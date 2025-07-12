@@ -14,3 +14,16 @@
 .no-scrollbar::-webkit-scrollbar{
   display: none;
 }
+
+@keyframes spin-slower {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slower {
+  animation: spin-slower 2.5s linear infinite;
+}
