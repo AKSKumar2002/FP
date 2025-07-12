@@ -54,7 +54,7 @@ const App = () => {
     const timer = setTimeout(() => {
       setShowInitialLoader(false);
       setShowDropdown(true);
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
