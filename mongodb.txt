@@ -1,0 +1,4 @@
+mongodb+srv://aksfarmpick:aks2002@cluster1.mpm265s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1
+
+SELLER_EMAIL = "admin@example.com"
+SELLER_PASSWORD = "greatstack123"
