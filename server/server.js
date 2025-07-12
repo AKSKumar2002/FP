@@ -18,7 +18,7 @@ await connectDB();
 await connectCloudinary();
 
 // Allow multiple origins
-const allowedOrigins = ['http://localhost:5173', 'https://farm-pick-v1.vercel.app'];
+const allowedOrigins = ['http://localhost:5173', 'farmpickshope.vercel.app'];
 
 // Middleware configuration
 app.use(express.json());
