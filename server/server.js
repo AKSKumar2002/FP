@@ -1,5 +1,4 @@
 import cookieParser from 'cookie-parser';
-import Location from './models/Location.js';
 import express from 'express';
 import cors from 'cors';
 import connectDB from './configs/db.js';
@@ -27,7 +26,7 @@ app.use(cookieParser());
 app.set('trust proxy', 1); // Required for secure cookies on Vercel/Heroku etc.
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
-// Routes
+
 app.get('/', (req, res) => res.send("API is Working"));
 
 app.use('/api/user', userRouter);
@@ -37,20 +36,6 @@ app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 
-// ✅ New Location Route with DB Save + Validation
-app.post('/api/location', async (req, res) => {
-  const { location } = req.body;
-
-  if (!location || location.trim().length < 2) {
-    return res.status(400).json({ message: 'Invalid location provided' });
-  }
-
-  try {
-    const newLocation = new Location({ location: location.trim() });
-    await newLocation.save();
-    res.status(201).json({ message: 'Location saved to database' });
-  } catch (error) {
-    console.error('Error saving location:', error);
-    res.status(500).json({ message: 'Server error while saving location' });
-  }
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
