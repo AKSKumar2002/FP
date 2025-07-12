@@ -25,7 +25,7 @@ export const AppContextProvider = ({ children }) => {
     // Fetch Seller Status
     const fetchSeller = async () => {
         try {
-            const { data } = await axios.get('/api/seller/is-auth', { withCredentials: true });
+            const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/seller/is-auth`, { withCredentials: true });
             if (data.success) {
                 setIsSeller(true)
             } else {
