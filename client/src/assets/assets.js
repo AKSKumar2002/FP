@@ -71,6 +71,7 @@ import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
 import logo1 from "./FarmPick.svg"
 import logo2 from "./FarmPick.jpg"
+import logo3 from "./FarmPick-1.png"
 export const assets = {
   logo,
   search_icon,
@@ -100,7 +101,8 @@ export const assets = {
   add_address_iamge,
   box_icon,
   logo1,
-  logo2
+  logo2,
+  logo3
 };
 
 export const categories = [

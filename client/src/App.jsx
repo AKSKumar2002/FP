@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import { Toaster } from "react-hot-toast";
 import Footer from './components/Footer';
@@ -19,7 +19,6 @@ import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import Loading from './components/Loading';
 
-// Properly routed B2B and Admin pages
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
     <h1 className="text-4xl font-bold mb-4 animate-bounce">🚧 B2B Portal</h1>
@@ -42,32 +41,52 @@ const AdminPage = () => (
 );
 
 const App = () => {
-  const isSellerPath = useLocation().pathname.includes("seller");
-  const { showUserLogin, isSeller } = useAppContext();
+  const location = useLocation();
   const navigate = useNavigate();
+  const isSellerPath = location.pathname.includes("seller");
+  const { showUserLogin, isSeller } = useAppContext();
 
   const [showInitialLoader, setShowInitialLoader] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isModeSelected, setIsModeSelected] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowInitialLoader(false);
-      setShowDropdown(true);
+
+      const savedMode = localStorage.getItem('siteMode');
+
+      if (!savedMode) {
+        setShowDropdown(true); // show dropdown if no mode yet
+      } else {
+        // If user refreshes, keep them in correct place
+        if (savedMode === 'B2B') {
+          if (location.pathname !== '/b2b') navigate('/b2b');
+        } else if (savedMode === 'Admin') {
+          if (location.pathname !== '/admin') navigate('/admin');
+        } else {
+          if (location.pathname === '/' || location.pathname === '') {
+            navigate('/'); // for B2C, you may stay on home
+          }
+        }
+      }
     }, 5000);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigate, location.pathname]);
 
   const handleSelect = (e) => {
     const selected = e.target.value;
+    localStorage.setItem('siteMode', selected);
+
     if (selected === "B2B") {
-      navigate("/b2b"); // ✅ Correct path
-    } else if (selected === "Admin") {
-      navigate("/admin");
+      navigate("/b2b");
+    } else if (selected === "seller") {
+      navigate("/seller");
     } else {
-      navigate("/"); // Default B2C
+      navigate("/"); // B2C
     }
-    setIsModeSelected(true);
+
+    setShowDropdown(false); // hide dropdown
   };
 
   if (showInitialLoader) {
@@ -90,7 +109,7 @@ const App = () => {
     );
   }
 
-  if (showDropdown && !isModeSelected) {
+  if (showDropdown) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
         <div className="mb-4 text-xl font-semibold">Hi User</div>
@@ -102,7 +121,7 @@ const App = () => {
           <option value="">Select Site</option>
           <option value="B2C">1. B2C</option>
           <option value="B2B">2. B2B</option>
-          <option value="Admin">3. Admin</option>
+          <option value="Admin">3. Seller</option>
         </select>
       </div>
     );
@@ -116,7 +135,7 @@ const App = () => {
       <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/b2b' element={<B2BPage />} /> {/* ✅ Correct route */}
+          <Route path='/b2b' element={<B2BPage />} />
           <Route path='/admin' element={<AdminPage />} />
           <Route path='/products' element={<AllProducts />} />
           <Route path='/products/:category' element={<ProductCategory />} />
@@ -126,7 +145,8 @@ const App = () => {
           <Route path='/my-orders' element={<MyOrders />} />
           <Route path='/loader' element={<Loading />} />
           <Route path='/seller' element={isSeller ? <SellerLayout /> : <SellerLogin />}>
-            <Route index element={isSeller ? <AddProduct /> : null} />
+            <Route index element={<Navigate to="add-product" />} />
+            <Route path='add-product' element={<AddProduct />} />
             <Route path='product-list' element={<ProductList />} />
             <Route path='orders' element={<Orders />} />
           </Route>
