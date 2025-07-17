@@ -35,7 +35,7 @@ const ProductDetails = () => {
 
     return (
         product && selectedVariant && (
-            <div className="mt-12">
+            <div className="mt-11">
                 <p>
                     <Link to={"/"}>Home</Link> /
                     <Link to={"/products"}> Products</Link> /

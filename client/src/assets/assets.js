@@ -27,10 +27,10 @@ import bottom_banner_image_sm from "./bottom_banner_image_sm.png";
 import add_address_iamge from "./add_address_image.svg";
 import organic_vegitable_image from "./organic_vegitable_image.png";
 import fresh_fruits_image from "./fresh_fruits_image.png";
-import bottles_image from "./bottles_image.png";
-import maggi_image from "./maggi_image.png";
+import bottles_image from "./budle-pack-removebg-preview.png";
+import maggi_image from "./business.png";
 import dairy_product_image from "./dairy_product_image.png";
-import bakery_image from "./bakery_image.png";
+import bakery_image from "./fresh_farm-removebg-preview.png";
 import grain_image from "./grain_image.png";
 import potato_image_1 from "./potato_image_1.png";
 import potato_image_2 from "./potato_image_2.png";
@@ -119,13 +119,13 @@ export const categories = [
     bgColor: "#FEE0E0",
   },
   {
-    text: "Cold Drinks",
+    text: "Bundle Packages",
     path: "Drinks",
     image: bottles_image,
     bgColor: "#F0F5DE",
   },
   {
-    text: "Instant Food",
+    text: "Business",
     path: "Instant",
     image: maggi_image,
     bgColor: "#E1F5EC",
@@ -137,13 +137,13 @@ export const categories = [
     bgColor: "#FEE6CD",
   },
   {
-    text: "Bakery & Breads",
+    text: "Fresh Farm",
     path: "Bakery",
     image: bakery_image,
     bgColor: "#E0F6FE",
   },
   {
-    text: "Grains & Cereals",
+    text: "Grocery",
     path: "Grains",
     image: grain_image,
     bgColor: "#F1E3F9",
