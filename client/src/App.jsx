@@ -18,6 +18,7 @@ import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import Loading from './components/Loading';
+import Contact from './components/Contact';
 
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
@@ -144,6 +145,7 @@ const App = () => {
           <Route path='/add-address' element={<AddAddress />} />
           <Route path='/my-orders' element={<MyOrders />} />
           <Route path='/loader' element={<Loading />} />
+          <Route path='/contact' element={<Contact />} /> {/* 👈 New route */}
           <Route path='/seller' element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />
             <Route path='add-product' element={<AddProduct />} />
@@ -151,6 +153,7 @@ const App = () => {
             <Route path='orders' element={<Orders />} />
           </Route>
         </Routes>
+
       </div>
       {!isSellerPath && <Footer />}
     </div>
