@@ -4,9 +4,12 @@ import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-// ✅ Use this instance everywhere
+// ✅ Dynamically set the base URL based on the environment
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL:
+    import.meta.env.MODE === "production"
+      ? import.meta.env.VITE_BACKEND_URL
+      : "http://localhost:4000", // Default for local development
   withCredentials: true,
 });
 
