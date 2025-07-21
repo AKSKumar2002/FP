@@ -29,14 +29,15 @@ export const addProduct = async (req, res) => {
 
 // Get Product : /api/product/list
 export const productList = async (req, res) => {
-    try {
-        const products = await Product.find({})
-        res.json({ success: true, products })
-    } catch (error) {
-        console.log(error.message);
-        res.json({ success: false, message: error.message })
-    }
-}
+  try {
+    const products = await Product.find({}).populate("category");
+    res.json({ success: true, products });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 
 // Get single Product : /api/product/id
 export const productById = async (req, res) => {
@@ -62,3 +63,57 @@ export const changeStock = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+// Add in productController.js
+
+// Edit Product : /api/product/edit
+export const editProduct = async (req, res) => {
+  try {
+    const { id } = req.body;
+    let productData = JSON.parse(req.body.productData);
+    const images = req.files;
+
+    let imagesUrl = [];
+
+    // If new images uploaded, upload to Cloudinary
+    if (images && images.length > 0) {
+      imagesUrl = await Promise.all(
+        images.map(async (item) => {
+          let result = await cloudinary.uploader.upload(item.path, {
+            resource_type: "image",
+          });
+          return result.secure_url;
+        })
+      );
+    }
+
+    if (imagesUrl.length > 0) {
+      productData.image = imagesUrl;
+    }
+
+    await Product.findByIdAndUpdate(id, productData);
+
+    res.json({ success: true, message: "Product Updated" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+// Add in productController.js
+
+// Delete Product : /api/product/delete/:id
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Product.findByIdAndDelete(id);
+    res.json({ success: true, message: "Product Deleted" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+
