@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
 import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import Home from './pages/Home';
-import { Toaster } from "react-hot-toast";
-import Footer from './components/Footer';
+import { Toaster } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext';
+
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Login from './components/Login';
+import Contact from './components/Contact';
+import About from './components/About.jsx'; // ✅ Correct import
+
+// Pages
+import Home from './pages/Home';
 import AllProducts from './pages/AllProducts';
 import ProductCategory from './pages/ProductCategory';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import AddAddress from './pages/AddAddress';
 import MyOrders from './pages/MyOrders';
+import Loading from './components/Loading';
+
+// Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
 import SellerLayout from './pages/seller/SellerLayout';
 import AddProduct from './pages/seller/AddProduct';
@@ -45,7 +53,7 @@ const AdminPage = () => (
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isSellerPath = location.pathname.includes("seller");
+  const isSellerPath = location.pathname.includes('seller');
   const { showUserLogin, isSeller } = useAppContext();
 
   const [showInitialLoader, setShowInitialLoader] = useState(true);
@@ -58,17 +66,14 @@ const App = () => {
       const savedMode = localStorage.getItem('siteMode');
 
       if (!savedMode) {
-        setShowDropdown(true); // show dropdown if no mode yet
+        setShowDropdown(true);
       } else {
-        // If user refreshes, keep them in correct place
-        if (savedMode === 'B2B') {
-          if (location.pathname !== '/b2b') navigate('/b2b');
-        } else if (savedMode === 'Admin') {
-          if (location.pathname !== '/admin') navigate('/admin');
-        } else {
-          if (location.pathname === '/' || location.pathname === '') {
-            navigate('/'); // for B2C, you may stay on home
-          }
+        if (savedMode === 'B2B' && location.pathname !== '/b2b') {
+          navigate('/b2b');
+        } else if (savedMode === 'Admin' && location.pathname !== '/admin') {
+          navigate('/admin');
+        } else if (savedMode === 'B2C' && location.pathname === '/') {
+          navigate('/');
         }
       }
     }, 5000);
@@ -80,27 +85,22 @@ const App = () => {
     const selected = e.target.value;
     localStorage.setItem('siteMode', selected);
 
-    if (selected === "B2B") {
-      navigate("/b2b");
-    } else if (selected === "seller") {
-      navigate("/seller");
+    if (selected === 'B2B') {
+      navigate('/b2b');
+    } else if (selected === 'seller') {
+      navigate('/seller');
     } else {
-      navigate("/"); // B2C
+      navigate('/');
     }
 
-    setShowDropdown(false); // hide dropdown
+    setShowDropdown(false);
   };
 
   if (showInitialLoader) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
         <div className="flex items-center justify-center w-44 h-44 mb-6 bg-white rounded-full shadow-lg">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="w-36 h-36 object-contain"
-            loading="eager"
-          />
+          <img src="/logo.png" alt="Logo" className="w-36 h-36 object-contain" loading="eager" />
         </div>
         <div className="relative w-12 h-12">
           <div className="absolute inset-0 border-4 border-green-500 border-dotted rounded-full animate-spin"></div>
@@ -130,25 +130,29 @@ const App = () => {
   }
 
   return (
-    <div className='text-default min-h-screen text-gray-700 bg-white'>
+    <div className="text-default min-h-screen text-gray-700 bg-white">
       {!isSellerPath && <Navbar />}
       {showUserLogin && <Login />}
       <Toaster />
-      <div className={`${isSellerPath ? "" : "px-6 md:px-16 lg:px-24 xl:px-32"}`}>
+      <div className={`${isSellerPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/b2b' element={<B2BPage />} />
-          <Route path='/admin' element={<AdminPage />} />
-          <Route path='/products' element={<AllProducts />} />
-          <Route path='/products/:category' element={<ProductCategory />} />
-          <Route path='/products/:category/:id' element={<ProductDetails />} />
-          <Route path='/cart' element={<Cart />} />
-          <Route path='/add-address' element={<AddAddress />} />
-          <Route path='/my-orders' element={<MyOrders />} />
-          <Route path='/loader' element={<Loading />} />
-          <Route path='/contact' element={<Contact />} /> {/* 👈 New route */}
-          <Route path='/seller' element={isSeller ? <SellerLayout /> : <SellerLogin />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/b2b" element={<B2BPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/products" element={<AllProducts />} />
+          <Route path="/products/:category" element={<ProductCategory />} />
+          <Route path="/products/:category/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/add-address" element={<AddAddress />} />
+          <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/loader" element={<Loading />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />
+            <Route path="add-product" element={<AddProduct />} />
+            <Route path="product-list" element={<ProductList />} />
+            <Route path="orders" element={<Orders />} />
             <Route path='add-product' element={<AddProduct />} />
             <Route path='product-list' element={<ProductList />} />
             <Route path='orders' element={<Orders />} />
@@ -156,7 +160,6 @@ const App = () => {
           </Route>
 
         </Routes>
-
       </div>
       {!isSellerPath && <Footer />}
     </div>
