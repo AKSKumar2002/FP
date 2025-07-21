@@ -6,8 +6,8 @@ import { useAppContext } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Login from './components/Login';
-import Contact from './components/Contact';
-import About from './components/About.jsx'; // ✅ Correct import
+import Contact from './components/Contact'; // ✅ keep only once
+import About from './components/About.jsx';
 
 // Pages
 import Home from './pages/Home';
@@ -17,7 +17,7 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import AddAddress from './pages/AddAddress';
 import MyOrders from './pages/MyOrders';
-import Loading from './components/Loading';
+import Loading from './components/Loading'; // ✅ keep only once
 
 // Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
@@ -25,9 +25,8 @@ import SellerLayout from './pages/seller/SellerLayout';
 import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
-import Loading from './components/Loading';
-import Contact from './components/Contact';
 import SellerCategories from './pages/seller/SellerCategories';
+
 
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
