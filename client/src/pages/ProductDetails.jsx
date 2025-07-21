@@ -39,12 +39,14 @@ const ProductDetails = () => {
                 <p>
                     <Link to={"/"}>Home</Link> /
                     <Link to={"/products"}> Products</Link> /
-                    <Link to={`/products/${product.category.toLowerCase()}`}>
-                        {" "}
-                        {product.category}
-                    </Link>{" "}
+                    {product.category && (
+                        <Link to={`/products/${product.category.name.toLowerCase()}`}>
+                            {product.category.name}
+                        </Link>
+                    )}
                     /<span className="text-primary"> {product.name}</span>
                 </p>
+
 
                 <div className="flex flex-col md:flex-row gap-16 mt-4">
                     <div className="flex gap-3">

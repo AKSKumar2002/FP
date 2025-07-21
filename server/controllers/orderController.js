@@ -130,17 +130,26 @@ export const verifyRazorpayPayment = async (req, res) => {
 export const getUserOrders = async (req, res) => {
   try {
     const { userId } = req.body;
+
     const orders = await Order.find({
       userId,
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
-      .populate("items.product address")
+      .populate({
+        path: "items.product",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      })
       .sort({ createdAt: -1 });
+
     res.json({ success: true, orders });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ 5️⃣ Get All Orders : /api/order/seller
 export const getAllOrders = async (req, res) => {
@@ -148,7 +157,13 @@ export const getAllOrders = async (req, res) => {
     const orders = await Order.find({
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
-      .populate("items.product address")
+      .populate({
+        path: "items.product",
+        populate: {
+          path: "category",
+          model: "Category",
+        },
+      })
       .sort({ createdAt: -1 });
     res.json({ success: true, orders });
   } catch (error) {

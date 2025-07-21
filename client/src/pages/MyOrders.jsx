@@ -39,7 +39,7 @@ const MyOrders = () => {
 
           {order.items.map((item, index) => {
             const variantIndex = item.variantIndex ?? 0
-            const variant = item.product.variants?.[variantIndex] || {}
+            const variant = item.product?.variants?.[variantIndex] || {}
 
             return (
               <div
@@ -50,12 +50,20 @@ const MyOrders = () => {
               >
                 <div className='flex items-center mb-4 md:mb-0'>
                   <div className='bg-primary/10 p-4 rounded-lg'>
-                    <img src={item.product.image[0]} alt="" className='w-16 h-16' />
+                    {item.product?.image?.[0] ? (
+                      <img src={item.product.image[0]} alt="" className='w-16 h-16' />
+                    ) : (
+                      <div className='w-16 h-16 flex items-center justify-center text-xs text-gray-400'>
+                        No Image
+                      </div>
+                    )}
                   </div>
                   <div className='ml-4'>
-                    <h2 className='text-xl font-medium text-gray-800'>{item.product.name}</h2>
-                    <p>Category: {item.product.category}</p>
-                    <p>Variant: {variant.weight} {variant.unit}</p>
+                    <h2 className='text-xl font-medium text-gray-800'>
+                      {item.product?.name || "Deleted Product"}
+                    </h2>
+                    <p>Category: {item.product?.category?.name || "N/A"}</p>
+                    <p>Variant: {variant.weight || "-"} {variant.unit || ""}</p>
                     <p>Unit Price: {currency}{variant.offerPrice || 0}</p>
                   </div>
                 </div>
@@ -67,7 +75,7 @@ const MyOrders = () => {
                 </div>
 
                 <p className='text-primary text-lg font-medium'>
-                  Amount: {currency}{((variant.offerPrice || 0) * item.quantity).toFixed(2)}
+                  Amount: {currency}{((variant.offerPrice || 0) * (item.quantity || 1)).toFixed(2)}
                 </p>
               </div>
             )

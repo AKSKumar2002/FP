@@ -22,6 +22,7 @@ export const AppContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState({});
+  const [categories, setCategories] = useState([]);
 
   // ✅ Fetch Seller Status
   const fetchSeller = async () => {
@@ -45,6 +46,18 @@ export const AppContextProvider = ({ children }) => {
       setUser(null);
     }
   };
+
+  const fetchCategories = async () => {
+    const { data } = await axios.get('/api/category/all');
+    if (data.success) {
+      setCategories(data.categories);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // ✅ Fetch Products
   const fetchProducts = async () => {
@@ -147,6 +160,8 @@ export const AppContextProvider = ({ children }) => {
     axios: axiosInstance, // ✅ Expose the correct instance
     fetchProducts,
     setCartItems,
+    categories,
+    fetchCategories
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

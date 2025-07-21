@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
   return product && (
     <div
       onClick={() => {
-        navigate(`/products/${product.category.toLowerCase()}/${product._id}`);
+        navigate(`/products/${product.category?.name.toLowerCase()}/${product._id}`);
         scrollTo(0, 0);
       }}
       className="border border-gray-300 rounded-md md:px-4 px-3 py-2 bg-white w-full cursor-pointer flex flex-col"
@@ -26,7 +26,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="text-gray-500/60 text-sm flex flex-col flex-1 w-full">
-        <p>{product.category}</p>
+        <p>{product.category?.name}</p>
         <p className="text-gray-700 font-medium text-lg truncate">{product.name}</p>
 
         <div className="flex items-center gap-0.5 mb-1">

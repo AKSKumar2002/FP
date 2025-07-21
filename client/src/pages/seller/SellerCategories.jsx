@@ -1,11 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
-const Categories = () => {
+const SellerCategories = () => {
   const { axios } = useAppContext();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  // ✅ Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get("/api/category/list");
+      if (data.success) {
+        setCategories(data.categories);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
@@ -21,6 +40,7 @@ const Categories = () => {
         toast.success(data.message);
         setName("");
         setDescription("");
+        fetchCategories(); // ✅ Refresh the list
       } else {
         toast.error(data.message);
       }
@@ -59,8 +79,23 @@ const Categories = () => {
           Add Category
         </button>
       </form>
+
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-2">Categories</h2>
+        {categories.length === 0 ? (
+          <p>No categories found.</p>
+        ) : (
+          <ul className="list-disc pl-5">
+            {categories.map((cat) => (
+              <li key={cat._id}>
+                <strong>{cat.name}</strong> — {cat.description || "No description"}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Categories;
+export default SellerCategories;

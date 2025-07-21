@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { assets, categories } from '../../assets/assets';
 import { useAppContext } from '../../context/AppContext';
 import toast from 'react-hot-toast';
@@ -8,11 +8,29 @@ const AddProduct = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]); // ✅
   const [variants, setVariants] = useState([
     { unit: '', weight: '', price: '', offerPrice: '' },
   ]);
 
   const { axios } = useAppContext();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get("/api/category/all");
+        if (data.success) {
+          setCategories(data.categories);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const onSubmitHandler = async (event) => {
     try {
@@ -126,13 +144,16 @@ const AddProduct = () => {
             onChange={(e) => setCategory(e.target.value)}
             value={category}
             id="category"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            className="..."
           >
             <option value="">Select Category</option>
-            {categories.map((item, index) => (
-              <option key={index} value={item.path}>{item.path}</option>
+            {categories.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
             ))}
           </select>
+
         </div>
 
         <div className="space-y-4">
