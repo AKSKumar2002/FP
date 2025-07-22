@@ -1,89 +1,62 @@
-// controllers/orderController.js
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
-import Address from "../models/Address.js";
 
-// ✅ COD Order
+// ✅ 1️⃣ Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
-
-    if (!userId || !Array.isArray(items) || !items.length || !address) {
-      return res.json({ success: false, message: "Missing userId, items, or address" });
+    if (!address || items.length === 0) {
+      return res.json({ success: false, message: "Invalid data" });
     }
 
-    let addressSnapshot;
-
-    if (typeof address === "string" && address.trim().length > 0) {
-      const savedAddress = await Address.findById(address.trim());
-      if (!savedAddress) {
-        return res.json({ success: false, message: "Address ID not found" });
-      }
-      addressSnapshot = savedAddress.toObject();
-      delete addressSnapshot._id; // optional
-      delete addressSnapshot.__v; // optional
-    } else if (typeof address === "object" && Object.keys(address).length > 0) {
-      addressSnapshot = { ...address, userId }; // Use inline address
-    } else {
-      return res.json({ success: false, message: "Invalid address format" });
-    }
-
-    console.log("✅ Final address snapshot:", addressSnapshot);
-
+    // ✅ FIXED: Calculate Amount properly
     let amount = 0;
-
     for (const item of items) {
       const product = await Product.findById(item.product);
-      if (!product) return res.json({ success: false, message: `Product not found: ${item.product}` });
       const variant = product.variants[item.variantIndex];
-      if (!variant) return res.json({ success: false, message: "Invalid variant index" });
       amount += variant.offerPrice * item.quantity;
     }
+    amount += amount * 0.02;
 
-    amount += Math.floor(amount * 0.02); // 2% tax
+
+    // Add Tax Charge (2%)
+    amount += Math.floor(amount * 0.02);
 
     await Order.create({
       userId,
       items,
       amount,
-      address: addressSnapshot, // ✅ Embed full snapshot
+      address,
       paymentType: "COD",
     });
 
-    return res.json({ success: true, message: "Order placed successfully (COD)" });
-
+    return res.json({ success: true, message: "Order Placed Successfully" });
   } catch (error) {
-    console.error(error);
     return res.json({ success: false, message: error.message });
   }
 };
 
 
-
-
-// ✅ Razorpay Order
+// ✅ 2️⃣ Place Order Razorpay : /api/order/razorpay
 export const placeOrderRazorpay = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
 
-    if (!userId || !Array.isArray(items) || !items.length || !address) {
-      return res.json({ success: false, message: "Missing userId, items, or address" });
-    }
-
-    if (typeof address !== "object" || !Object.keys(address).length) {
-      return res.json({ success: false, message: "Address must be a valid object" });
+    if (!userId || !items?.length || !address) {
+      return res.json({ success: false, message: "Missing data" });
     }
 
     let amount = 0;
+
     for (const item of items) {
       const product = await Product.findById(item.product);
-      if (!product) return res.json({ success: false, message: `Product not found: ${item.product}` });
+      if (!product) return res.json({ success: false, message: "Product not found" });
 
       const variant = product.variants[item.variantIndex];
-      if (!variant) return res.json({ success: false, message: "Invalid variant index" });
+      if (!variant) return res.json({ success: false, message: "Variant not found" });
 
       amount += variant.offerPrice * item.quantity;
     }
@@ -94,7 +67,7 @@ export const placeOrderRazorpay = async (req, res) => {
       userId,
       items,
       amount,
-      address, // ✅ snapshot stored directly
+      address,
       paymentType: "Online",
     });
 
@@ -104,7 +77,7 @@ export const placeOrderRazorpay = async (req, res) => {
     });
 
     const options = {
-      amount: amount * 100, // to paise
+      amount: amount * 100, // paise
       currency: "INR",
       receipt: `order_rcptid_${order._id}`,
     };
@@ -119,16 +92,13 @@ export const placeOrderRazorpay = async (req, res) => {
       orderId: razorpayOrder.id,
       orderDbId: order._id,
     });
-
   } catch (error) {
     console.error(error);
     return res.json({ success: false, message: error.message });
   }
 };
 
-
-
-// ✅ Razorpay Verify
+// ✅ 3️⃣ Verify Razorpay Payment : /api/order/razorpay/verify
 export const verifyRazorpayPayment = async (req, res) => {
   try {
     const {
@@ -140,24 +110,23 @@ export const verifyRazorpayPayment = async (req, res) => {
     } = req.body;
 
     const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
-    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature === razorpay_signature) {
       await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
-      return res.json({ success: true, message: "Payment verified" });
+      return res.json({ success: true, message: "Payment Verified" });
     } else {
       await Order.findByIdAndDelete(orderId);
-      return res.json({ success: false, message: "Payment verification failed" });
+      return res.json({ success: false, message: "Payment Verification Failed" });
     }
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
 };
 
-
-// ✅ Get Orders for User
+// ✅ 4️⃣ Get Orders by User ID : /api/order/user
 export const getUserOrders = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -168,9 +137,13 @@ export const getUserOrders = async (req, res) => {
     })
       .populate({
         path: "items.product",
-        populate: { path: "category" },
+        populate: {
+          path: "category",
+          model: "Category",
+        },
       })
       .populate("address")
+  
       .sort({ createdAt: -1 });
 
     res.json({ success: true, orders });
@@ -180,19 +153,22 @@ export const getUserOrders = async (req, res) => {
 };
 
 
-// ✅ Get All Orders (Seller)
+// ✅ 5️⃣ Get All Orders : /api/order/seller
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({
-      $or: [{ paymentType: "COD" }, { isPaid: true }]
+      $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
       .populate({
         path: "items.product",
-        populate: { path: "category" },
+        populate: {
+          path: "category",
+          model: "Category",
+        },
       })
-      .populate("address")
+       .populate("address")
+     
       .sort({ createdAt: -1 });
-
     res.json({ success: true, orders });
   } catch (error) {
     res.json({ success: false, message: error.message });

@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   amount: { type: Number, required: true },
-  address: { type: mongoose.Schema.Types.ObjectId, ref: 'address', required: true }, // ✅ Clean & simple
+address: { type: mongoose.Schema.Types.ObjectId, ref: 'address', required: true },
   status: { type: String, default: 'Order Placed' },
   paymentType: { type: String, required: true },
   isPaid: { type: Boolean, default: false },
