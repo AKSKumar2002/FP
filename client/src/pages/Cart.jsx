@@ -16,13 +16,22 @@ const Cart = () => {
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [paymentOption, setPaymentOption] = useState("COD");
 
-    const cartArray = Object.keys(cartItems).map(key => {
-        const [productId, variantIndex] = key.split("|");
-        const product = products.find(item => item._id === productId);
-        if (!product) return null;
-        const variant = product.variants?.[variantIndex] || {};
-        return { ...product, variant, variantIndex, quantity: cartItems[key] };
-    }).filter(Boolean);
+    const cartArray = Object.keys(cartItems)
+        .filter((key) => {
+            const [productId, variantIndex] = key.split("|");
+            const qty = cartItems[key];
+            const validProduct = products.some(p => p._id === productId);
+            return qty > 0 && validProduct;
+        })
+        .map((key) => {
+            const [productId, variantIndex] = key.split("|");
+            const product = products.find(item => item._id === productId);
+            const variant = product?.variants?.[variantIndex] || {};
+            return { ...product, variant, variantIndex, quantity: cartItems[key], cartKey: key };
+        });
+
+
+
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -156,7 +165,7 @@ const Cart = () => {
                                     <div className='flex items-center'>
                                         <p>Qty:</p>
                                         <select
-                                            onChange={e => updateCartItem(`${product._id}|${product.variantIndex}`, Number(e.target.value))}
+                                             onChange={e => updateCartItem(product.cartKey, Number(e.target.value))}
                                             value={product.quantity}
                                             className='outline-none ml-2'
                                         >
@@ -171,7 +180,7 @@ const Cart = () => {
 
                         <p className="text-center">{currency}{product.variant.offerPrice * product.quantity}</p>
 
-                        <button onClick={() => removeFromCart(`${product._id}|${product.variantIndex}`)} className="cursor-pointer mx-auto">
+                        <button onClick={() => removeFromCart(product.cartKey)} className="cursor-pointer mx-auto">
                             <img src={assets.remove_icon} alt="remove" className="inline-block w-6 h-6" />
                         </button>
                     </div>

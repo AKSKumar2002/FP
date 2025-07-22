@@ -86,10 +86,14 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const updateCartItem = (cartKey, quantity) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [cartKey]: quantity,
-    }));
+    if (quantity <= 0) {
+      removeFromCart(cartKey);
+    } else {
+      setCartItems((prev) => ({
+        ...prev,
+        [cartKey]: quantity,
+      }));
+    }
   };
 
   const removeFromCart = (cartKey) => {
@@ -99,6 +103,7 @@ export const AppContextProvider = ({ children }) => {
       return updated;
     });
   };
+
 
   const getCartCount = () => {
     return Object.values(cartItems).reduce((acc, cur) => acc + cur, 0);
