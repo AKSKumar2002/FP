@@ -1,15 +1,14 @@
+// AppContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-// ✅ Dynamically set the base URL based on the environment
 const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === "production"
       ? import.meta.env.VITE_BACKEND_URL
-      : "https://fp-mocha.vercel.app", // Default for local development
+      : "https://fp-mocha.vercel.app",
   withCredentials: true,
 });
 
@@ -26,8 +25,8 @@ export const AppContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState({});
   const [categories, setCategories] = useState([]);
+  const [animateCart, setAnimateCart] = useState(false); // ✅ NEW
 
-  // ✅ Fetch Seller Status
   const fetchSeller = async () => {
     try {
       const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/seller/is-auth");
@@ -37,7 +36,6 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // ✅ Fetch User Auth & Cart
   const fetchUser = async () => {
     try {
       const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/user/is-auth");
@@ -57,12 +55,8 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => { fetchCategories(); }, []);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  // ✅ Fetch Products
   const fetchProducts = async () => {
     try {
       const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/product/list");
@@ -76,13 +70,16 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // ✅ Cart Operations
+  // ✅ Add to Cart With Animation
   const addToCart = (productId, variantIndex) => {
     const key = `${productId}|${variantIndex}`;
     setCartItems((prev) => ({
       ...prev,
       [key]: prev[key] ? prev[key] + 1 : 1,
     }));
+
+    setAnimateCart(true); // ✅ trigger
+    setTimeout(() => setAnimateCart(false), 600); // reset
   };
 
   const updateCartItem = (cartKey, quantity) => {
@@ -104,7 +101,6 @@ export const AppContextProvider = ({ children }) => {
     });
   };
 
-
   const getCartCount = () => {
     return Object.values(cartItems).reduce((acc, cur) => acc + cur, 0);
   };
@@ -122,14 +118,12 @@ export const AppContextProvider = ({ children }) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
-  // ✅ Fetch on App Load
   useEffect(() => {
     fetchUser();
     fetchSeller();
     fetchProducts();
   }, []);
 
-  // ✅ Update Cart in DB
   useEffect(() => {
     const updateCart = async () => {
       try {
@@ -165,11 +159,12 @@ export const AppContextProvider = ({ children }) => {
     setSearchQuery,
     getCartAmount,
     getCartCount,
-    axios: axiosInstance, // ✅ Expose the correct instance
+    axios: axiosInstance,
     fetchProducts,
     setCartItems,
     categories,
-    fetchCategories
+    fetchCategories,
+    animateCart // ✅ Exposed
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

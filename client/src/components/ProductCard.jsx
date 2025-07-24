@@ -1,6 +1,37 @@
+// ProductCard.jsx
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
+
+// ✅ Fly-to-cart with image + sound
+function flyToCart(startEl, endEl, imageUrl) {
+  if (!startEl || !endEl || !imageUrl) return;
+
+  const startRect = startEl.getBoundingClientRect();
+  const endRect = endEl.getBoundingClientRect();
+
+  const flyingImage = document.createElement("img");
+  flyingImage.src = imageUrl;
+  flyingImage.className = "fixed z-[9999] w-16 h-16 rounded-full object-cover pointer-events-none shadow-lg";
+  flyingImage.style.left = `${startRect.left}px`;
+  flyingImage.style.top = `${startRect.top}px`;
+  flyingImage.style.transition = "all 0.8s ease-in-out";
+
+  document.body.appendChild(flyingImage);
+
+  requestAnimationFrame(() => {
+    flyingImage.style.left = `${endRect.left + endRect.width / 2}px`;
+    flyingImage.style.top = `${endRect.top + endRect.height / 2}px`;
+    flyingImage.style.transform = "scale(0.1)";
+    flyingImage.style.opacity = "0";
+  });
+
+  setTimeout(() => flyingImage.remove(), 900);
+
+  // 🔊 Play sound
+  const sound = new Audio("/sounds/add-to-cart.wav"); // must be in public/sounds/
+  sound.play().catch(() => {});
+}
 
 const ProductCard = ({ product }) => {
   const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
@@ -65,7 +96,12 @@ const ProductCard = ({ product }) => {
             {!cartItems[cartKey] ? (
               <button
                 className="flex items-center justify-center gap-1 bg-primary/10 border border-primary/40 md:w-[80px] w-[64px] h-[34px] rounded"
-                onClick={() => addToCart(cartKey)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const [productId, variantIndex] = cartKey.split('|');
+                  addToCart(productId, Number(variantIndex));
+                  flyToCart(e.currentTarget, document.querySelector('#cart-icon'), product.image[0]);
+                }}
               >
                 <img src={assets.cart_icon} alt="cart_icon" />
                 Add
@@ -80,7 +116,12 @@ const ProductCard = ({ product }) => {
                 </button>
                 <span className="w-5 text-center">{cartItems[cartKey]}</span>
                 <button
-                  onClick={() => addToCart(cartKey)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const [productId, variantIndex] = cartKey.split('|');
+                    addToCart(productId, Number(variantIndex));
+                    flyToCart(e.currentTarget, document.querySelector('#cart-icon'), product.image[0]);
+                  }}
                   className="cursor-pointer text-md px-2 h-full"
                 >
                   +
