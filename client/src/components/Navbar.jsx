@@ -69,7 +69,7 @@ const Navbar = () => {
           <select
             value={mode}
             onChange={handleModeChange}
-            className="border border-green-600 text-green-700 dark:text-green-400 bg-transparent rounded px-2 py-1"
+            className="border border-green-600 text-green-1000 dark:text-green-1000 bg-transparent rounded px-2 py-1"
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
