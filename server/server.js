@@ -15,11 +15,10 @@ import CategoryRouter from './routes/CategoryRoute.js';
 const app = express();
 const port = process.env.PORT || 4000;
 
-// ✅ Connect your DB & Cloudinary
 await connectDB();
 await connectCloudinary();
 
-// ✅ Allow multiple origins
+// ✅ Only use CORS once — this is the correct one
 const allowedOrigins = [
   'http://localhost:5173',
   'https://farmpickshope.vercel.app'
@@ -37,14 +36,14 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
+// ✅ Middleware (after CORS)
 app.use(express.json());
 app.use(cookieParser());
-app.set('trust proxy', 1);
+app.set('trust proxy', 1); // For secure cookies
 
-// ✅ Basic API route
+// ✅ Routes
 app.get('/', (req, res) => res.send("API is Working"));
 
-// ✅ Attach your routes
 app.use('/api/user', userRouter);
 app.use('/api/seller', sellerRouter);
 app.use('/api/product', productRouter);

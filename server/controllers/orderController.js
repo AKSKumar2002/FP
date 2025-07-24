@@ -12,17 +12,20 @@ export const placeOrderCOD = async (req, res) => {
       return res.json({ success: false, message: "Invalid data" });
     }
 
-    // ✅ Calculate Amount properly
+    // ✅ FIXED: Calculate Amount properly
     let amount = 0;
     for (const item of items) {
       const product = await Product.findById(item.product);
       const variant = product.variants[item.variantIndex];
       amount += variant.offerPrice * item.quantity;
     }
+    amount += amount * 0.02;
 
-    // ✅ Add Tax Charge (2%)
+
+    // Add Tax Charge (2%)
     amount += Math.floor(amount * 0.02);
 
+    await Order.create({
     await Order.create({
       userId,
       items,
@@ -36,6 +39,7 @@ export const placeOrderCOD = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ 2️⃣ Place Order Razorpay : /api/order/razorpay
 export const placeOrderRazorpay = async (req, res) => {
@@ -81,6 +85,7 @@ export const placeOrderRazorpay = async (req, res) => {
 
     const razorpayOrder = await razorpay.orders.create(options);
 
+
     return res.json({
       success: true,
       key: process.env.RAZORPAY_KEY_ID,
@@ -112,6 +117,7 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     if (generatedSignature === razorpay_signature) {
       await Order.findByIdAndUpdate(orderId, { isPaid: true });
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
 
       return res.json({ success: true, message: "Payment Verified" });
@@ -141,6 +147,7 @@ export const getUserOrders = async (req, res) => {
         },
       })
       .populate("address")
+  
       .sort({ createdAt: -1 });
 
     res.json({ success: true, orders });
@@ -148,6 +155,7 @@ export const getUserOrders = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ 5️⃣ Get All Orders : /api/order/seller
 export const getAllOrders = async (req, res) => {
@@ -162,7 +170,8 @@ export const getAllOrders = async (req, res) => {
           model: "Category",
         },
       })
-      .populate("address")
+       .populate("address")
+     
       .sort({ createdAt: -1 });
     res.json({ success: true, orders });
   } catch (error) {
