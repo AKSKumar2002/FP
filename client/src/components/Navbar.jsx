@@ -30,7 +30,6 @@ const Navbar = () => {
     setMode(selectedMode)
     localStorage.setItem('siteMode', selectedMode)
 
-    // Navigate to correct route
     if (selectedMode === 'B2B') navigate('/b2b')
     else if (selectedMode === 'seller') navigate('/seller')
     else if (selectedMode === 'admin') navigate('/admin')
@@ -44,24 +43,24 @@ const Navbar = () => {
   }, [searchQuery])
 
   return (
-    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
+    <nav className="backdrop-blur-md bg-[rgba(255,255,255,0.65)] text-black border-b border-gray-300 shadow-md flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 sticky top-0 z-50 transition-all">
 
-      {/* Logo */}
-      <NavLink to='/' onClick={() => setOpen(false)}>
-        <img className="h-18 w-40 p-2" src={assets.logo2} alt="logo" />
+      {/* Logo with frosted glass */}
+      <NavLink to='/' onClick={() => setOpen(false)} className="rounded-lg bg-white/60 backdrop-blur-sm p-1.5 shadow-sm">
+        <img className="h-14 w-auto rounded-lg object-contain" src={assets.logo2} alt="logo" />
       </NavLink>
 
       {/* Desktop Nav */}
-      <div className="hidden sm:flex items-center gap-8">
+      <div className="hidden sm:flex items-center gap-8 text-gray-800">
         <NavLink to='/'>Home</NavLink>
         <NavLink to='/products'>All Product</NavLink>
         <NavLink to='/About'>About</NavLink>
         <NavLink to='/Contact'>Contact Us</NavLink>
 
         {/* Search */}
-        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
-          <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
-          <img src={assets.search_icon} alt='search' className='w-4 h-4' />
+        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 py-1 rounded-full bg-white/50 backdrop-blur">
+          <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500 text-black" type="text" placeholder="Search products" />
+          <img src={assets.search_icon} alt='search' className='w-4 h-4 opacity-70' />
         </div>
 
         {/* Cart */}
@@ -78,22 +77,21 @@ const Navbar = () => {
         ) : (
           <div className='relative group'>
             <img src={assets.profile_icon} className='w-10' alt="profile" />
-            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded-md text-sm z-40'>
+            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded-md text-sm z-40 text-black'>
               <li onClick={() => navigate("my-orders")} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>My Orders</li>
               <li onClick={logout} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
             </ul>
           </div>
         )}
 
-        {/* ✅ Mode Switch */}
+        {/* Mode Switch */}
         <select
           value={mode}
           onChange={handleModeChange}
-          className="border border-green-600 rounded px-2 py-1 text-sm text-green-700"
+          className="border border-green-600 rounded px-2 py-1 text-sm text-green-1000 bg-white/60 backdrop-blur-sm"
         >
           <option value="B2C">B2C</option>
           <option value="B2B">B2B</option>
-          
         </select>
       </div>
 
@@ -110,7 +108,7 @@ const Navbar = () => {
 
       {/* Mobile Nav Menu */}
       {open && (
-        <div className={`absolute top-[70px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden z-50`}>
+        <div className={`absolute top-[70px] left-0 w-full bg-white/80 backdrop-blur-md shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden z-50 text-black`}>
           <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
           <NavLink to="/products" onClick={() => setOpen(false)}>All Product</NavLink>
           {user && <NavLink to="/my-orders" onClick={() => setOpen(false)}>My Orders</NavLink>}
@@ -129,14 +127,13 @@ const Navbar = () => {
             </button>
           )}
 
-          {/* ✅ Mode Switch for Mobile */}
           <select
             value={mode}
             onChange={(e) => {
               setOpen(false)
               handleModeChange(e)
             }}
-            className="border border-green-600 mt-3 rounded px-2 py-1 text-sm text-green-700"
+            className="border border-green-600 mt-3 rounded px-2 py-1 text-sm text-green-700 bg-white/60 backdrop-blur-sm"
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
