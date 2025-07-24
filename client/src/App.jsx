@@ -122,7 +122,7 @@ const App = () => {
           <option value="">Select Site</option>
           <option value="B2C">1. B2C</option>
           <option value="B2B">2. B2B</option>
-          <option value="seller">3. Seller</option>
+          {/* <option value="seller">3. Seller</option> */}
         </select>
       </div>
     );
