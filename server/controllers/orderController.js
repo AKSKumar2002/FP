@@ -4,9 +4,6 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
 
-// ✅ Import your io instance!
-import { io } from "../server.js";
-
 // ✅ 1️⃣ Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
   try {
@@ -15,18 +12,20 @@ export const placeOrderCOD = async (req, res) => {
       return res.json({ success: false, message: "Invalid data" });
     }
 
-    // ✅ Calculate Amount properly
+    // ✅ FIXED: Calculate Amount properly
     let amount = 0;
     for (const item of items) {
       const product = await Product.findById(item.product);
       const variant = product.variants[item.variantIndex];
       amount += variant.offerPrice * item.quantity;
     }
+    amount += amount * 0.02;
 
-    // ✅ Add Tax Charge (2%)
+
+    // Add Tax Charge (2%)
     amount += Math.floor(amount * 0.02);
 
-    const newOrder = await Order.create({
+    await Order.create({
       userId,
       items,
       amount,
@@ -34,14 +33,12 @@ export const placeOrderCOD = async (req, res) => {
       paymentType: "COD",
     });
 
-    // ✅ Emit new order to all clients
-    io.emit("new-order", newOrder);
-
     return res.json({ success: true, message: "Order Placed Successfully" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ 2️⃣ Place Order Razorpay : /api/order/razorpay
 export const placeOrderRazorpay = async (req, res) => {
@@ -87,7 +84,6 @@ export const placeOrderRazorpay = async (req, res) => {
 
     const razorpayOrder = await razorpay.orders.create(options);
 
- 
     return res.json({
       success: true,
       key: process.env.RAZORPAY_KEY_ID,
@@ -118,23 +114,8 @@ export const verifyRazorpayPayment = async (req, res) => {
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature === razorpay_signature) {
-      const updatedOrder = await Order.findByIdAndUpdate(
-        orderId,
-        { isPaid: true },
-        { new: true }
-      ).populate({
-        path: "items.product",
-        populate: {
-          path: "category",
-          model: "Category",
-        },
-      });
-
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
-
-      // ✅ Emit new-order ONLY NOW
-      io.emit("new-order", updatedOrder);
-
       return res.json({ success: true, message: "Payment Verified" });
     } else {
       await Order.findByIdAndDelete(orderId);
@@ -144,7 +125,6 @@ export const verifyRazorpayPayment = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
-
 
 // ✅ 4️⃣ Get Orders by User ID : /api/order/user
 export const getUserOrders = async (req, res) => {
@@ -163,6 +143,7 @@ export const getUserOrders = async (req, res) => {
         },
       })
       .populate("address")
+  
       .sort({ createdAt: -1 });
 
     res.json({ success: true, orders });
@@ -170,6 +151,7 @@ export const getUserOrders = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ 5️⃣ Get All Orders : /api/order/seller
 export const getAllOrders = async (req, res) => {
@@ -184,7 +166,8 @@ export const getAllOrders = async (req, res) => {
           model: "Category",
         },
       })
-      .populate("address")
+       .populate("address")
+     
       .sort({ createdAt: -1 });
     res.json({ success: true, orders });
   } catch (error) {
