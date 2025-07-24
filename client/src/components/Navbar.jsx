@@ -122,8 +122,8 @@ const Navbar = () => {
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
-            <option value="seller">Seller</option>
-            <option value="admin">Admin</option>
+            {/* <option value="seller">Seller</option>
+            <option value="admin">Admin</option> */}
           </select>
 
           {/* Dark Mode Toggle */}
