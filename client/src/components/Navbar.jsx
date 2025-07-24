@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
-import { assets } from '../assets/assets'
-import { useAppContext } from '../context/AppContext'
-import toast from 'react-hot-toast'
+import React, { useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import { assets } from '../assets/assets';
+import { useAppContext } from '../context/AppContext';
+import { LogIn, LogOut, User } from 'lucide-react'; // Icons
+import toast from 'react-hot-toast';
 
 const Navbar = () => {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
   const {
     user,
     setUser,
@@ -14,31 +15,30 @@ const Navbar = () => {
     setSearchQuery,
     searchQuery,
     mode,
-    setMode
-  } = useAppContext()
+    setMode,
+  } = useAppContext();
 
   const logout = () => {
-    localStorage.clear()
-    setUser(null)
-    toast.success("Logged out")
-    setOpen(false)
-    navigate('/')
-  }
+    localStorage.clear();
+    setUser(null);
+    toast.success('Logged out');
+    setOpen(false);
+    navigate('/');
+  };
 
   const handleModeChange = (e) => {
-    setMode(e.target.value)
-    localStorage.setItem('mode', e.target.value)
-  }
+    setMode(e.target.value);
+    localStorage.setItem('mode', e.target.value);
+  };
 
   useEffect(() => {
-    const savedMode = localStorage.getItem('mode')
-    if (savedMode) setMode(savedMode)
-  }, [])
+    const savedMode = localStorage.getItem('mode');
+    if (savedMode) setMode(savedMode);
+  }, []);
 
   return (
-    <header className="w-full sticky top-0 z-50 backdrop-blur-xl shadow-xl bg-white/80 border-b border-white/30 transition-all duration-300">
+    <header className="w-full sticky top-0 z-50 backdrop-blur-lg bg-white/60 dark:bg-white/10 border-b border-white/30 shadow-md transition-all duration-300">
       <nav className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-8 py-2 md:py-3">
-        
         {/* Logo */}
         <NavLink to="/" className="flex-shrink-0">
           <img
@@ -49,19 +49,26 @@ const Navbar = () => {
         </NavLink>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
-          <NavLink to="/" className="rounded-full px-3 py-1 hover:bg-green-100 dark:hover:bg-green-900 transition">Home</NavLink>
-          <NavLink to="/products" className="rounded-full px-3 py-1 hover:bg-green-100 dark:hover:bg-green-900 transition">All Products</NavLink>
-          {user && <NavLink to="/my-orders" className="rounded-full px-3 py-1 hover:bg-green-100 dark:hover:bg-green-900 transition">My Orders</NavLink>}
-          <NavLink to="/contact" className="rounded-full px-3 py-1 hover:bg-green-100 dark:hover:bg-green-900 transition">Contact</NavLink>
+        <div className="hidden md:flex items-center gap-5">
+          <NavLink to="/" className="rounded-full px-4 py-2 hover:bg-green-100 dark:hover:bg-green-900 transition">Home</NavLink>
+          <NavLink to="/products" className="rounded-full px-4 py-2 hover:bg-green-100 dark:hover:bg-green-900 transition">All Products</NavLink>
+          {user && <NavLink to="/my-orders" className="rounded-full px-4 py-2 hover:bg-green-100 dark:hover:bg-green-900 transition">My Orders</NavLink>}
+          <NavLink to="/contact" className="rounded-full px-4 py-2 hover:bg-green-100 dark:hover:bg-green-900 transition">Contact</NavLink>
 
+          {/* Login/Logout */}
           {!user ? (
-            <button onClick={() => setShowUserLogin(true)} className="bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 transition">
-              Login
+            <button
+              onClick={() => setShowUserLogin(true)}
+              className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-full hover:bg-green-700 transition"
+            >
+              <LogIn size={18} /> Login
             </button>
           ) : (
-            <button onClick={logout} className="bg-red-600 text-white px-5 py-2 rounded-full hover:bg-red-700 transition">
-              Logout
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 bg-red-600 text-white px-5 py-2 rounded-full hover:bg-red-700 transition"
+            >
+              <LogOut size={18} /> Logout
             </button>
           )}
 
@@ -69,7 +76,7 @@ const Navbar = () => {
           <select
             value={mode}
             onChange={handleModeChange}
-            className="border border-green-600 text-green-1000 dark:text-green-1000 bg-transparent rounded px-2 py-1"
+            className="border border-green-600 text-green-900 dark:text-green-100 bg-transparent rounded px-3 py-1"
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
@@ -78,10 +85,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Icon */}
         <div className="md:hidden">
-          <button
-            className={`relative w-8 h-8 focus:outline-none group`}
-            onClick={() => setOpen(!open)}
-          >
+          <button className="relative w-8 h-8 group" onClick={() => setOpen(!open)}>
             <span className={`absolute h-0.5 w-8 bg-black dark:bg-white rounded-full transition-transform duration-300 ${open ? 'rotate-45 top-3.5' : 'top-2'}`} />
             <span className={`absolute h-0.5 w-8 bg-black dark:bg-white rounded-full transition-opacity duration-300 ${open ? 'opacity-0' : 'top-4'}`} />
             <span className={`absolute h-0.5 w-8 bg-black dark:bg-white rounded-full transition-transform duration-300 ${open ? '-rotate-45 top-3.5' : 'top-6'}`} />
@@ -98,23 +102,29 @@ const Navbar = () => {
           <NavLink to="/contact" onClick={() => setOpen(false)}>Contact</NavLink>
 
           {!user ? (
-            <button onClick={() => {
-              setOpen(false)
-              setShowUserLogin(true)
-            }} className="px-6 py-2 bg-green-600 text-white rounded-full">
-              Login
+            <button
+              onClick={() => {
+                setOpen(false);
+                setShowUserLogin(true);
+              }}
+              className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-full"
+            >
+              <LogIn size={18} /> Login
             </button>
           ) : (
-            <button onClick={logout} className="px-6 py-2 bg-red-600 text-white rounded-full">
-              Logout
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-full"
+            >
+              <LogOut size={18} /> Logout
             </button>
           )}
 
           <select
             value={mode}
             onChange={(e) => {
-              setOpen(false)
-              handleModeChange(e)
+              setOpen(false);
+              handleModeChange(e);
             }}
             className="border border-green-600 rounded px-2 py-1 text-green-700"
           >
@@ -124,7 +134,7 @@ const Navbar = () => {
         </div>
       )}
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
