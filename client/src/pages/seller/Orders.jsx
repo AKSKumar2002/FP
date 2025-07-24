@@ -2,9 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useAppContext } from '../../context/AppContext'
 import { assets } from '../../assets/assets'
 import toast from 'react-hot-toast'
-import io from "socket.io-client"
-
-const socket = io("http://localhost:4000", { withCredentials: true })
 
 // ✅ Make sure the bell sound is inside your public folder
 const bellSound = new Audio('/bell-notification-337658.mp3')
@@ -53,6 +50,7 @@ const Orders = () => {
           data.orders.length > prevOrdersRef.current.length
         ) {
           if (soundEnabled) playBellSound()
+          toast.success('📦 New Order Received!')
         }
         prevOrdersRef.current = [...data.orders]
         setOrders(data.orders)
@@ -66,22 +64,8 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders()
-    const interval = setInterval(fetchOrders, 500)
+    const interval = setInterval(fetchOrders, 5000) // use a sane interval (5 sec)
     return () => clearInterval(interval)
-  }, [soundEnabled])
-
-  // ✅ Listen for socket event
-  useEffect(() => {
-    socket.on('new-order', (newOrder) => {
-      toast.success('📦 New Order Received!')
-      setOrders(prev => [newOrder, ...prev])
-      prevOrdersRef.current = [newOrder, ...prevOrdersRef.current]
-      if (soundEnabled) playBellSound()
-    })
-
-    return () => {
-      socket.off('new-order')
-    }
   }, [soundEnabled])
 
   return (

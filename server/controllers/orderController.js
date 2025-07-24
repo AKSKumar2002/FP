@@ -4,9 +4,6 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
 
-// ✅ Import your io instance!
-import { io } from "../server.js";
-
 // ✅ 1️⃣ Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
   try {
@@ -26,16 +23,13 @@ export const placeOrderCOD = async (req, res) => {
     // ✅ Add Tax Charge (2%)
     amount += Math.floor(amount * 0.02);
 
-    const newOrder = await Order.create({
+    await Order.create({
       userId,
       items,
       amount,
       address,
       paymentType: "COD",
     });
-
-    // ✅ Emit new order to all clients
-    io.emit("new-order", newOrder);
 
     return res.json({ success: true, message: "Order Placed Successfully" });
   } catch (error) {
@@ -87,7 +81,6 @@ export const placeOrderRazorpay = async (req, res) => {
 
     const razorpayOrder = await razorpay.orders.create(options);
 
- 
     return res.json({
       success: true,
       key: process.env.RAZORPAY_KEY_ID,
@@ -118,22 +111,8 @@ export const verifyRazorpayPayment = async (req, res) => {
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature === razorpay_signature) {
-      const updatedOrder = await Order.findByIdAndUpdate(
-        orderId,
-        { isPaid: true },
-        { new: true }
-      ).populate({
-        path: "items.product",
-        populate: {
-          path: "category",
-          model: "Category",
-        },
-      });
-
+      await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
-
-      // ✅ Emit new-order ONLY NOW
-      io.emit("new-order", updatedOrder);
 
       return res.json({ success: true, message: "Payment Verified" });
     } else {
@@ -144,7 +123,6 @@ export const verifyRazorpayPayment = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
-
 
 // ✅ 4️⃣ Get Orders by User ID : /api/order/user
 export const getUserOrders = async (req, res) => {

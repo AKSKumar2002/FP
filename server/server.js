@@ -12,10 +12,6 @@ import addressRouter from './routes/addressRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import CategoryRouter from './routes/CategoryRoute.js';
 
-// ✅ NEW: Import http & socket.io
-import http from 'http';
-import { Server } from 'socket.io';
-
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -38,7 +34,7 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ensure OPTIONS is allowed
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
 app.use(express.json());
@@ -57,26 +53,7 @@ app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/category', CategoryRouter);
 
-// ✅ NEW: Create HTTP server & attach Socket.IO
-const server = http.createServer(app);
-
-export const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    credentials: true
-  }
-});
-
-// ✅ Socket.IO connection handler
-io.on('connection', (socket) => {
-  console.log('🔗 A client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('❌ A client disconnected:', socket.id);
-  });
-});
-
-// ✅ Start server
-server.listen(port, () => {
+// ✅ Start server directly (no http.createServer or socket.io)
+app.listen(port, () => {
   console.log(`🚀 Server is running on http://localhost:${port}`);
 });
