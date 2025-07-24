@@ -26,7 +26,7 @@ await connectCloudinary();
 // ✅ Allow multiple origins
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://farmpickshope.vercel.app',
+  'https://farmpickshope.vercel.app'
 ];
 
 app.use(cors({
@@ -37,7 +37,8 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ensure OPTIONS is allowed
 }));
 
 app.use(express.json());
