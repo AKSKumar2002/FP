@@ -18,10 +18,10 @@ const port = process.env.PORT || 4000;
 await connectDB();
 await connectCloudinary();
 
-// Allow multiple origins
+// ✅ Only use CORS once — this is the correct one
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://farmpickshope.vercel.app',
+  'https://farmpickshope.vercel.app'
 ];
 
 app.use(cors({
@@ -32,17 +32,16 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // ensure OPTIONS is allowed
 }));
 
-
-// Middleware configuration
+// ✅ Middleware (after CORS)
 app.use(express.json());
 app.use(cookieParser());
-app.set('trust proxy', 1); // Required for secure cookies on Vercel/Heroku etc.
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.set('trust proxy', 1); // For secure cookies
 
-
+// ✅ Routes
 app.get('/', (req, res) => res.send("API is Working"));
 
 app.use('/api/user', userRouter);
@@ -53,6 +52,7 @@ app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/category', CategoryRouter);
 
+// ✅ Start server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
