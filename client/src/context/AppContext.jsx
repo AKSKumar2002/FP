@@ -8,8 +8,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === "production"
-      ? import.meta.env.VITE_BACKEND_URL
-      : "https://fp-mocha.vercel.app", // Default for local development
+      ? import.meta.env.VITE_BACKEND_URL: "https://fp-mocha.vercel.app", // Default for local development
   withCredentials: true,
 });
 
