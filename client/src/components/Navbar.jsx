@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { assets } from '../assets/assets'
+import { assets } from '../assets/assets' // make sure logo2, icons exist
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 
@@ -58,40 +58,48 @@ const Navbar = () => {
   }, [dark])
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/50 dark:bg-black/30 shadow-lg border-b border-gray-200 dark:border-gray-700 transition-all">
+    <nav className="sticky top-0 z-50 bg-white/30 dark:bg-black/30 backdrop-blur-lg shadow-md border-b border-white/40 dark:border-white/10 transition-all">
       <div className="flex items-center justify-between px-6 md:px-12 py-3">
-        
-        {/* Logo */}
-        <NavLink to='/' onClick={() => setOpen(false)}>
-          <img className="h-14 w-auto" src={assets.logo2} alt="logo" />
+
+        {/* Logo inside frosted glass */}
+        <NavLink to="/" className="flex-shrink-0">
+          <img
+            src={assets.logo2}
+            alt="logo"
+            className="h-13 w-auto object-contain rounded-xl p-1 bg-white/10 dark:bg-white/10 backdrop-blur-md"
+          />
         </NavLink>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-          {['Home', 'products', 'About', 'Contact'].map((page) => (
-            <NavLink key={page} to={`/${page === 'Home' ? '' : page}`} className="px-4 py-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900 transition">
-              {page === 'products' ? 'All Products' : page}
+          {['Home', 'Products', 'About', 'Contact'].map((item) => (
+            <NavLink
+              key={item}
+              to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
+              className="px-4 py-2 rounded-full hover:bg-white/10 dark:hover:bg-white/10 transition"
+            >
+              {item === 'Products' ? 'All Products' : item}
             </NavLink>
           ))}
 
-          {/* Search Bar */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border border-gray-300 dark:border-gray-700">
+          {/* Search */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-white/10 border border-gray-300 dark:border-gray-700">
             <input
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent outline-none text-sm w-44 dark:text-white"
+              className="bg-transparent outline-none text-sm w-44 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               type="text"
               placeholder="Search products"
             />
             <img src={assets.search_icon} alt="search" className="w-4 h-4" />
           </div>
 
-          {/* Cart Icon */}
+          {/* Cart */}
           <div onClick={() => navigate("/cart")} className="relative cursor-pointer">
             <img src={assets.nav_cart_icon} alt="cart" className="w-6 opacity-80" />
             <span className="absolute -top-2 -right-3 text-xs text-white bg-primary w-5 h-5 rounded-full flex items-center justify-center">{getCartCount()}</span>
           </div>
 
-          {/* Auth/Profile */}
+          {/* Login/Profile */}
           {!user ? (
             <button onClick={() => setShowUserLogin(true)} className="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dull transition">
               Login
@@ -106,7 +114,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Mode Select */}
+          {/* Mode Dropdown */}
           <select
             value={mode}
             onChange={handleModeChange}
@@ -114,17 +122,17 @@ const Navbar = () => {
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
-            {/* <option value="seller">Seller</option>
-            <option value="admin">Admin</option> */}
+            <option value="seller">Seller</option>
+            <option value="admin">Admin</option>
           </select>
 
           {/* Dark Mode Toggle */}
-          {/* <button onClick={toggleDarkMode} className="text-xs px-2 py-1 rounded-full border dark:border-gray-600">
+          <button onClick={toggleDarkMode} className="text-xs px-2 py-1 rounded-full border dark:border-gray-600">
             {dark ? '☀️ Light' : '🌙 Dark'}
-          </button> */}
+          </button>
         </div>
 
-        {/* Hamburger Toggle */}
+        {/* Mobile Menu Toggle */}
         <button onClick={() => setOpen(!open)} className="md:hidden flex flex-col gap-[6px] z-50">
           <span className={`w-6 h-0.5 bg-black dark:bg-white rounded transition-all duration-300 ${open ? 'rotate-45 translate-y-1.5' : ''}`} />
           <span className={`w-6 h-0.5 bg-black dark:bg-white rounded transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
@@ -132,7 +140,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Dropdown */}
       {open && (
         <div className="md:hidden flex flex-col gap-4 px-6 pb-6 text-sm bg-white/80 dark:bg-black/80 backdrop-blur-lg transition-all">
           <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
