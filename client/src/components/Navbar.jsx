@@ -97,14 +97,14 @@ const Navbar = () => {
           </div>
         )}
 
-        <select
+        {/* <select
           value={mode}
           onChange={handleModeChange}
           className="border border-green-600 rounded px-2 py-1 text-sm text-green-1000 bg-white/60 backdrop-blur-sm"
         >
           <option value="B2C">B2C</option>
           <option value="B2B">B2B</option>
-        </select>
+        </select> */}
       </div>
 
       {/* Mobile */}
@@ -143,7 +143,7 @@ const Navbar = () => {
               Logout
             </button>
           )}
-          <select
+          {/* <select
             value={mode}
             onChange={(e) => {
               setOpen(false)
@@ -153,7 +153,7 @@ const Navbar = () => {
           >
             <option value="B2C">B2C</option>
             <option value="B2B">B2B</option>
-          </select>
+          </select> */}
         </div>
       )}
     </nav>
