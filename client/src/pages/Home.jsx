@@ -11,9 +11,11 @@ const Home = () => {
     <div className='mt-10'>
       <MainBanner />
       <Categories />
-      <BestSeller />
+      <div id="best-sellers">
+        <BestSeller />
+      </div>
       <Details />
-      <BottomBanner/>
+      <BottomBanner />
       <NewsLetter />
     </div>
   )

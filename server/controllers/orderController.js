@@ -178,3 +178,30 @@ export const getAllOrders = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+
+// ✅ 6️⃣ Update Order Status : /api/order/status/:id
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['Order Placed', 'Order Confirmed', 'Shipped', 'Out for Delivery', 'Delivered'].includes(status)) {
+      return res.json({ success: false, message: "Invalid status" });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    return res.json({ success: true, order: updatedOrder, message: "Status updated" });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};

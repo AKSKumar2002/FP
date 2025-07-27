@@ -26,6 +26,8 @@ import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import SellerCategories from './pages/seller/SellerCategories';
+import DeliveryInfo from './pages/DeliveryInfo.jsx';
+import ReturnRefundPolicy from './pages/ReturnRefundPolicy.jsx';
 
 
 const B2BPage = () => (
@@ -147,6 +149,8 @@ const App = () => {
           <Route path="/loader" element={<Loading />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/deliveryinfo" element={<DeliveryInfo />} />
+          <Route path="/return-policy" element={<ReturnRefundPolicy />} />
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />
             <Route path="add-product" element={<AddProduct />} />

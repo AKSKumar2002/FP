@@ -8,6 +8,7 @@ import {
   verifyRazorpayPayment,
   getUserOrders,
   getAllOrders,
+  updateOrderStatus,
 } from '../controllers/orderController.js';
 
 const orderRouter = express.Router();
@@ -17,5 +18,6 @@ orderRouter.post('/razorpay', authUser, placeOrderRazorpay);
 orderRouter.post('/razorpay/verify', authUser, verifyRazorpayPayment);
 orderRouter.get('/user', authUser, getUserOrders);
 orderRouter.get('/seller', authSeller, getAllOrders);
+orderRouter.post('/status/:id', authSeller, updateOrderStatus);
 
 export default orderRouter;
