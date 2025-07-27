@@ -128,7 +128,7 @@ const App = () => {
           <div className="absolute inset-0 border-4 border-green-500 border-dotted rounded-full animate-spin"></div>
           <div className="absolute inset-2 border-2 border-green-300 border-solid rounded-full animate-spin-slower"></div>
         </div>
-        <p className="mt-4 text-sm text-green-600 tracking-wide">Loading FarmPick...</p>
+        <p className="mt-4 text-sm text-green-600 tracking-wide">Powered by AKStack.dev</p>
       </div>
     );
   }
