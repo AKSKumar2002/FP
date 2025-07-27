@@ -6,8 +6,8 @@ import { useAppContext } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Login from './components/Login';
-import Contact from './components/Contact'; // ✅ keep only once
-import About from './components/About.jsx';
+import Contact from './components/Contact';
+import About from './components/About';
 
 // Pages
 import Home from './pages/Home';
@@ -17,9 +17,10 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import AddAddress from './pages/AddAddress';
 import MyOrders from './pages/MyOrders';
-import Loading from './components/Loading'; // ✅ keep only once
-import FAQ from './pages/FAQ.jsx';
-
+import Loading from './components/Loading';
+import FAQ from './pages/FAQ';
+import DeliveryInfo from './pages/DeliveryInfo';
+import ReturnRefundPolicy from './pages/ReturnRefundPolicy';
 
 // Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
@@ -28,9 +29,6 @@ import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import SellerCategories from './pages/seller/SellerCategories';
-import DeliveryInfo from './pages/DeliveryInfo.jsx';
-import ReturnRefundPolicy from './pages/ReturnRefundPolicy.jsx';
-
 
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
@@ -60,7 +58,6 @@ const App = () => {
   const { showUserLogin, isSeller } = useAppContext();
 
   const [showInitialLoader, setShowInitialLoader] = useState(true);
-  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -69,7 +66,8 @@ const App = () => {
       const savedMode = localStorage.getItem('siteMode');
 
       if (!savedMode) {
-        setShowDropdown(true);
+        localStorage.setItem('siteMode', 'B2C');
+        navigate('/');
       } else {
         if (savedMode === 'B2B' && location.pathname !== '/b2b') {
           navigate('/b2b');
@@ -84,20 +82,41 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [navigate, location.pathname]);
 
-  const handleSelect = (e) => {
-    const selected = e.target.value;
-    localStorage.setItem('siteMode', selected);
+  // 🔒 Dropdown logic removed (commented out)
+  // const [showDropdown, setShowDropdown] = useState(false);
 
-    if (selected === 'B2B') {
-      navigate('/b2b');
-    } else if (selected === 'seller') {
-      navigate('/seller');
-    } else {
-      navigate('/');
-    }
+  // const handleSelect = (e) => {
+  //   const selected = e.target.value;
+  //   localStorage.setItem('siteMode', selected);
 
-    setShowDropdown(false);
-  };
+  //   if (selected === 'B2B') {
+  //     navigate('/b2b');
+  //   } else if (selected === 'seller') {
+  //     navigate('/seller');
+  //   } else {
+  //     navigate('/');
+  //   }
+
+  //   setShowDropdown(false);
+  // };
+
+  // if (showDropdown) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
+  //       <div className="mb-4 text-xl font-semibold">Hi User</div>
+  //       <select
+  //         onChange={handleSelect}
+  //         defaultValue=""
+  //         className="border border-green-500 rounded px-4 py-2 text-green-700 focus:outline-none"
+  //       >
+  //         <option value="">Select Site</option>
+  //         <option value="B2C">1. B2C</option>
+  //         <option value="B2B">2. B2B</option>
+  //         {/* <option value="seller">3. Seller</option> */}
+  //       </select>
+  //     </div>
+  //   );
+  // }
 
   if (showInitialLoader) {
     return (
@@ -110,24 +129,6 @@ const App = () => {
           <div className="absolute inset-2 border-2 border-green-300 border-solid rounded-full animate-spin-slower"></div>
         </div>
         <p className="mt-4 text-sm text-green-600 tracking-wide">Loading FarmPick...</p>
-      </div>
-    );
-  }
-
-  if (showDropdown) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
-        <div className="mb-4 text-xl font-semibold">Hi User</div>
-        <select
-          onChange={handleSelect}
-          defaultValue=""
-          className="border border-green-500 rounded px-4 py-2 text-green-700 focus:outline-none"
-        >
-          <option value="">Select Site</option>
-          <option value="B2C">1. B2C</option>
-          <option value="B2B">2. B2B</option>
-          {/* <option value="seller">3. Seller</option> */}
-        </select>
       </div>
     );
   }
@@ -160,12 +161,8 @@ const App = () => {
             <Route path="add-product" element={<AddProduct />} />
             <Route path="product-list" element={<ProductList />} />
             <Route path="orders" element={<Orders />} />
-            <Route path='add-product' element={<AddProduct />} />
-            <Route path='product-list' element={<ProductList />} />
-            <Route path='orders' element={<Orders />} />
-            <Route path='categories' element={<SellerCategories />} /> {/* <-- HERE */}
+            <Route path="categories" element={<SellerCategories />} />
           </Route>
-
         </Routes>
       </div>
       {!isSellerPath && <Footer />}
