@@ -47,8 +47,18 @@ const Footer = () => {
             </div>
 
             <p className="py-4 text-center text-sm md:text-base text-gray-500/80">
-                Copyright {new Date().getFullYear()} © AKStack.dev | Farmpick All Right Reserved.
-            </p>
+  Copyright {new Date().getFullYear()} ©{' '}
+  <a
+    href="https://akstackdev.vercel.app"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-green-600 hover:underline"
+  >
+    AKStack.dev
+  </a>{' '}
+  | Farmpick All Rights Reserved.
+</p>
+
         </div>
     );
 };
