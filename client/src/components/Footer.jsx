@@ -47,7 +47,7 @@ const Footer = () => {
             </div>
 
             <p className="py-4 text-center text-sm md:text-base text-gray-500/80">
-                Copyright {new Date().getFullYear()} © AjithKumar S | Farmpick All Right Reserved.
+                Copyright {new Date().getFullYear()} © AKStack.dev | Farmpick All Right Reserved.
             </p>
         </div>
     );
