@@ -18,6 +18,8 @@ import Cart from './pages/Cart';
 import AddAddress from './pages/AddAddress';
 import MyOrders from './pages/MyOrders';
 import Loading from './components/Loading'; // ✅ keep only once
+import FAQ from './pages/FAQ.jsx';
+
 
 // Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
@@ -151,6 +153,8 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/deliveryinfo" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnRefundPolicy />} />
+          <Route path="/faq" element={<FAQ />} />
+
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />
             <Route path="add-product" element={<AddProduct />} />

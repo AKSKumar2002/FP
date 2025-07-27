@@ -19,8 +19,7 @@ const Footer = () => {
                             <li><a href="/" className="hover:underline transition">Home</a></li>
                             <li><a href="/#best-sellers" className="hover:underline transition">Best Sellers</a></li>
                             <li><a href="/contact" className="hover:underline transition">Contact Us</a></li>
-                            <li><a href="/faqs" className="hover:underline transition">FAQs</a></li>
-
+                            <li><a href="/faq" className="hover:underline transition">FAQs</a></li> {/* ✅ Fixed route */}
                         </ul>
                     </div>
 
@@ -32,7 +31,6 @@ const Footer = () => {
                             <li><a href="/return-policy" className="hover:underline transition">Return & Refund Policy</a></li>
                             <li><a href="/my-orders" className="hover:underline transition">Track your Order</a></li>
                             <li><a href="/contact" className="hover:underline transition">Contact Us</a></li>
-
                         </ul>
                     </div>
 
@@ -43,7 +41,6 @@ const Footer = () => {
                             <li><a href="https://www.instagram.com/farm_pick_/" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Instagram</a></li>
                             <li><a href="https://x.com/Dharanidha52756" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Twitter</a></li>
                             <li><a href="https://www.linkedin.com/in/farm-pick-268b48352/" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Facebook</a></li>
-                            {/* <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:underline transition">YouTube</a></li> */}
                         </ul>
                     </div>
                 </div>
