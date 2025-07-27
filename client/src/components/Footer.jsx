@@ -41,16 +41,16 @@ const Footer = () => {
                         <h3 className="font-semibold text-base text-gray-900 md:mb-5 mb-2">Follow Us</h3>
                         <ul className="text-sm space-y-1">
                             <li><a href="https://www.instagram.com/farm_pick_/" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Instagram</a></li>
-                            <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Twitter</a></li>
-                            <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Facebook</a></li>
-                            <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:underline transition">YouTube</a></li>
+                            <li><a href="https://x.com/Dharanidha52756" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Twitter</a></li>
+                            <li><a href="https://www.linkedin.com/in/farm-pick-268b48352/" target="_blank" rel="noopener noreferrer" className="hover:underline transition">Facebook</a></li>
+                            {/* <li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:underline transition">YouTube</a></li> */}
                         </ul>
                     </div>
                 </div>
             </div>
 
             <p className="py-4 text-center text-sm md:text-base text-gray-500/80">
-                Copyright {new Date().getFullYear()} © AjithKumar S All Right Reserved.
+                Copyright {new Date().getFullYear()} © AjithKumar S | Farmpick All Right Reserved.
             </p>
         </div>
     );
