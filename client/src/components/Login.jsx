@@ -79,7 +79,7 @@ const Login = () => {
         try {
             const { data } = await axios.post(
                 '/api/user/login',
-                { email, password }, // Use email instead of mobile
+                { email, mobile, password }, // Include mobile in the request
                 { withCredentials: true }
             );
 
@@ -150,12 +150,29 @@ const Login = () => {
                 {state === "login" && (
                     <>
                         <div className="w-full">
-                            <p>Email</p>
-                            <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
+                            <p>Email or Mobile Number</p>
+                            <input
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    setMobile(e.target.value);
+                                }}
+                                value={email || mobile}
+                                placeholder="Enter email or mobile number"
+                                className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+                                type="text"
+                                required
+                            />
                         </div>
                         <div className="w-full">
                             <p>Password</p>
-                            <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
+                            <input
+                                onChange={(e) => setPassword(e.target.value)}
+                                value={password}
+                                placeholder="Enter password"
+                                className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+                                type="password"
+                                required
+                            />
                         </div>
                         <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
                             Login
