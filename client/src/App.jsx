@@ -155,6 +155,7 @@ const App = () => {
           <Route path="/deliveryinfo" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnRefundPolicy />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/login" element={<Login />} /> {/* Ensure this route exists */}
 
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />

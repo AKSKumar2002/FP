@@ -216,10 +216,10 @@ const Cart = () => {
                                     </p>
                                 ))}
                                 <p onClick={() => {
-                                    if (user && user._id) { // Ensure user is properly checked
+                                    if (user && user._id) {
                                         navigate("/add-address");
                                     } else {
-                                        navigate("/login"); // Redirect to login page
+                                        navigate("/login"); // Ensure this matches the route in your routing configuration
                                     }
                                 }} className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">
                                     Add address
