@@ -9,7 +9,7 @@ const Login = () => {
     const [state, setState] = React.useState("register"); // "register" for Sign Up, "login" for Login
     const [step, setStep] = React.useState(1); // Step state for Sign Up transitions
     const [name, setName] = React.useState("");
-    const [email, setEmail] = React.useState("");
+    const [email, setEmail] = React.useState(""); // Updated for login
     const [mobile, setMobile] = React.useState("");
     const [otp, setOtp] = React.useState(""); // State for OTP
     const [generatedOtp, setGeneratedOtp] = React.useState(""); // Store generated OTP
@@ -79,7 +79,7 @@ const Login = () => {
         try {
             const { data } = await axios.post(
                 '/api/user/login',
-                { mobile, password },
+                { email, password }, // Use email instead of mobile
                 { withCredentials: true }
             );
 
@@ -150,8 +150,8 @@ const Login = () => {
                 {state === "login" && (
                     <>
                         <div className="w-full">
-                            <p>Mobile Number</p>
-                            <input onChange={(e) => setMobile(e.target.value)} value={mobile} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="tel" pattern="[0-9]{10}" required />
+                            <p>Email</p>
+                            <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
                         </div>
                         <div className="w-full">
                             <p>Password</p>
