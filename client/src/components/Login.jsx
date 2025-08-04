@@ -10,25 +10,26 @@ const Login = () => {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [mobile, setMobile] = React.useState(""); // Added state for mobile number
     const [otpSent, setOtpSent] = React.useState(false);
 
     const sendOtpHandler = async () => {
       try {
         const { data } = await axios.post(
-          'https://fp-mocha.vercel.app/api/user/send-otp', // Updated to full URL
-          { email },
+          'https://fp-mocha.vercel.app/api/user/send-otp',
+          { email, mobile }, // Include mobile number in the request
           { withCredentials: true }
         );
 
         if (data.success) {
-          toast.success('OTP sent successfully!');
+          toast.success('OTP sent successfully to your mobile number!');
           setOtpSent(true);
         } else {
           toast.error(data.message);
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          toast.error('API endpoint not found. Please contact support.');
+          toast.error('The OTP service is currently unavailable. Please try again later.');
         } else {
           toast.error(error.message);
         }
@@ -91,6 +92,20 @@ const Login = () => {
                     </button>
                 )}
             </div>
+            {state === "register" && (
+                <div className="w-full">
+                    <p>Mobile Number</p>
+                    <input
+                        onChange={(e) => setMobile(e.target.value)}
+                        value={mobile}
+                        placeholder="type here"
+                        className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+                        type="tel"
+                        pattern="[0-9]{10}" // Ensure only valid 10-digit numbers
+                        required
+                    />
+                </div>
+            )}
             <div className="w-full ">
                 <p>Password</p>
                 <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
