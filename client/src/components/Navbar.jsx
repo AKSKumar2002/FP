@@ -4,6 +4,8 @@ import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faBoxOpen, faInfoCircle, faPhone, faShoppingBag, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
@@ -117,24 +119,24 @@ const Navbar = () => {
       {open && (
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
           <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
-            <img src={assets.home_icon} alt="home" className="w-4 h-4" />
+            <FontAwesomeIcon icon={faHome} className="w-4 h-4" />
             Home
           </NavLink>
           <NavLink to="/products" onClick={() => setOpen(false)} className="flex items-center gap-2">
-            <img src={assets.products_icon} alt="products" className="w-4 h-4" />
+            <FontAwesomeIcon icon={faBoxOpen} className="w-4 h-4" />
             All Products
           </NavLink>
           <NavLink to="/About" onClick={() => setOpen(false)} className="flex items-center gap-2">
-            <img src={assets.about_icon} alt="about" className="w-4 h-4" />
+            <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
             About
           </NavLink>
           <NavLink to="/Contact" onClick={() => setOpen(false)} className="flex items-center gap-2">
-            <img src={assets.contact_icon} alt="contact" className="w-4 h-4" />
+            <FontAwesomeIcon icon={faPhone} className="w-4 h-4" />
             Contact Us
           </NavLink>
           {user && (
             <NavLink to="/my-orders" onClick={() => setOpen(false)} className="flex items-center gap-2">
-              <img src={assets.orders_icon} alt="orders" className="w-4 h-4" />
+              <FontAwesomeIcon icon={faShoppingBag} className="w-4 h-4" />
               My Orders
             </NavLink>
           )}
@@ -146,7 +148,7 @@ const Navbar = () => {
               }}
               className="flex items-center gap-2 cursor-pointer px-5 py-1.5 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm"
             >
-              <img src={assets.login_icon} alt="login" className="w-4 h-4" />
+              <FontAwesomeIcon icon={faSignInAlt} className="w-4 h-4" />
               Login
             </button>
           ) : (
@@ -154,7 +156,7 @@ const Navbar = () => {
               onClick={logout}
               className="flex items-center gap-2 cursor-pointer px-5 py-1.5 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm"
             >
-              <img src={assets.logout_icon} alt="logout" className="w-4 h-4" />
+              <FontAwesomeIcon icon={faSignOutAlt} className="w-4 h-4" />
               Logout
             </button>
           )}
