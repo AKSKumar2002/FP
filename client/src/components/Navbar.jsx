@@ -54,12 +54,12 @@ const Navbar = () => {
   }, [searchQuery])
 
   return (
-    <nav className="backdrop-blur-md bg-[rgba(255,255,255,0.65)] text-black border-b border-gray-300 shadow-md flex items-center justify-between px-4 md:px-12 lg:px-20 xl:px-28 py-2 sticky top-0 z-50 transition-all">
+    <nav className="backdrop-blur-md bg-[rgba(255,255,255,0.65)] text-black border-b border-gray-300 shadow-md flex items-center justify-between px-6 md:px-12 lg:px-20 xl:px-28 py-2 sticky top-0 z-50 transition-all">
       <NavLink to='/' onClick={() => setOpen(false)} className="rounded-lg bg-white/60 backdrop-blur-sm p-1 shadow-sm">
         <img className="h-10 w-auto rounded-lg object-contain" src={assets.logo2} alt="logo" />
       </NavLink>
 
-      <div className="hidden sm:flex items-center gap-6 text-gray-800">
+      <div className="hidden sm:flex items-center gap-8 text-gray-800">
         <NavLink to='/'>Home</NavLink>
         <NavLink to='/products'>All Product</NavLink>
         <NavLink to='/About'>About</NavLink>
@@ -118,8 +118,9 @@ const Navbar = () => {
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
           <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
           <NavLink to="/products" onClick={() => setOpen(false)}>All Product</NavLink>
-          {user && <NavLink to="/my-orders" onClick={() => setOpen(false)}>My Orders</NavLink>}
+          <NavLink to="/About" onClick={() => setOpen(false)}>About</NavLink>
           <NavLink to="/Contact" onClick={() => setOpen(false)}>Contact</NavLink>
+          {user && <NavLink to="/my-orders" onClick={() => setOpen(false)}>My Orders</NavLink>}
           {!user ? (
             <button onClick={() => {
               setOpen(false)
