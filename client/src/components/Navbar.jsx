@@ -61,7 +61,7 @@ const Navbar = () => {
 
       <div className="hidden sm:flex items-center gap-8 text-gray-800">
         <NavLink to='/'>Home</NavLink>
-        <NavLink to='/products'>All Product</NavLink>
+        <NavLink to='/products'>All Products</NavLink>
         <NavLink to='/About'>About</NavLink>
         <NavLink to='/Contact'>Contact Us</NavLink>
 
@@ -117,9 +117,9 @@ const Navbar = () => {
       {open && (
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
           <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
-          <NavLink to="/products" onClick={() => setOpen(false)}>All Product</NavLink>
+          <NavLink to="/products" onClick={() => setOpen(false)}>All Products</NavLink>
           <NavLink to="/About" onClick={() => setOpen(false)}>About</NavLink>
-          <NavLink to="/Contact" onClick={() => setOpen(false)}>Contact</NavLink>
+          <NavLink to="/Contact" onClick={() => setOpen(false)}>Contact Us</NavLink>
           {user && <NavLink to="/my-orders" onClick={() => setOpen(false)}>My Orders</NavLink>}
           {!user ? (
             <button onClick={() => {
