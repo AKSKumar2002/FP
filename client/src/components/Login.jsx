@@ -29,7 +29,11 @@ const Login = () => {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
+            if (error.response?.status === 404) {
+                toast.error('The OTP service is currently unavailable. Please try again later.');
+            } else {
+                toast.error(error.response?.data?.message || error.message);
+            }
         }
     };
 
