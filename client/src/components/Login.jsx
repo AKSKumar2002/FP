@@ -98,15 +98,10 @@ const Login = () => {
 
     return (
         <div onClick={() => setShowUserLogin(false)} className='fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50'>
-            <form onSubmit={isSignUp ? onSignUpHandler : onLoginHandler} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white">
+            <form onSubmit={isSignUp ? onSignUpHandler : onLoginHandler} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-6 py-8 w-72 sm:w-[320px] rounded-lg shadow-xl border border-gray-200 bg-white">
                 <p className="text-2xl font-medium m-auto">
                     <span className="text-primary">{isSignUp ? 'User Sign Up' : 'User Login'}</span>
                 </p>
-                <div className="w-full text-center">
-                    <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="text-primary underline">
-                        {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
-                    </button>
-                </div>
                 {isSignUp ? (
                     <>
                         {step === 1 && (
@@ -126,6 +121,11 @@ const Login = () => {
                                 <button type="button" onClick={sendOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
                                     Send OTP
                                 </button>
+                                <div className="w-full text-center mt-2">
+                                    <button type="button" onClick={() => setIsSignUp(false)} className="text-white">
+                                        Already have an account? <span className="text-green-500">Login</span>
+                                    </button>
+                                </div>
                             </>
                         )}
                         {step === 2 && (
@@ -164,6 +164,11 @@ const Login = () => {
                         <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
                             Login
                         </button>
+                        <div className="w-full text-center mt-2">
+                            <button type="button" onClick={() => setIsSignUp(true)} className="text-white">
+                                Don't have an account? <span className="text-green-500">Sign Up</span>
+                            </button>
+                        </div>
                     </>
                 )}
             </form>
