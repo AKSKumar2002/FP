@@ -2,7 +2,6 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import toast from 'react-hot-toast';
 import emailjs from 'emailjs-com'; // Import EmailJS
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 
 const Login = () => {
     const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
@@ -16,11 +15,6 @@ const Login = () => {
     const [generatedOtp, setGeneratedOtp] = React.useState(""); // Store generated OTP
     const [otpVerified, setOtpVerified] = React.useState(false); // State for OTP verification
     const [password, setPassword] = React.useState("");
-    const [passwordVisible, setPasswordVisible] = React.useState(false); // State for toggling password visibility
-
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
 
     const sendOtpHandler = async () => {
         const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
@@ -147,22 +141,9 @@ const Login = () => {
                         )}
                         {step === 3 && (
                             <>
-                                <div className="w-full relative">
+                                <div className="w-full">
                                     <p>Password</p>
-                                    <input 
-                                        onChange={(e) => setPassword(e.target.value)} 
-                                        value={password} 
-                                        placeholder="type here" 
-                                        className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" 
-                                        type={passwordVisible ? "text" : "password"} 
-                                        required 
-                                    />
-                                    <span 
-                                        onClick={togglePasswordVisibility} 
-                                        className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-700 text-lg"
-                                    >
-                                        {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-                                    </span>
+                                    <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
                                 </div>
                                 <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
                                     Submit
@@ -176,22 +157,9 @@ const Login = () => {
                             <p>Email</p>
                             <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
                         </div>
-                        <div className="w-full relative">
+                        <div className="w-full">
                             <p>Password</p>
-                            <input 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                value={password} 
-                                placeholder="type here" 
-                                className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" 
-                                type={passwordVisible ? "text" : "password"} 
-                                required 
-                            />
-                            <span 
-                                onClick={togglePasswordVisibility} 
-                                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-700 text-lg"
-                            >
-                                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-                            </span>
+                            <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
                         </div>
                         <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
                             Login
