@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 // Registration endpoint
 router.post('/register', async (req, res) => {
     const { name, email, password, mobile } = req.body; // Include mobile
-    if (!mobile) {
+    if (!mobile || mobile.trim() === "") {
         return res.status(400).json({ success: false, message: 'Mobile number is required.' });
     }
 

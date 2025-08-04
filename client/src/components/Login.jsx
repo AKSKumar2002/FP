@@ -53,7 +53,7 @@ const Login = () => {
     const onSignUpSubmitHandler = async (event) => {
         event.preventDefault();
 
-        if (!mobile) {
+        if (!mobile || mobile.trim() === "") {
             toast.error('Mobile number is required.');
             return;
         }
