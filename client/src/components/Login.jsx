@@ -81,10 +81,15 @@ const Login = () => {
     const onLoginSubmitHandler = async (event) => {
         event.preventDefault();
 
+        if (!email || !password) {
+            toast.error('Email and password are required.');
+            return;
+        }
+
         try {
             const { data } = await axios.post(
                 '/api/user/login',
-                { email, mobile, password }, // Include mobile in the request
+                { email, password }, // Use only email and password
                 { withCredentials: true }
             );
 
@@ -155,16 +160,13 @@ const Login = () => {
                 {state === "login" && (
                     <>
                         <div className="w-full">
-                            <p>Email or Mobile Number</p>
+                            <p>Email</p>
                             <input
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    setMobile(e.target.value);
-                                }}
-                                value={email || mobile}
-                                placeholder="Enter email or mobile number"
+                                onChange={(e) => setEmail(e.target.value)}
+                                value={email}
+                                placeholder="Enter email"
                                 className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
-                                type="text"
+                                type="email"
                                 required
                             />
                         </div>

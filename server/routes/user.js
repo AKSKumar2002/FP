@@ -22,10 +22,14 @@ router.post('/register', async (req, res) => {
 
 // Login endpoint
 router.post('/login', async (req, res) => {
-    const { email, mobile, password } = req.body; // Include mobile
+    const { email, password } = req.body; // Use only email and password
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Email and password are required.' });
+    }
+
     try {
-        // Find user by email or mobile
-        const user = await User.findOne({ $or: [{ email }, { mobile }] });
+        // Find user by email
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
