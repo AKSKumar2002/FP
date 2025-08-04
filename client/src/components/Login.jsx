@@ -122,7 +122,7 @@ const Login = () => {
                                     Send OTP
                                 </button>
                                 <div className="w-full text-center mt-2">
-                                    <button type="button" onClick={() => setIsSignUp(false)} className="text-white">
+                                    <button type="button" onClick={() => setIsSignUp(false)} className="text-gray-600">
                                         Already have an account? <span className="text-green-500">Login</span>
                                     </button>
                                 </div>
@@ -165,7 +165,7 @@ const Login = () => {
                             Login
                         </button>
                         <div className="w-full text-center mt-2">
-                            <button type="button" onClick={() => setIsSignUp(true)} className="text-white">
+                            <button type="button" onClick={() => setIsSignUp(true)} className="text-gray-600">
                                 Don't have an account? <span className="text-green-500">Sign Up</span>
                             </button>
                         </div>
