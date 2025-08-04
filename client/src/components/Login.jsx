@@ -10,30 +10,45 @@ const Login = () => {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [otpSent, setOtpSent] = React.useState(false);
 
-  const onSubmitHandler = async (event) => {
-  try {
-    event.preventDefault();
+    const sendOtpHandler = async () => {
+      try {
+        const { data } = await axios.post('/api/user/send-otp', { email }, { withCredentials: true });
 
-    const { data } = await axios.post(`/api/user/${state}`, {
-      name, email, password
-    }, {
-      withCredentials: true
-    });
+        if (data.success) {
+          toast.success('OTP sent successfully!');
+          setOtpSent(true);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
 
-    if (data.success) {
-      navigate('/');
-      setUser(data.user);
-      setShowUserLogin(false);
-    } else {
-      toast.error(data.message);
-    }
+    const onSubmitHandler = async (event) => {
+      try {
+        event.preventDefault();
 
-  } catch (error) {
-    toast.error(error.message);
-  }
-};
+        const { data } = await axios.post(`/api/user/${state}`, {
+          name, email, password
+        }, {
+          withCredentials: true
+        });
 
+        if (data.success) {
+          navigate('/');
+          setUser(data.user);
+          setShowUserLogin(false);
+        } else {
+          toast.error(data.message);
+        }
+
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
 
   return (
     <div onClick={()=> setShowUserLogin(false)} className='fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50'>
@@ -48,9 +63,25 @@ const Login = () => {
                     <input onChange={(e) => setName(e.target.value)} value={name} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="text" required />
                 </div>
             )}
-            <div className="w-full ">
+            <div className="w-full">
                 <p>Email</p>
-                <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
+                <input
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    placeholder="type here"
+                    className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+                    type="email"
+                    required
+                />
+                {state === "register" && (
+                    <button
+                        type="button"
+                        onClick={sendOtpHandler}
+                        className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer"
+                    >
+                        {otpSent ? "Resend OTP" : "Send OTP"}
+                    </button>
+                )}
             </div>
             <div className="w-full ">
                 <p>Password</p>
