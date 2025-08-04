@@ -159,7 +159,7 @@ const Login = () => {
                                     />
                                     <span 
                                         onClick={togglePasswordVisibility} 
-                                        className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                                        className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-700 text-lg"
                                     >
                                         {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                                     </span>
@@ -188,7 +188,7 @@ const Login = () => {
                             />
                             <span 
                                 onClick={togglePasswordVisibility} 
-                                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
+                                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-700 text-lg"
                             >
                                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                             </span>
