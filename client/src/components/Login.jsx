@@ -98,8 +98,8 @@ const Login = () => {
 
     return (
         <div onClick={() => setShowUserLogin(false)} className='fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50'>
-            <form onSubmit={isSignUp ? onSignUpHandler : onLoginHandler} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-6 py-8 w-72 sm:w-[320px] rounded-lg shadow-xl border border-gray-200 bg-white">
-                <p className="text-2xl font-medium m-auto">
+            <form onSubmit={isSignUp ? onSignUpHandler : onLoginHandler} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-4 py-6 w-64 sm:w-[280px] rounded-lg shadow-xl border border-gray-200 bg-white">
+                <p className="text-xl font-medium m-auto">
                     <span className="text-primary">{isSignUp ? 'User Sign Up' : 'User Login'}</span>
                 </p>
                 {isSignUp ? (
