@@ -18,36 +18,51 @@ function writeStore(file, data) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, message: 'Method not allowed' });
-  }
-  const { name, email, mobile, otp, password } = req.body;
-  if (!name || !email || !mobile || !otp || !password) {
-    return res.status(400).json({ success: false, message: 'Missing Details' });
-  }
-  // Read OTP store
-  const otpStore = readStore(OTP_FILE);
-  const otpData = otpStore[mobile];
-  if (!otpData || otpData.otp !== otp || otpData.email !== email || otpData.name !== name) {
-    return res.status(400).json({ success: false, message: 'Invalid OTP or details' });
-  }
-  if (otpData.expires < Date.now()) {
+  try {
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Change to your frontend URL in production
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+    const { name, email, mobile, otp, password } = req.body;
+    if (!name || !email || !mobile || !otp || !password) {
+      return res.status(400).json({ success: false, message: 'Missing Details' });
+    }
+    // Read OTP store
+    const otpStore = readStore(OTP_FILE);
+    const otpData = otpStore[mobile];
+    if (!otpData || otpData.otp !== otp || otpData.email !== email || otpData.name !== name) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP or details' });
+    }
+    if (otpData.expires < Date.now()) {
+      delete otpStore[mobile];
+      writeStore(OTP_FILE, otpStore);
+      return res.status(400).json({ success: false, message: 'OTP expired' });
+    }
+    // Read user store
+    const userStore = readStore(USER_FILE);
+    if (userStore[email] || Object.values(userStore).some(u => u.mobile === mobile)) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    userStore[email] = { name, email, mobile, password: hashedPassword };
+    writeStore(USER_FILE, userStore);
     delete otpStore[mobile];
     writeStore(OTP_FILE, otpStore);
-    return res.status(400).json({ success: false, message: 'OTP expired' });
+    // Create JWT (for demo, use a static secret)
+    const token = jwt.sign({ email }, 'demo_secret', { expiresIn: '7d' });
+    res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`);
+    return res.status(200).json({ success: true, user: { name, email, mobile } });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
-  // Read user store
-  const userStore = readStore(USER_FILE);
-  if (userStore[email] || Object.values(userStore).some(u => u.mobile === mobile)) {
-    return res.status(400).json({ success: false, message: 'User already exists' });
-  }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  userStore[email] = { name, email, mobile, password: hashedPassword };
-  writeStore(USER_FILE, userStore);
-  delete otpStore[mobile];
-  writeStore(OTP_FILE, otpStore);
-  // Create JWT (for demo, use a static secret)
-  const token = jwt.sign({ email }, 'demo_secret', { expiresIn: '7d' });
-  res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=604800`);
-  return res.status(200).json({ success: true, user: { name, email, mobile } });
 }
