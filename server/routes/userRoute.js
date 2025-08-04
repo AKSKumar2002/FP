@@ -1,9 +1,10 @@
 import express from 'express';
-import { isAuth, login, logout, register } from '../controllers/userController.js';
+import { isAuth, login, logout, register, sendOtp } from '../controllers/userController.js';
 import authUser from '../middlewares/authUser.js';
 
 const userRouter = express.Router();
 
+userRouter.post('/send-otp', sendOtp)
 userRouter.post('/register', register)
 userRouter.post('/login', login)
 userRouter.get('/is-auth', authUser, isAuth)
