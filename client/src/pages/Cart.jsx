@@ -215,7 +215,13 @@ const Cart = () => {
                                         {address.street}, {address.city}, {address.state}, {address.country}
                                     </p>
                                 ))}
-                                <p onClick={() => navigate("/add-address")} className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">
+                                <p onClick={() => {
+                                    if (user) {
+                                        navigate("/add-address");
+                                    } else {
+                                        navigate("/login");
+                                    }
+                                }} className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">
                                     Add address
                                 </p>
                             </div>
