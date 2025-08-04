@@ -62,10 +62,10 @@ const Navbar = () => {
       </NavLink>
 
       <div className="hidden sm:flex items-center gap-8 text-gray-800">
-        <NavLink to='/' className="hover:underline hover:text-primary">Home</NavLink>
-        <NavLink to='/products' className="hover:underline hover:text-primary">All Products</NavLink>
-        <NavLink to='/About' className="hover:underline hover:text-primary">About</NavLink>
-        <NavLink to='/Contact' className="hover:underline hover:text-primary">Contact Us</NavLink>
+        <NavLink to='/' className="hover:scale-110 hover:text-primary transition duration-200">Home</NavLink>
+        <NavLink to='/products' className="hover:scale-110 hover:text-primary transition duration-200">All Products</NavLink>
+        <NavLink to='/About' className="hover:scale-110 hover:text-primary transition duration-200">About</NavLink>
+        <NavLink to='/Contact' className="hover:scale-110 hover:text-primary transition duration-200">Contact Us</NavLink>
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-2 py-1 rounded-full bg-white/50 backdrop-blur">
           <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black" type="text" placeholder="Search products" />
@@ -118,19 +118,19 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
-          <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:underline hover:text-primary">
+          <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faHome} className="w-4 h-4" />
             Home
           </NavLink>
-          <NavLink to="/products" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:underline hover:text-primary">
+          <NavLink to="/products" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faBoxOpen} className="w-4 h-4" />
             All Products
           </NavLink>
-          <NavLink to="/About" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:underline hover:text-primary">
+          <NavLink to="/About" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
             About
           </NavLink>
-          <NavLink to="/Contact" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:underline hover:text-primary">
+          <NavLink to="/Contact" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faPhone} className="w-4 h-4" />
             Contact Us
           </NavLink>
