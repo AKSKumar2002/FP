@@ -87,10 +87,11 @@ const ProductCard = ({ product }) => {
         </select>
 
         <div className="flex justify-between items-center mt-auto pt-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+            <span className="text-gray-400 line-through text-base">{selectedVariant.price}₹</span>
             <span className="text-lg font-semibold text-gray-700">{selectedVariant.offerPrice}₹</span>
-            <span className="text-sm text-gray-500 line-through">{selectedVariant.originalPrice}₹</span>
           </div>
+
           <div
             onClick={(e) => { e.stopPropagation(); }}
             className="text-primary"
