@@ -27,10 +27,10 @@ const Login = () => {
 
         try {
             await emailjs.send(
-                'your_service_id', // Replace with your EmailJS service ID
-                'your_template_id', // Replace with your EmailJS template ID
+                'service_qdgynna', // Replace with your EmailJS service ID
+                'template_80gwir6', // Replace with your EmailJS template ID
                 templateParams,
-                'your_user_id' // Replace with your EmailJS user ID
+                'mTgVI_IpSn6ZFfCbC' // Replace with your EmailJS user ID
             );
             toast.success('OTP sent successfully to your email!');
         } catch (error) {
