@@ -1,6 +1,7 @@
-import React from 'react'
+import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import toast from 'react-hot-toast';
+import emailjs from 'emailjs-com'; // Import EmailJS
 
 const Login = () => {
     const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
@@ -8,61 +9,46 @@ const Login = () => {
     const [state, setState] = React.useState("register"); // Default to "register"
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
     const [mobile, setMobile] = React.useState("");
     const [otp, setOtp] = React.useState(""); // State for OTP
-    const [otpSent, setOtpSent] = React.useState(false);
+    const [generatedOtp, setGeneratedOtp] = React.useState(""); // Store generated OTP
     const [otpVerified, setOtpVerified] = React.useState(false); // State for OTP verification
+    const [password, setPassword] = React.useState("");
 
     const sendOtpHandler = async () => {
-        try {
-            const { data } = await axios.post(
-                'https://fp-mocha.vercel.app/api/user/send-otp',
-                { email, mobile },
-                { withCredentials: true }
-            );
+        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
+        setGeneratedOtp(generatedOtp);
 
-            if (data.success) {
-                toast.success('OTP sent successfully to your mobile number!');
-                setOtpSent(true);
-            } else {
-                toast.error(data.message);
-            }
+        const templateParams = {
+            to_name: name,
+            to_email: email,
+            otp: generatedOtp,
+        };
+
+        try {
+            await emailjs.send(
+                'your_service_id', // Replace with your EmailJS service ID
+                'your_template_id', // Replace with your EmailJS template ID
+                templateParams,
+                'your_user_id' // Replace with your EmailJS user ID
+            );
+            toast.success('OTP sent successfully to your email!');
         } catch (error) {
-            if (error.response?.status === 404) {
-                toast.error('The OTP service is currently unavailable. Please try again later.');
-            } else {
-                toast.error(error.response?.data?.message || error.message);
-            }
+            toast.error('Failed to send OTP. Please try again.');
         }
     };
 
-    const verifyOtpHandler = async () => {
-        try {
-            const { data } = await axios.post(
-                'https://fp-mocha.vercel.app/api/user/verify-otp',
-                { email, otp },
-                { withCredentials: true }
-            );
-
-            if (data.success) {
-                toast.success('OTP verified successfully!');
-                setOtpVerified(true);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
+    const verifyOtpHandler = () => {
+        if (otp === generatedOtp) {
+            toast.success('OTP verified successfully!');
+            setOtpVerified(true);
+        } else {
+            toast.error('Invalid OTP. Please try again.');
         }
     };
 
     const onSubmitHandler = async (event) => {
         event.preventDefault();
-
-        if (!otpSent) {
-            sendOtpHandler(); // Trigger OTP if not sent
-            return;
-        }
 
         if (!otpVerified) {
             toast.error('Please verify the OTP before proceeding.');
@@ -77,7 +63,8 @@ const Login = () => {
             );
 
             if (data.success) {
-                navigate('/');
+                toast.success('Account created successfully!');
+                navigate('/'); // Navigate to the main site
                 setUser(data.user);
                 setShowUserLogin(false);
             } else {
@@ -106,8 +93,11 @@ const Login = () => {
                     <p>Mobile Number</p>
                     <input onChange={(e) => setMobile(e.target.value)} value={mobile} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="tel" pattern="[0-9]{10}" required />
                 </div>
-                {otpSent && (
+                {!otpVerified && (
                     <div className="w-full">
+                        <button type="button" onClick={sendOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                            Send OTP
+                        </button>
                         <p>OTP</p>
                         <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="text" required />
                         <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
@@ -122,7 +112,7 @@ const Login = () => {
                     </div>
                 )}
                 <button className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
-                    {otpSent ? "Submit" : "Send OTP"}
+                    {otpVerified ? "Submit" : "Next"}
                 </button>
             </form>
         </div>
