@@ -6,9 +6,13 @@ const bcrypt = require('bcrypt');
 // Registration endpoint
 router.post('/register', async (req, res) => {
     const { name, email, password, mobile } = req.body; // Include mobile
+    if (!mobile) {
+        return res.status(400).json({ success: false, message: 'Mobile number is required.' });
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, email, password: hashedPassword, mobile });
+        const user = new User({ name, email, password: hashedPassword, mobile }); // Ensure mobile is saved
         await user.save();
         res.status(201).json({ success: true, user });
     } catch (error) {

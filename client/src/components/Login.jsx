@@ -53,10 +53,15 @@ const Login = () => {
     const onSignUpSubmitHandler = async (event) => {
         event.preventDefault();
 
+        if (!mobile) {
+            toast.error('Mobile number is required.');
+            return;
+        }
+
         try {
             const { data } = await axios.post(
                 '/api/user/register',
-                { name, email, password, mobile },
+                { name, email, password, mobile }, // Ensure mobile is included
                 { withCredentials: true }
             );
 
