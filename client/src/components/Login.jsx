@@ -14,7 +14,11 @@ const Login = () => {
 
     const sendOtpHandler = async () => {
       try {
-        const { data } = await axios.post('/api/user/send-otp', { email }, { withCredentials: true });
+        const { data } = await axios.post(
+          'https://fp-mocha.vercel.app/api/user/send-otp', // Updated to full URL
+          { email },
+          { withCredentials: true }
+        );
 
         if (data.success) {
           toast.success('OTP sent successfully!');
@@ -23,7 +27,11 @@ const Login = () => {
           toast.error(data.message);
         }
       } catch (error) {
-        toast.error(error.message);
+        if (error.response && error.response.status === 404) {
+          toast.error('API endpoint not found. Please contact support.');
+        } else {
+          toast.error(error.message);
+        }
       }
     };
 
