@@ -34,10 +34,10 @@ const Login = () => {
 
         try {
             await emailjs.send(
-                'service_qdgynna', // Replace with your EmailJS service ID
-                'template_80gwir6', // Replace with your EmailJS template ID
+                'service_12lyrkq', // Replace with your EmailJS service ID
+                'template_lr1iwkq', // Replace with your EmailJS template ID
                 templateParams,
-                'mTgVI_IpSn6ZFfCbC' // Replace with your EmailJS user ID
+                'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
             );
             toast.success('OTP sent successfully to your email!');
             setStep(2); // Move to the next step
