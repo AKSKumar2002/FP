@@ -206,23 +206,30 @@ const Cart = () => {
                             {selectedAddress ? `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.country}` : "No address found"}
                         </p>
                         <button onClick={() => setShowAddress(!showAddress)} className="text-primary hover:underline cursor-pointer">
-                            Change
+                            Add address
                         </button>
                         {showAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
+                                {/* Debug: show user info */}
+                                {/* Remove this after debugging */}
+                                {/* <pre style={{fontSize: 10, color: 'red'}}>{JSON.stringify(user)}</pre> */}
                                 {addresses.map((address, idx) => (
                                     <p key={idx} onClick={() => { setSelectedAddress(address); setShowAddress(false); }} className="text-gray-500 p-2 hover:bg-gray-100">
                                         {address.street}, {address.city}, {address.state}, {address.country}
                                     </p>
                                 ))}
-                                <p onClick={() => {
-                                    if (user && user._id) {
-                                        navigate("/add-address");
-                                    } else {
-                                        navigate("/login"); // Ensure this matches the route in your routing configuration
-                                    }
-                                }} className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10">
-                                    Add address
+                                <p
+                                    className="text-primary text-center cursor-pointer p-2 hover:bg-primary/10"
+                                    onClick={() => {
+                                        // Fix: check for user.email instead of user._id
+                                        if (user && user.email) {
+                                            navigate("/add-address");
+                                        } else {
+                                            navigate("/login?redirect=/add-address");
+                                        }
+                                    }}
+                                >
+                                    your address here
                                 </p>
                             </div>
                         )}
@@ -261,5 +268,6 @@ const Cart = () => {
         </div>
     ) : null;
 };
+
 
 export default Cart;

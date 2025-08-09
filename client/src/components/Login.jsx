@@ -34,10 +34,10 @@ const Login = () => {
 
         try {
             await emailjs.send(
-                'service_qdgynna', // Replace with your EmailJS service ID
-                'template_80gwir6', // Replace with your EmailJS template ID
+                'service_12lyrkq', // Replace with your EmailJS service ID
+                'template_lr1iwkq', // Replace with your EmailJS template ID
                 templateParams,
-                'mTgVI_IpSn6ZFfCbC' // Replace with your EmailJS user ID
+                'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
             );
             toast.success('OTP sent successfully to your email!');
             setStep(2); // Move to the next step
@@ -103,28 +103,38 @@ const Login = () => {
     };
 
     return (
-        <div onClick={() => setShowUserLogin(false)} className='fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50'>
-            <form onSubmit={isSignUp ? onSignUpHandler : onLoginHandler} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 m-auto items-start p-6 py-8 w-72 sm:w-[320px] rounded-lg shadow-xl border border-gray-200 bg-white">
-                <p className="text-2xl font-medium m-auto">
+        <div
+            onClick={() => setShowUserLogin(false)}
+            className="fixed inset-0 z-30 flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto"
+        >
+            <form
+                onSubmit={isSignUp ? onSignUpHandler : onLoginHandler}
+                onClick={(e) => e.stopPropagation()}
+                className="flex flex-col gap-6 m-auto items-start p-6 py-6 min-w-[340px] sm:w-[420px] max-w-full rounded-xl shadow-2xl border border-gray-200 bg-white mt-12 mb-8 h-auto max-h-[90vh] overflow-y-auto"
+                style={{
+                    boxShadow: "0 8px 32px 0 rgba(60,60,60,0.18), 0 1.5px 8px 0 rgba(60,60,60,0.10)"
+                }}
+            >
+                <p className="text-2xl font-medium m-auto mb-2">
                     <span className="text-primary">{isSignUp ? 'User Sign Up' : 'User Login'}</span>
                 </p>
                 {isSignUp ? (
                     <>
                         {step === 1 && (
                             <>
-                                <div className="w-full">
-                                    <p>Name</p>
-                                    <input onChange={(e) => setName(e.target.value)} value={name} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="text" required />
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">Name</label>
+                                    <input onChange={(e) => setName(e.target.value)} value={name} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
                                 </div>
-                                <div className="w-full">
-                                    <p>Email</p>
-                                    <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">Email</label>
+                                    <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
                                 </div>
-                                <div className="w-full">
-                                    <p>Mobile No</p>
-                                    <input onChange={(e) => setMobile(e.target.value)} value={mobile} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="tel" pattern="[0-9]{10}" required />
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">Mobile No</label>
+                                    <input onChange={(e) => setMobile(e.target.value)} value={mobile} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="tel" pattern="[0-9]{10}" required />
                                 </div>
-                                <button type="button" onClick={sendOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                                <button type="button" onClick={sendOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
                                     Send OTP
                                 </button>
                                 <div className="w-full text-center mt-2">
@@ -136,35 +146,40 @@ const Login = () => {
                         )}
                         {step === 2 && (
                             <>
-                                <div className="w-full">
-                                    <p>OTP</p>
-                                    <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="text" required />
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">OTP</label>
+                                    <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
                                 </div>
-                                <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                                <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
                                     Verify OTP
                                 </button>
                             </>
                         )}
                         {step === 3 && (
                             <>
-                                <div className="w-full relative">
-                                    <p>Password</p>
-                                    <input 
-                                        onChange={(e) => setPassword(e.target.value)} 
-                                        value={password} 
-                                        placeholder="type here" 
-                                        className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" 
-                                        type={passwordVisible ? "text" : "password"} 
-                                        required 
-                                    />
-                                    <span 
-                                        onClick={togglePasswordVisibility} 
-                                        className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
-                                    >
-                                        {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-                                    </span>
+                                <div className="w-full mb-4 relative">
+                                    <label className="block mb-2">Password</label>
+                                    <div className="relative">
+                                        <input 
+                                            onChange={(e) => setPassword(e.target.value)} 
+                                            value={password} 
+                                            placeholder="type here" 
+                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
+                                            type={passwordVisible ? "text" : "password"} 
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={togglePasswordVisibility}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
+                                            tabIndex={-1}
+                                            style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                        >
+                                            {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                                        </button>
+                                    </div>
                                 </div>
-                                <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                                <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
                                     Submit
                                 </button>
                             </>
@@ -172,28 +187,33 @@ const Login = () => {
                     </>
                 ) : (
                     <>
-                        <div className="w-full">
-                            <p>Email</p>
-                            <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="email" required />
+                        <div className="w-full mb-4">
+                            <label className="block mb-2">Email</label>
+                            <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
                         </div>
-                        <div className="w-full relative">
-                            <p>Password</p>
-                            <input 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                value={password} 
-                                placeholder="type here" 
-                                className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" 
-                                type={passwordVisible ? "text" : "password"} 
-                                required 
-                            />
-                            <span 
-                                onClick={togglePasswordVisibility} 
-                                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer text-gray-500"
-                            >
-                                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-                            </span>
+                        <div className="w-full mb-4 relative">
+                            <label className="block mb-2">Password</label>
+                            <div className="relative">
+                                <input 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    value={password} 
+                                    placeholder="type here" 
+                                    className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
+                                    type={passwordVisible ? "text" : "password"} 
+                                    required 
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
+                                    tabIndex={-1}
+                                    style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                >
+                                    {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                                </button>
+                            </div>
                         </div>
-                        <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+                        <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
                             Login
                         </button>
                         <div className="w-full text-center mt-2">
@@ -207,5 +227,6 @@ const Login = () => {
         </div>
     );
 };
+
 
 export default Login;
