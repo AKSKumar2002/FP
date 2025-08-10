@@ -83,11 +83,12 @@ const Cart = () => {
             } else {
                 // ✅ 1️⃣ Create Razorpay order on backend
                 const { data } = await axios.post('/api/order/razorpay', payload);
+                console.log("Razorpay Key:", data.key); // ✅ Debug: Check if live key is being used
                 if (!data.success) return toast.error("Failed to create Razorpay order");
 
                 // ✅ 2️⃣ Open Razorpay checkout
                 const options = {
-                    key: data.key, // from server response
+                    key: data.key, // Ensure this is the live key
                     amount: data.amount,
                     currency: data.currency,
                     name: "Farmpick",

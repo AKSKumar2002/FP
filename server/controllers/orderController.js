@@ -9,6 +9,7 @@ const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET,
 });
+console.log("Razorpay Key ID:", process.env.RAZORPAY_KEY_ID); // ✅ Debug: Check if live key is being used
 
 // ✅ 1️⃣ Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
