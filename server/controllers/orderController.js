@@ -117,7 +117,6 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     if (generatedSignature === razorpay_signature) {
       await Order.findByIdAndUpdate(orderId, { isPaid: true });
-      await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
 
       return res.json({ success: true, message: "Payment Verified" });
