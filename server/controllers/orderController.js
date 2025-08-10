@@ -4,6 +4,12 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
 
+// ✅ Update Razorpay instance to use live keys
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
+
 // ✅ 1️⃣ Place Order COD : /api/order/cod
 export const placeOrderCOD = async (req, res) => {
   try {
@@ -72,11 +78,6 @@ export const placeOrderRazorpay = async (req, res) => {
       paymentType: "Online",
     });
 
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_SECRET,
-    });
-
     const options = {
       amount: amount * 100, // paise
       currency: "INR",
@@ -84,7 +85,6 @@ export const placeOrderRazorpay = async (req, res) => {
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
-
 
     return res.json({
       success: true,
