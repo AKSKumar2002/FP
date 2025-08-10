@@ -90,11 +90,11 @@ const Cart = () => {
                     key: data.key, // from server response
                     amount: data.amount,
                     currency: data.currency,
-                    name: "Your Shop Name",
+                    name: "Farmpick",
                     description: "Order Payment",
                     order_id: data.orderId,
                     handler: async (response) => {
-                        // ✅ 3️⃣ Verify payment signature on server
+                        // ✅ Verify payment signature on server
                         const verifyPayload = {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
@@ -102,7 +102,6 @@ const Cart = () => {
                             orderId: data.orderDbId,
                             userId: user._id,
                         };
-
                         const verifyRes = await axios.post("/api/order/razorpay/verify", verifyPayload);
                         if (verifyRes.data.success) {
                             toast.success("Payment Verified & Order Placed!");
@@ -121,7 +120,6 @@ const Cart = () => {
                         color: "#3399cc",
                     },
                 };
-
                 const rzp = new window.Razorpay(options);
                 rzp.open();
             }
