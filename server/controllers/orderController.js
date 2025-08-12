@@ -53,39 +53,26 @@ export const placeOrderRazorpay = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
 
-    // Basic validation
     if (!userId || !items?.length || !address) {
       return res.json({ success: false, message: "Missing data" });
     }
 
     let amount = 0;
 
-    // Calculate base amount
     for (const item of items) {
       const product = await Product.findById(item.product);
-      if (!product) {
-        return res.json({ success: false, message: "Product not found" });
-      }
+      if (!product) return res.json({ success: false, message: "Product not found" });
 
       const variant = product.variants[item.variantIndex];
-      if (!variant) {
-        return res.json({ success: false, message: "Variant not found" });
-      }
+      if (!variant) return res.json({ success: false, message: "Variant not found" });
 
       amount += variant.offerPrice * item.quantity;
     }
 
-    // Add 2% tax ONCE
-    amount = amount + amount * 0.02;
-
-    // Round off to nearest rupee
+    // Add 2% tax (only once)
+    amount += amount * 0.02;
     amount = Math.round(amount);
 
-    if (amount <= 0) {
-      return res.json({ success: false, message: "Invalid order amount" });
-    }
-
-    // Create order in DB
     const order = await Order.create({
       userId,
       items,
@@ -94,14 +81,25 @@ export const placeOrderRazorpay = async (req, res) => {
       paymentType: "Online",
     });
 
-    // Create Razorpay order
     const options = {
-      amount: amount * 100, // Convert to paise
+      amount: amount * 100, // paise
       currency: "INR",
       receipt: `order_rcptid_${order._id}`,
     };
 
-    const razorpayOrder = await razorpay.orders.create(options);
+    let razorpayOrder;
+    try {
+      razorpayOrder = await razorpay.orders.create(options);
+      console.log("Razorpay order response:", razorpayOrder);
+    } catch (err) {
+      console.error("Razorpay order creation error:", err);
+      // Return error details to frontend for debugging
+      return res.json({ success: false, message: "Razorpay API error", error: err });
+    }
+
+    if (!razorpayOrder || !razorpayOrder.id) {
+      return res.json({ success: false, message: "Failed to create Razorpay order", error: razorpayOrder });
+    }
 
     return res.json({
       success: true,
@@ -112,15 +110,10 @@ export const placeOrderRazorpay = async (req, res) => {
       orderDbId: order._id,
     });
   } catch (error) {
-    console.error("Razorpay create order error:", error.error || error.message || error);
-    return res.json({
-      success: false,
-      message: error.error?.description || error.message || "Something went wrong",
-      details: error.error || null
-    });
+    console.error("OrderController error:", error);
+    return res.json({ success: false, message: error.message, error });
   }
 };
-
 
 // ✅ 3️⃣ Verify Razorpay Payment : /api/order/razorpay/verify
 export const verifyRazorpayPayment = async (req, res) => {
