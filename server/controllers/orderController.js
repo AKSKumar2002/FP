@@ -32,7 +32,7 @@ export const placeOrderCOD = async (req, res) => {
     // Add Tax Charge (2%)
     amount += Math.floor(amount * 0.02);
 
-
+    
     await Order.create({
       userId,
       items,
@@ -168,7 +168,7 @@ export const getUserOrders = async (req, res) => {
         },
       })
       .populate("address")
-
+  
       .sort({ createdAt: -1 });
 
     res.json({ success: true, orders });
@@ -191,8 +191,8 @@ export const getAllOrders = async (req, res) => {
           model: "Category",
         },
       })
-      .populate("address")
-
+       .populate("address")
+     
       .sort({ createdAt: -1 });
     res.json({ success: true, orders });
   } catch (error) {
