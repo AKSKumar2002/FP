@@ -69,7 +69,9 @@ export const placeOrderRazorpay = async (req, res) => {
       amount += variant.offerPrice * item.quantity;
     }
 
-    amount += Math.floor(amount * 0.02);
+    // Add 2% tax (only once)
+    amount += amount * 0.02;
+    amount = Math.round(amount);
 
     const order = await Order.create({
       userId,
@@ -85,7 +87,18 @@ export const placeOrderRazorpay = async (req, res) => {
       receipt: `order_rcptid_${order._id}`,
     };
 
-    const razorpayOrder = await razorpay.orders.create(options);
+    let razorpayOrder;
+    try {
+      razorpayOrder = await razorpay.orders.create(options);
+      console.log("Razorpay order response:", razorpayOrder);
+    } catch (err) {
+      console.error("Razorpay order creation error:", err);
+      return res.json({ success: false, message: "Razorpay API error", error: err });
+    }
+
+    if (!razorpayOrder || !razorpayOrder.id) {
+      return res.json({ success: false, message: "Failed to create Razorpay order", error: razorpayOrder });
+    }
 
     return res.json({
       success: true,
@@ -96,8 +109,8 @@ export const placeOrderRazorpay = async (req, res) => {
       orderDbId: order._id,
     });
   } catch (error) {
-    console.error(error);
-    return res.json({ success: false, message: error.message });
+    console.error("OrderController error:", error);
+    return res.json({ success: false, message: error.message, error });
   }
 };
 
