@@ -73,6 +73,11 @@ export const placeOrderRazorpay = async (req, res) => {
     amount += amount * 0.02;
     amount = Math.round(amount);
 
+    // Ensure amount is valid
+    if (!amount || amount <= 0) {
+      return res.json({ success: false, message: "Invalid order amount" });
+    }
+
     const order = await Order.create({
       userId,
       items,
@@ -94,7 +99,7 @@ export const placeOrderRazorpay = async (req, res) => {
     } catch (err) {
       console.error("Razorpay order creation error:", err);
       // Return error details to frontend for debugging
-      return res.json({ success: false, message: "Razorpay API error", error: err });
+      return res.json({ success: false, message: "Razorpay API error", error: err?.error || err });
     }
 
     if (!razorpayOrder || !razorpayOrder.id) {
