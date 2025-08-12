@@ -4,35 +4,36 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
 
-// ✅ Update Razorpay instance to use live keys
+// ✅ Razorpay instance (LIVE KEYS - TEMP for testing)
+// ⚠️ Remove hardcoded keys after testing and use process.env instead
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: "rzp_live_Qq6OO5EK3zMXpD",
+  key_secret: "Owq6Pbysody2qPXeUhTjekmk",
 });
-console.log("Razorpay Key ID:", process.env.RAZORPAY_KEY_ID); // ✅ Debug: Check if live key is being used
 
-// ✅ 1️⃣ Place Order COD : /api/order/cod
+// ===============================
+// 1️⃣ Place Order COD
+// ===============================
 export const placeOrderCOD = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
-    if (!address || items.length === 0) {
+    if (!address || !items.length) {
       return res.json({ success: false, message: "Invalid data" });
     }
 
-    // ✅ FIXED: Calculate Amount properly
     let amount = 0;
     for (const item of items) {
       const product = await Product.findById(item.product);
+      if (!product) return res.json({ success: false, message: "Product not found" });
       const variant = product.variants[item.variantIndex];
+      if (!variant) return res.json({ success: false, message: "Variant not found" });
       amount += variant.offerPrice * item.quantity;
     }
+
+    // Add 2% tax once
     amount += amount * 0.02;
+    amount = Math.round(amount);
 
-
-    // Add Tax Charge (2%)
-    amount += Math.floor(amount * 0.02);
-
-    
     await Order.create({
       userId,
       items,
@@ -47,29 +48,26 @@ export const placeOrderCOD = async (req, res) => {
   }
 };
 
-
-// ✅ 2️⃣ Place Order Razorpay : /api/order/razorpay
+// ===============================
+// 2️⃣ Place Order Razorpay
+// ===============================
 export const placeOrderRazorpay = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
-
     if (!userId || !items?.length || !address) {
       return res.json({ success: false, message: "Missing data" });
     }
 
     let amount = 0;
-
     for (const item of items) {
       const product = await Product.findById(item.product);
       if (!product) return res.json({ success: false, message: "Product not found" });
-
       const variant = product.variants[item.variantIndex];
       if (!variant) return res.json({ success: false, message: "Variant not found" });
-
       amount += variant.offerPrice * item.quantity;
     }
 
-    // Add 2% tax (only once)
+    // Add 2% tax once
     amount += amount * 0.02;
     amount = Math.round(amount);
 
@@ -90,32 +88,32 @@ export const placeOrderRazorpay = async (req, res) => {
     let razorpayOrder;
     try {
       razorpayOrder = await razorpay.orders.create(options);
-      console.log("Razorpay order response:", razorpayOrder);
     } catch (err) {
-      console.error("Razorpay order creation error:", err);
-      // Return error details to frontend for debugging
+      console.error("❌ Razorpay order creation error:", err);
       return res.json({ success: false, message: "Razorpay API error", error: err });
     }
 
-    if (!razorpayOrder || !razorpayOrder.id) {
-      return res.json({ success: false, message: "Failed to create Razorpay order", error: razorpayOrder });
+    if (!razorpayOrder?.id) {
+      return res.json({ success: false, message: "Failed to create Razorpay order" });
     }
 
     return res.json({
       success: true,
-      key: process.env.RAZORPAY_KEY_ID,
+      key: "rzp_live_Qq6OO5EK3zMXpD", // sending live key directly
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       orderId: razorpayOrder.id,
       orderDbId: order._id,
     });
   } catch (error) {
-    console.error("OrderController error:", error);
-    return res.json({ success: false, message: error.message, error });
+    console.error("❌ OrderController error:", error);
+    return res.json({ success: false, message: error.message });
   }
 };
 
-// ✅ 3️⃣ Verify Razorpay Payment : /api/order/razorpay/verify
+// ===============================
+// 3️⃣ Verify Razorpay Payment
+// ===============================
 export const verifyRazorpayPayment = async (req, res) => {
   try {
     const {
@@ -126,8 +124,8 @@ export const verifyRazorpayPayment = async (req, res) => {
       userId,
     } = req.body;
 
-    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
-    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+    const hmac = crypto.createHmac("sha256", "Owq6Pbysody2qPXeUhTjekmk"); // live key secret
+    hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature === razorpay_signature) {
@@ -144,24 +142,21 @@ export const verifyRazorpayPayment = async (req, res) => {
   }
 };
 
-// ✅ 4️⃣ Get Orders by User ID : /api/order/user
+// ===============================
+// 4️⃣ Get Orders by User ID
+// ===============================
 export const getUserOrders = async (req, res) => {
   try {
     const { userId } = req.body;
-
     const orders = await Order.find({
       userId,
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
       .populate({
         path: "items.product",
-        populate: {
-          path: "category",
-          model: "Category",
-        },
+        populate: { path: "category", model: "Category" },
       })
       .populate("address")
-  
       .sort({ createdAt: -1 });
 
     res.json({ success: true, orders });
@@ -170,8 +165,9 @@ export const getUserOrders = async (req, res) => {
   }
 };
 
-
-// ✅ 5️⃣ Get All Orders : /api/order/seller
+// ===============================
+// 5️⃣ Get All Orders (Seller)
+// ===============================
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({
@@ -179,22 +175,20 @@ export const getAllOrders = async (req, res) => {
     })
       .populate({
         path: "items.product",
-        populate: {
-          path: "category",
-          model: "Category",
-        },
+        populate: { path: "category", model: "Category" },
       })
-       .populate("address")
-     
+      .populate("address")
       .sort({ createdAt: -1 });
+
     res.json({ success: true, orders });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
 
-
-// ✅ 6️⃣ Update Order Status : /api/order/status/:id
+// ===============================
+// 6️⃣ Update Order Status
+// ===============================
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -204,12 +198,7 @@ export const updateOrderStatus = async (req, res) => {
       return res.json({ success: false, message: "Invalid status" });
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
-
+    const updatedOrder = await Order.findByIdAndUpdate(id, { status }, { new: true });
     if (!updatedOrder) {
       return res.json({ success: false, message: "Order not found" });
     }
