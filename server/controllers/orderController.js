@@ -7,7 +7,7 @@ import User from "../models/User.js";
 // ✅ Update Razorpay instance to use live keys
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_SECRET,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 console.log("Razorpay Key ID:", process.env.RAZORPAY_KEY_ID); // ✅ Debug: Check if live key is being used
 
@@ -112,7 +112,7 @@ export const verifyRazorpayPayment = async (req, res) => {
       userId,
     } = req.body;
 
-    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
+    const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
     hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
     const generatedSignature = hmac.digest("hex");
 
