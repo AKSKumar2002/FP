@@ -39,7 +39,9 @@ const Login = () => {
                 templateParams,
                 'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
             );
-            toast.success('OTP sent successfully to your email!');
+            toast.success('OTP sent successfully to your email!', {
+                duration: Infinity, // Keep toast until user clicks/dismisses
+            });
             setStep(2); // Move to the next step
         } catch (error) {
             toast.error('Failed to send OTP. Please try again.');
