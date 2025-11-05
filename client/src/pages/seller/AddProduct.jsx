@@ -167,6 +167,7 @@ const AddProduct = () => {
                 required
               >
                 <option value="">Select Unit</option>
+                <option value="pcs">piece</option>
                 <option value="gm">gm</option>
                 <option value="kg">kg</option>
                 <option value="litre">litre</option>

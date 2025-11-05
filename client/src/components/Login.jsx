@@ -40,7 +40,7 @@ const Login = () => {
                 'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
             );
             toast.success('OTP sent successfully to your email!', {
-                duration: Infinity, // Keep toast until user clicks/dismisses
+                duration: 10000, // 10 seconds (adjust as needed)
             });
             setStep(2); // Move to the next step
         } catch (error) {
