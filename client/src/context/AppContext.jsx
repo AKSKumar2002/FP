@@ -141,6 +141,38 @@ export const AppContextProvider = ({ children }) => {
     if (user) updateCart();
   }, [cartItems]);
 
+  // Add this function inside your context provider
+  const getPopularProducts = async (limit = 10) => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/product/popular?limit=${limit}`);
+      if (response.data.success) {
+        return response.data.products;
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  // Make sure you have this function that fetches products
+  const getAllProducts = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/product/list`);
+      if (response.data.success) {
+        setProducts(response.data.products);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  // Call it on mount
+  useEffect(() => {
+    getAllProducts();
+    // ...other initialization
+  }, []);
+
   const value = {
     navigate,
     user,
@@ -164,7 +196,8 @@ export const AppContextProvider = ({ children }) => {
     setCartItems,
     categories,
     fetchCategories,
-    animateCart // ✅ Exposed
+    animateCart, // ✅ Exposed
+    getPopularProducts, // Add to context value
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

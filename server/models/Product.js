@@ -18,6 +18,8 @@ const productSchema = new mongoose.Schema({
     },
   ],
   inStock: { type: Boolean, default: true },
+  orderCount: { type: Number, default: 0 }, // ✅ Track popularity
+  displayOrder: { type: Number, default: 999 }, // ✅ Manual ordering (lower = higher priority)
 }, { timestamps: true });
 
 const Product = mongoose.models.product || mongoose.model('product', productSchema);

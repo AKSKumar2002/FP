@@ -29,6 +29,7 @@ import AddProduct from './pages/seller/AddProduct';
 import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import SellerCategories from './pages/seller/SellerCategories';
+import ProductOrder from './pages/seller/ProductOrder';
 
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
@@ -161,6 +162,7 @@ const App = () => {
             <Route index element={<Navigate to="add-product" />} />
             <Route path="add-product" element={<AddProduct />} />
             <Route path="product-list" element={<ProductList />} />
+            <Route path="product-order" element={<ProductOrder />} />
             <Route path="orders" element={<Orders />} />
             <Route path="categories" element={<SellerCategories />} />
           </Route>
