@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-export const AppContext = createContext();
+const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -26,6 +26,9 @@ export const AppContextProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState({});
   const [categories, setCategories] = useState([]);
   const [animateCart, setAnimateCart] = useState(false); // ✅ NEW
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchSeller = async () => {
     try {
@@ -167,6 +170,30 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  // Check authentication token
+  const checkAuthToken = async () => {
+    try {
+      if (!token) return false;
+      
+      const response = await axios.post(`${backendUrl}/api/user/verify`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data.success) {
+        return true;
+      } else {
+        setToken('');
+        localStorage.removeItem('token');
+        return false;
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setToken('');
+      localStorage.removeItem('token');
+      return false;
+    }
+  };
+
   // Call it on mount
   useEffect(() => {
     getAllProducts();
@@ -198,6 +225,9 @@ export const AppContextProvider = ({ children }) => {
     fetchCategories,
     animateCart, // ✅ Exposed
     getPopularProducts, // Add to context value
+    token,
+    setToken,
+    checkAuthToken
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
