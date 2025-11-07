@@ -8,6 +8,7 @@ const Login = () => {
     const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
     const [isSignUp, setIsSignUp] = React.useState(true); // Toggle between Sign Up and Login
+    const [isForgotPassword, setIsForgotPassword] = React.useState(false); // State for forgot password
     const [step, setStep] = React.useState(1); // Step state to control transitions
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -16,6 +17,7 @@ const Login = () => {
     const [generatedOtp, setGeneratedOtp] = React.useState(""); // Store generated OTP
     const [otpVerified, setOtpVerified] = React.useState(false); // State for OTP verification
     const [password, setPassword] = React.useState("");
+    const [confirmPassword, setConfirmPassword] = React.useState(""); // State for confirm password
     const [passwordVisible, setPasswordVisible] = React.useState(false); // State for toggling password visibility
 
     const togglePasswordVisibility = () => {
@@ -43,6 +45,40 @@ const Login = () => {
                 duration: 10000, // 10 seconds (adjust as needed)
             });
             setStep(2); // Move to the next step
+        } catch (error) {
+            toast.error('Failed to send OTP. Please try again.');
+        }
+    };
+
+    const sendForgotPasswordOtp = async () => {
+        try {
+            // Check if user exists
+            const { data } = await axios.post('/api/user/check-email', { email });
+            
+            if (!data.exists) {
+                toast.error('No account found with this email');
+                return;
+            }
+
+            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            setGeneratedOtp(generatedOtp);
+
+            const templateParams = {
+                to_name: data.name || 'User',
+                to_email: email,
+                otp: generatedOtp,
+            };
+
+            await emailjs.send(
+                'service_12lyrkq',
+                'template_lr1iwkq',
+                templateParams,
+                'oLMFFwhse8y8oWg3S'
+            );
+            toast.success('OTP sent successfully to your email!', {
+                duration: 10000,
+            });
+            setStep(2);
         } catch (error) {
             toast.error('Failed to send OTP. Please try again.');
         }
@@ -104,13 +140,49 @@ const Login = () => {
         }
     };
 
+    const onResetPasswordHandler = async (event) => {
+        event.preventDefault();
+
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
+        if (password.length < 6) {
+            toast.error('Password must be at least 6 characters');
+            return;
+        }
+
+        try {
+            const { data } = await axios.post('/api/user/reset-password', {
+                email,
+                password
+            });
+
+            if (data.success) {
+                toast.success('Password reset successfully!');
+                setIsForgotPassword(false);
+                setIsSignUp(false);
+                setStep(1);
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+                setOtp('');
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message);
+        }
+    };
+
     return (
         <div
             onClick={() => setShowUserLogin(false)}
             className="fixed inset-0 z-30 flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto"
         >
             <form
-                onSubmit={isSignUp ? onSignUpHandler : onLoginHandler}
+                onSubmit={isForgotPassword ? onResetPasswordHandler : (isSignUp ? onSignUpHandler : onLoginHandler)}
                 onClick={(e) => e.stopPropagation()}
                 className="flex flex-col gap-6 m-auto items-start p-6 py-6 min-w-[340px] sm:w-[420px] max-w-full rounded-xl shadow-2xl border border-gray-200 bg-white mt-12 mb-8 h-auto max-h-[90vh] overflow-y-auto"
                 style={{
@@ -118,9 +190,82 @@ const Login = () => {
                 }}
             >
                 <p className="text-2xl font-medium m-auto mb-2">
-                    <span className="text-primary">{isSignUp ? 'User Sign Up' : 'User Login'}</span>
+                    <span className="text-primary">
+                        {isForgotPassword ? 'Reset Password' : (isSignUp ? 'User Sign Up' : 'User Login')}
+                    </span>
                 </p>
-                {isSignUp ? (
+
+                {isForgotPassword ? (
+                    <>
+                        {step === 1 && (
+                            <>
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">Email</label>
+                                    <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
+                                </div>
+                                <button type="button" onClick={sendForgotPasswordOtp} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
+                                    Send OTP
+                                </button>
+                                <div className="w-full text-center mt-2">
+                                    <button type="button" onClick={() => { setIsForgotPassword(false); setStep(1); }} className="text-gray-600">
+                                        Back to <span className="text-green-500">Login</span>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        {step === 2 && (
+                            <>
+                                <div className="w-full mb-4">
+                                    <label className="block mb-2">OTP</label>
+                                    <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
+                                </div>
+                                <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
+                                    Verify OTP
+                                </button>
+                            </>
+                        )}
+                        {step === 3 && (
+                            <>
+                                <div className="w-full mb-4 relative">
+                                    <label className="block mb-2">New Password</label>
+                                    <div className="relative">
+                                        <input 
+                                            onChange={(e) => setPassword(e.target.value)} 
+                                            value={password} 
+                                            placeholder="type here" 
+                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
+                                            type={passwordVisible ? "text" : "password"} 
+                                            required 
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={togglePasswordVisibility}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
+                                            tabIndex={-1}
+                                            style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                        >
+                                            {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="w-full mb-4 relative">
+                                    <label className="block mb-2">Confirm Password</label>
+                                    <input 
+                                        onChange={(e) => setConfirmPassword(e.target.value)} 
+                                        value={confirmPassword} 
+                                        placeholder="type here" 
+                                        className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" 
+                                        type="password" 
+                                        required 
+                                    />
+                                </div>
+                                <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
+                                    Reset Password
+                                </button>
+                            </>
+                        )}
+                    </>
+                ) : isSignUp ? (
                     <>
                         {step === 1 && (
                             <>
@@ -219,6 +364,15 @@ const Login = () => {
                             Login
                         </button>
                         <div className="w-full text-center mt-2">
+                            <button 
+                                type="button" 
+                                onClick={() => { setIsForgotPassword(true); setStep(1); }} 
+                                className="text-green-500 underline text-sm"
+                            >
+                                Forgot Password?
+                            </button>
+                        </div>
+                        <div className="w-full text-center mt-2">
                             <button type="button" onClick={() => setIsSignUp(true)} className="text-gray-600">
                                 Don't have an account? <span className="text-green-500">Sign Up</span>
                             </button>
@@ -229,6 +383,5 @@ const Login = () => {
         </div>
     );
 };
-
 
 export default Login;
