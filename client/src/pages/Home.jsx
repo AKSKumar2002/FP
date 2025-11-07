@@ -69,7 +69,7 @@ const Home = () => {
       </div>
       <div className="my-20">
         <div className="flex flex-col items-center w-max mx-auto">
-          <p className="text-4xl font-medium">Freshies</p>
+          <p className="text-4xl font-medium">Best Sellers</p>
           <div className="w-20 h-1 bg-primary rounded-full mt-2"></div>
         </div>
 
