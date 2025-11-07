@@ -124,7 +124,7 @@ const About = () => {
 
       {/* Footer */}
       <footer className="glass-footer">
-        <p>&copy; 2025 Farmpick. All copyrights reserved by AjithKumar S.</p>
+        <p>&copy; 2025 Farmpick | All copyrights reserved</p>
       </footer>
     </div>
   );

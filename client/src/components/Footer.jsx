@@ -54,7 +54,7 @@ const Footer = () => {
     rel="noopener noreferrer"
     className="text-green-600 hover:underline"
   >
-    Qubo technologies.Pvt Ltd
+    Qubo technologies
   </a>{' '}
   | Farmpick All Rights Reserved.
 </p>
