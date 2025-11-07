@@ -51,24 +51,17 @@ const Login = () => {
     };
 
     const sendForgotPasswordOtp = async () => {
+        // Skip email check - just send OTP directly
+        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        setGeneratedOtp(generatedOtp);
+
+        const templateParams = {
+            to_name: 'User', // Generic name since we're not checking
+            to_email: email,
+            otp: generatedOtp,
+        };
+
         try {
-            // Check if user exists
-            const { data } = await axios.post('/api/user/check-email', { email });
-            
-            if (!data.exists) {
-                toast.error('No account found with this email');
-                return;
-            }
-
-            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            setGeneratedOtp(generatedOtp);
-
-            const templateParams = {
-                to_name: data.name || 'User',
-                to_email: email,
-                otp: generatedOtp,
-            };
-
             await emailjs.send(
                 'service_12lyrkq',
                 'template_lr1iwkq',
