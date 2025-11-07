@@ -115,12 +115,23 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Get Product Display Order : /api/product/display-order
 export const getProductDisplayOrder = async (req, res) => {
   try {
     const products = await Product.find({})
       .populate("category")
       .sort({ displayOrder: 1, createdAt: -1 });
+=======
+// Get Popular Products : /api/product/popular
+export const getPopularProducts = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const products = await Product.find({ inStock: true })
+      .populate("category")
+      .sort({ displayOrder: 1, orderCount: -1 }) // ✅ Sort by displayOrder first, then orderCount
+      .limit(limit);
+>>>>>>> c1f506592b4b4e358822e21395dc780ca502b16a
     res.json({ success: true, products });
   } catch (error) {
     console.log(error.message);
@@ -128,6 +139,7 @@ export const getProductDisplayOrder = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Update Product Display Order : /api/product/update-order
 export const updateProductDisplayOrder = async (req, res) => {
   try {
@@ -145,12 +157,30 @@ export const updateProductDisplayOrder = async (req, res) => {
     );
 
     res.json({ success: true, message: "Display order updated successfully" });
+=======
+// Increment Order Count : /api/product/increment-order
+export const incrementOrderCount = async (req, res) => {
+  try {
+    const { productIds } = req.body; // Array of product IDs
+    
+    if (!productIds || !Array.isArray(productIds)) {
+      return res.json({ success: false, message: "Invalid product IDs" });
+    }
+
+    await Product.updateMany(
+      { _id: { $in: productIds } },
+      { $inc: { orderCount: 1 } }
+    );
+
+    res.json({ success: true, message: "Order count updated" });
+>>>>>>> c1f506592b4b4e358822e21395dc780ca502b16a
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
   }
 };
 
+<<<<<<< HEAD
 // Toggle Best Seller Status
 export const toggleBestSeller = async (req, res) => {
     try {
@@ -164,6 +194,49 @@ export const toggleBestSeller = async (req, res) => {
         console.log(error.message);
         res.json({ success: false, message: error.message });
     }
+=======
+// Set Product Display Order : /api/product/set-order
+export const setProductOrder = async (req, res) => {
+  try {
+    const { productId, displayOrder } = req.body;
+
+    if (!productId || displayOrder === undefined) {
+      return res.json({ success: false, message: "Product ID and display order are required" });
+    }
+
+    await Product.findByIdAndUpdate(productId, { displayOrder: parseInt(displayOrder) });
+
+    res.json({ success: true, message: "Product order updated" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Bulk Set Product Display Order : /api/product/bulk-set-order
+export const bulkSetProductOrder = async (req, res) => {
+  try {
+    const { orders } = req.body; // [{ productId, displayOrder }, ...]
+
+    if (!orders || !Array.isArray(orders)) {
+      return res.json({ success: false, message: "Invalid orders data" });
+    }
+
+    const bulkOps = orders.map(({ productId, displayOrder }) => ({
+      updateOne: {
+        filter: { _id: productId },
+        update: { displayOrder: parseInt(displayOrder) }
+      }
+    }));
+
+    await Product.bulkWrite(bulkOps);
+
+    res.json({ success: true, message: "Product orders updated" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+>>>>>>> c1f506592b4b4e358822e21395dc780ca502b16a
 };
 
 

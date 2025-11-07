@@ -104,12 +104,21 @@ const About = () => {
                 desc: "Leads farm-to-shelf logistics with unmatched efficiency.",
                 img: "/images/Rahul.png"
               },
+<<<<<<< HEAD
               /*{
+=======
+              /*
+              {
+>>>>>>> c1f506592b4b4e358822e21395dc780ca502b16a
                 name: "Dharani",
                 role: "Founder & Marketing Lead",
                 desc: "Ensures Farmpick stays connected with both businesses and households.",
                 img: "/images/Dharani.png"
+<<<<<<< HEAD
               }*/
+=======
+              } */
+>>>>>>> c1f506592b4b4e358822e21395dc780ca502b16a
             ].map((member, idx) => (
               <div key={idx} className="member-card" data-aos="fade-up">
                 <img src={member.img} alt={member.name} className="profile-img" />
