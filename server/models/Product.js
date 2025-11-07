@@ -18,6 +18,16 @@ const productSchema = new mongoose.Schema({
     },
   ],
   inStock: { type: Boolean, default: true },
+  isBestSeller: {
+    type: Boolean,
+    default: false
+  },
+  starRating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  }
 }, { timestamps: true });
 
 const Product = mongoose.models.product || mongoose.model('product', productSchema);

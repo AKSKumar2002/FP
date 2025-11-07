@@ -13,8 +13,8 @@ const Home = () => {
   const scrollContainerRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(true);
 
-  // Filter best sellers - only show products manually marked as best sellers
-  const bestSellerProducts = products.filter(product => product.isBestSeller && product.inStock);
+  // Filter best sellers
+  const bestSellerProducts = products.filter(product => product.isBestSeller);
 
   // Auto-scroll Best Sellers
   useEffect(() => {
@@ -91,9 +91,14 @@ const Home = () => {
                 </div>
               ))
             ) : (
-              <div className="w-full text-center py-10">
-                <p className="text-gray-500">No best sellers available at the moment.</p>
-              </div>
+              products
+                .filter((product) => product.inStock)
+                .slice(0, 12)
+                .map((product, index) => (
+                  <div key={index} className="w-64 flex-shrink-0">
+                    <ProductCard product={product} />
+                  </div>
+                ))
             )}
           </div>
         </div>
