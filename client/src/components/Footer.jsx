@@ -49,7 +49,7 @@ const Footer = () => {
             <p className="py-4 text-center text-sm md:text-base text-gray-500/80">
   Copyright {new Date().getFullYear()} ©{' '}
   <a
-    href="https://akstackdev.vercel.app"
+    href="https://quboin.vercel.app/"
     target="_blank"
     rel="noopener noreferrer"
     className="text-green-600 hover:underline"
