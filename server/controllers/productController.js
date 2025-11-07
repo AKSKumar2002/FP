@@ -115,4 +115,55 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
+// Get Product Display Order : /api/product/display-order
+export const getProductDisplayOrder = async (req, res) => {
+  try {
+    const products = await Product.find({})
+      .populate("category")
+      .sort({ displayOrder: 1, createdAt: -1 });
+    res.json({ success: true, products });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Update Product Display Order : /api/product/update-order
+export const updateProductDisplayOrder = async (req, res) => {
+  try {
+    const { orders } = req.body; // Array of { id, displayOrder }
+    
+    if (!Array.isArray(orders)) {
+      return res.json({ success: false, message: "Invalid data format" });
+    }
+
+    // Update all products in parallel
+    await Promise.all(
+      orders.map(({ id, displayOrder }) =>
+        Product.findByIdAndUpdate(id, { displayOrder })
+      )
+    );
+
+    res.json({ success: true, message: "Display order updated successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Toggle Best Seller Status
+export const toggleBestSeller = async (req, res) => {
+    try {
+        const { id, isBestSeller } = req.body;
+        await Product.findByIdAndUpdate(id, { isBestSeller });
+        res.json({ 
+            success: true, 
+            message: isBestSeller ? "Added to Best Sellers" : "Removed from Best Sellers" 
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+};
+
 

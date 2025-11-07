@@ -54,7 +54,7 @@ const Footer = () => {
     rel="noopener noreferrer"
     className="text-green-600 hover:underline"
   >
-    AKStack.dev
+    Qubo technologies.Pvt Ltd
   </a>{' '}
   | Farmpick All Rights Reserved.
 </p>
