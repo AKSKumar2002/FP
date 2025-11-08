@@ -137,8 +137,8 @@ export const categories = [
     bgColor: "#FEE6CD",
   },
   {
-    text: "Fresh Farm",
-    path: "Bakery",
+    text: "Greens",
+    path: "Greens",
     image: bakery_image,
     bgColor: "#E0F6FE",
   },

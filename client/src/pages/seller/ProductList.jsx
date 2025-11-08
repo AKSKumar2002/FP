@@ -8,7 +8,7 @@ const ProductList = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Bundle packages', 'Dairy products', 'Fresh Farm', 'Greens', 'Agro']);
+    const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Bundle packages', 'Dairy products', 'Greens', 'Grocery', 'Agro']);
 
     const handleEdit = (product) => {
         setEditingProduct({
