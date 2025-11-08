@@ -83,6 +83,9 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`🚀 Server is running on http://localhost:${port}`);
   console.log('📍 Available routes:');
+  console.log('   - POST /api/seller/login');          // ✅ Add this
+  console.log('   - GET  /api/seller/is-auth');        // ✅ Add this
+  console.log('   - GET  /api/seller/logout');         // ✅ Add this
   console.log('   - POST /api/product/reorder');
   console.log('   - POST /api/product/toggle-stock/:id');
   console.log('   - GET  /api/product/list');
