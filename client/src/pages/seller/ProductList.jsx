@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast'
-import { useState } from 'react'
 
 const ProductList = () => {
     const { products, currency, axios, fetchProducts, categories } = useAppContext()
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Bundle packages', 'Dairy products', 'Fresh Farm', 'Greens', 'Agro']);
 
     const handleEdit = (product) => {
         setEditingProduct({
@@ -108,6 +109,15 @@ const ProductList = () => {
         setEditingProduct({ ...editingProduct, variants: newVariants });
     };
 
+    // Filter products based on selected category
+    const filteredProducts = selectedCategory === 'All' 
+        ? products 
+        : products.filter(product => {
+            const categoryName = product.category?.name?.toLowerCase() || '';
+            const selectedLower = selectedCategory.toLowerCase();
+            return categoryName.includes(selectedLower) || categoryName === selectedLower;
+        });
+
     return (
         <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
             <div className="w-full p-6 md:p-10">
@@ -115,6 +125,32 @@ const ProductList = () => {
                 <div className="mb-6">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">All Products</h1>
                     <p className="text-gray-500">Manage your product inventory and stock status</p>
+                </div>
+
+                {/* Category Filter Tabs */}
+                <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {filterCategories.map((category) => (
+                        <button
+                            key={category}
+                            onClick={() => setSelectedCategory(category)}
+                            className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all ${
+                                selectedCategory === category
+                                    ? 'bg-primary text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                        >
+                            {category}
+                            <span className="ml-2 text-xs opacity-75">
+                                ({category === 'All' 
+                                    ? products.length 
+                                    : products.filter(p => {
+                                        const catName = p.category?.name?.toLowerCase() || '';
+                                        const filterLower = category.toLowerCase();
+                                        return catName.includes(filterLower) || catName === filterLower;
+                                    }).length})
+                            </span>
+                        </button>
+                    ))}
                 </div>
 
                 {/* Products Table */}
@@ -141,7 +177,7 @@ const ProductList = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {products.length === 0 ? (
+                                {filteredProducts.length === 0 ? (
                                     <tr>
                                         <td colSpan="4" className="px-6 py-12 text-center">
                                             <div className="flex flex-col items-center justify-center text-gray-400">
@@ -154,7 +190,7 @@ const ProductList = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    products.map((product) => (
+                                    filteredProducts.map((product) => (
                                         <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center space-x-4">
