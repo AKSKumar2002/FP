@@ -1,39 +1,42 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import Seller from '../models/Seller'; // Assuming Seller model is in models folder
+import Seller from '../models/Seller.js'; // ✅ Add .js extension and proper path
 
 // Login Seller : /api/seller/login
-
 export const sellerLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    
+    console.log('Login attempt:', { email }); // Debug
     
     // Find seller
     const seller = await Seller.findOne({ email });
     
     if (!seller) {
-      return res.json({ success: false, message: 'Seller not found' });
+      console.log('Seller not found:', email);
+      return res.status(404).json({ success: false, message: 'Seller not found' });
     }
     
     // Check password
     const isMatch = await bcrypt.compare(password, seller.password);
     
     if (!isMatch) {
-      return res.json({ success: false, message: 'Invalid credentials' });
+      console.log('Invalid password for:', email);
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
     
     // Create token with role
     const token = jwt.sign(
       { 
         id: seller._id, 
-        role: 'seller', // Make sure this is included
+        role: 'seller',
         email: seller.email 
       },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
     
-    console.log('Generated token for seller:', seller.email); // Debug
+    console.log('✅ Login successful for:', seller.email);
     
     res.json({
       success: true,
@@ -46,8 +49,8 @@ export const sellerLogin = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Seller login error:', error);
-    res.json({ success: false, message: error.message });
+    console.error('❌ Seller login error:', error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

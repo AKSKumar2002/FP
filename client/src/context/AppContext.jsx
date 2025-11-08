@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://fp-mocha.vercel.app';
+
 const axiosInstance = axios.create({
-  baseURL:
-    import.meta.env.MODE === "production"
-      ? import.meta.env.VITE_BACKEND_URL
-      : "https://fp-mocha.vercel.app",
+  baseURL: backendUrl,
   withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 export const AppContext = createContext();
@@ -34,7 +36,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchSeller = async () => {
     try {
-      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/seller/is-auth");
+      const { data } = await axiosInstance.get("/api/seller/is-auth");
       setIsSeller(data.success);
     } catch {
       setIsSeller(false);
@@ -43,7 +45,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/user/is-auth");
+      const { data } = await axiosInstance.get("/api/user/is-auth");
       if (data.success) {
         setUser(data.user);
         setCartItems(data.user.cartItems || {});
@@ -54,7 +56,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const fetchCategories = async () => {
-    const { data } = await axios.get('https://fp-mocha.vercel.app/api/category/all');
+    const { data } = await axiosInstance.get('/api/category/all');
     if (data.success) {
       setCategories(data.categories);
     }
@@ -64,7 +66,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/product/list");
+      const { data } = await axiosInstance.get("/api/product/list");
       if (data.success) {
         setProducts(data.products);
       } else {
@@ -132,7 +134,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     const updateCart = async () => {
       try {
-        const { data } = await axiosInstance.post("https://fp-mocha.vercel.app/api/cart/update", {
+        const { data } = await axiosInstance.post("/api/cart/update", {
           userId: user._id,
           cartItems,
         });
