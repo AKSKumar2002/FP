@@ -41,18 +41,37 @@ app.use(express.json());
 app.use(cookieParser());
 app.set('trust proxy', 1); // For secure cookies
 
-// ✅ Routes
-app.get('/', (req, res) => res.send("API is Working"));
+// ✅ Health check endpoint
+app.get('/', (req, res) => res.json({ 
+  status: "API is Working", 
+  timestamp: new Date().toISOString() 
+}));
 
+// ✅ API Routes - Make sure these are mounted correctly
 app.use('/api/user', userRouter);
 app.use('/api/seller', sellerRouter);
-app.use('/api/product', productRouter);
+app.use('/api/product', productRouter); // ✅ This mounts /api/product/reorder
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/category', CategoryRouter);
 
+// ✅ 404 handler for debugging
+app.use((req, res) => {
+  console.log('404 - Route not found:', req.method, req.path);
+  res.status(404).json({ 
+    success: false, 
+    message: 'Route not found',
+    path: req.path,
+    method: req.method
+  });
+});
+
 // ✅ Start server directly (no http.createServer or socket.io)
 app.listen(port, () => {
   console.log(`🚀 Server is running on http://localhost:${port}`);
+  console.log('📍 Available routes:');
+  console.log('   - POST /api/product/reorder');
+  console.log('   - POST /api/product/toggle-stock/:id');
+  console.log('   - GET  /api/product/list');
 });

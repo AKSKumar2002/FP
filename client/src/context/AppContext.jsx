@@ -19,7 +19,12 @@ export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
-  const [isSeller, setIsSeller] = useState(false);
+  const [isSeller, setIsSeller] = useState(() => {
+    // Check if seller is logged in on initial load
+    const token = localStorage.getItem('token');
+    const sellerFlag = localStorage.getItem('isSeller');
+    return token && sellerFlag === 'true';
+  });
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
@@ -140,6 +145,18 @@ export const AppContextProvider = ({ children }) => {
     };
     if (user) updateCart();
   }, [cartItems]);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const sellerFlag = localStorage.getItem('isSeller');
+    
+    if (token && sellerFlag === 'true') {
+      setIsSeller(true);
+    } else {
+      setIsSeller(false);
+    }
+  }, []);
 
   const value = {
     navigate,

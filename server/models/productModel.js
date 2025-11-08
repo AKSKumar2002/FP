@@ -48,6 +48,14 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    display_order: {
+        type: Number,
+        default: 0
+    },
+    available: {
+        type: Boolean,
+        default: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

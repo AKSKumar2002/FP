@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary"
 import Product from "../models/Product.js"
+import Category from "../models/Category.js" // Add this import
 
 // Add Product : /api/product/add
 export const addProduct = async (req, res) => {
@@ -17,8 +18,6 @@ export const addProduct = async (req, res) => {
 
         await Product.create({ ...productData, image: imagesUrl })
 
-
-
         res.json({ success: true, message: "Product Added" })
 
     } catch (error) {
@@ -30,14 +29,27 @@ export const addProduct = async (req, res) => {
 // Get Product : /api/product/list
 export const productList = async (req, res) => {
   try {
-    const products = await Product.find({}).populate("category");
+    const { category } = req.query;
+    let query = {};
+    
+    if (category && category !== 'all') {
+      // Find category by name and get its ID
+      const categoryDoc = await Category.findOne({ name: category });
+      if (categoryDoc) {
+        query.category = categoryDoc._id;
+      }
+    }
+    
+    const products = await Product.find(query)
+      .sort({ display_order: 1, _id: 1 }) // Sort by display_order first, then by ID
+      .populate('category');
+    
     res.json({ success: true, products });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     res.json({ success: false, message: error.message });
   }
 };
-
 
 // Get single Product : /api/product/id
 export const productById = async (req, res) => {
@@ -99,7 +111,6 @@ export const editProduct = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
-
 
 // Add in productController.js
 
