@@ -4,22 +4,21 @@ import ProductCard from '../components/ProductCard'
 
 const AllProducts = () => {
 
-    const { products, categories } = useAppContext()
+    const {products, categories } = useAppContext()
     const [filteredProducts, setFilteredProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All")
 
-    useEffect(() => {
+    useEffect(()=>{
         if (selectedCategory === "All") {
-            // Filter only available products
-            setFilteredProducts(products.filter((p) => p.available !== false));
+            setFilteredProducts(products.filter((p) => p.inStock));
         } else {
             setFilteredProducts(
               products.filter(
-                (p) => (p.available !== false) && p.category?.name === selectedCategory
+                (p) => p.inStock && p.category?.name === selectedCategory
               )
             );
-        }
-    }, [selectedCategory, products])
+          }
+    },[selectedCategory, products])
 
   return (
     <div className="mt-11">
@@ -44,7 +43,7 @@ const AllProducts = () => {
         </div>
       </div>
 
-      {/* Category Pills */}
+      {/* Category Pills (Optional - for better UX) */}
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setSelectedCategory("All")}

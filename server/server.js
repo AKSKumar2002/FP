@@ -18,75 +18,41 @@ const port = process.env.PORT || 4000;
 await connectDB();
 await connectCloudinary();
 
-// ✅ FIXED: More permissive CORS for Vercel
+// ✅ Only use CORS once — this is the correct one
 const allowedOrigins = [
   'http://localhost:5173',
-  'http://localhost:5174',
-  'https://farmpickshope.vercel.app',
-  'https://fp-mocha.vercel.app', // ✅ Add your actual Vercel frontend URL
-  'https://farmpickshope-git-main-akskumar2002s-projects.vercel.app',
+  'https://farmpickshope.vercel.app'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, curl)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.log('❌ Blocked by CORS:', origin);
-      callback(null, true); // ✅ Allow all in production for now
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'token'], // ✅ Add 'token' header
-  exposedHeaders: ['set-cookie'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
-
-// ✅ Handle OPTIONS preflight for all routes
-app.options('*', cors());
 
 // ✅ Middleware (after CORS)
 app.use(express.json());
 app.use(cookieParser());
 app.set('trust proxy', 1); // For secure cookies
 
-// ✅ Health check endpoint
-app.get('/', (req, res) => res.json({ 
-  status: "API is Working", 
-  timestamp: new Date().toISOString() 
-}));
+// ✅ Routes
+app.get('/', (req, res) => res.send("API is Working"));
 
-// ✅ API Routes - Make sure these are mounted correctly
 app.use('/api/user', userRouter);
 app.use('/api/seller', sellerRouter);
-app.use('/api/product', productRouter); // ✅ This mounts /api/product/reorder
+app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/category', CategoryRouter);
 
-// ✅ 404 handler for debugging
-app.use((req, res) => {
-  console.log('404 - Route not found:', req.method, req.path);
-  res.status(404).json({ 
-    success: false, 
-    message: 'Route not found',
-    path: req.path,
-    method: req.method
-  });
-});
-
 // ✅ Start server directly (no http.createServer or socket.io)
 app.listen(port, () => {
   console.log(`🚀 Server is running on http://localhost:${port}`);
-  console.log('📍 Available routes:');
-  console.log('   - POST /api/seller/login');          // ✅ Add this
-  console.log('   - GET  /api/seller/is-auth');        // ✅ Add this
-  console.log('   - GET  /api/seller/logout');         // ✅ Add this
-  console.log('   - POST /api/product/reorder');
-  console.log('   - POST /api/product/toggle-stock/:id');
-  console.log('   - GET  /api/product/list');
 });

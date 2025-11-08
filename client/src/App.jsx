@@ -83,6 +83,42 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [navigate, location.pathname]);
 
+  // 🔒 Dropdown logic removed (commented out)
+  // const [showDropdown, setShowDropdown] = useState(false);
+
+  // const handleSelect = (e) => {
+  //   const selected = e.target.value;
+  //   localStorage.setItem('siteMode', selected);
+
+  //   if (selected === 'B2B') {
+  //     navigate('/b2b');
+  //   } else if (selected === 'seller') {
+  //     navigate('/seller');
+  //   } else {
+  //     navigate('/');
+  //   }
+
+  //   setShowDropdown(false);
+  // };
+
+  // if (showDropdown) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
+  //       <div className="mb-4 text-xl font-semibold">Hi User</div>
+  //       <select
+  //         onChange={handleSelect}
+  //         defaultValue=""
+  //         className="border border-green-500 rounded px-4 py-2 text-green-700 focus:outline-none"
+  //       >
+  //         <option value="">Select Site</option>
+  //         <option value="B2C">1. B2C</option>
+  //         <option value="B2B">2. B2B</option>
+  //         {/* <option value="seller">3. Seller</option> */}
+  //       </select>
+  //     </div>
+  //   );
+  // }
+
   if (showInitialLoader) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
@@ -122,9 +158,8 @@ const App = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/login" element={<Login />} /> {/* Ensure this route exists */}
 
-          {/* Seller Routes - Fixed authentication check */}
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
-            <Route index element={<Navigate to="product-list" replace />} />
+            <Route index element={<Navigate to="add-product" />} />
             <Route path="add-product" element={<AddProduct />} />
             <Route path="product-list" element={<ProductList />} />
             <Route path="orders" element={<Orders />} />

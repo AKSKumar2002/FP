@@ -2,21 +2,11 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
 
 const SellerLayout = () => {
-    const { axios, navigate, setIsSeller } = useAppContext();
 
-    // Check authentication on mount
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const sellerFlag = localStorage.getItem('isSeller');
+    const { axios, navigate } = useAppContext();
 
-        if (!token || sellerFlag !== 'true') {
-            setIsSeller(false);
-            navigate('/seller');
-        }
-    }, []);
 
     const sidebarLinks = [
         { name: "Add Product", path: "/seller", icon: assets.add_icon },
@@ -29,18 +19,15 @@ const SellerLayout = () => {
         try {
             const { data } = await axios.get('/api/seller/logout');
             if (data.success) {
-                toast.success(data.message);
-                localStorage.removeItem('token');
-                localStorage.removeItem('isSeller');
-                setIsSeller(false);
-                navigate('/');
+                toast.success(data.message)
+                navigate('/')
             } else {
-                toast.error(data.message);
+                toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message)
         }
-    };
+    }
 
     return (
         <>
@@ -67,15 +54,10 @@ const SellerLayout = () => {
                             <p className="md:block hidden text-center">{item.name}</p>
                         </NavLink>
                     ))}
-                    <button
-                        onClick={logout}
-                        className="w-full p-4 text-left text-red-600 hover:bg-red-50 transition mt-auto"
-                    >
-                        🚪 Logout
-                    </button>
                 </div>
                 <Outlet />
             </div>
+
         </>
     );
 };

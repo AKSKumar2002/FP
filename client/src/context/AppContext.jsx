@@ -4,14 +4,12 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://fp-mocha.vercel.app';
-
 const axiosInstance = axios.create({
-  baseURL: backendUrl,
+  baseURL:
+    import.meta.env.MODE === "production"
+      ? import.meta.env.VITE_BACKEND_URL
+      : "https://fp-mocha.vercel.app",
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json'
-  }
 });
 
 export const AppContext = createContext();
@@ -21,12 +19,7 @@ export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
-  const [isSeller, setIsSeller] = useState(() => {
-    // Check if seller is logged in on initial load
-    const token = localStorage.getItem('token');
-    const sellerFlag = localStorage.getItem('isSeller');
-    return token && sellerFlag === 'true';
-  });
+  const [isSeller, setIsSeller] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
@@ -36,7 +29,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchSeller = async () => {
     try {
-      const { data } = await axiosInstance.get("/api/seller/is-auth");
+      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/seller/is-auth");
       setIsSeller(data.success);
     } catch {
       setIsSeller(false);
@@ -45,7 +38,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const { data } = await axiosInstance.get("/api/user/is-auth");
+      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/user/is-auth");
       if (data.success) {
         setUser(data.user);
         setCartItems(data.user.cartItems || {});
@@ -56,7 +49,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const fetchCategories = async () => {
-    const { data } = await axiosInstance.get('/api/category/all');
+    const { data } = await axios.get('https://fp-mocha.vercel.app/api/category/all');
     if (data.success) {
       setCategories(data.categories);
     }
@@ -66,7 +59,7 @@ export const AppContextProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await axiosInstance.get("/api/product/list");
+      const { data } = await axiosInstance.get("https://fp-mocha.vercel.app/api/product/list");
       if (data.success) {
         setProducts(data.products);
       } else {
@@ -134,7 +127,7 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     const updateCart = async () => {
       try {
-        const { data } = await axiosInstance.post("/api/cart/update", {
+        const { data } = await axiosInstance.post("https://fp-mocha.vercel.app/api/cart/update", {
           userId: user._id,
           cartItems,
         });
@@ -147,18 +140,6 @@ export const AppContextProvider = ({ children }) => {
     };
     if (user) updateCart();
   }, [cartItems]);
-
-  // Check authentication on mount
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const sellerFlag = localStorage.getItem('isSeller');
-    
-    if (token && sellerFlag === 'true') {
-      setIsSeller(true);
-    } else {
-      setIsSeller(false);
-    }
-  }, []);
 
   const value = {
     navigate,
