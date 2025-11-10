@@ -52,7 +52,7 @@ const Contact = () => {
       >
         <div className="grid md:grid-cols-2 gap-10">
           <div className="space-y-5">
-            <h2 className="text-4xl font-bold text-green-700 dark:text-green-300">Get in Touch</h2>
+            <h2 className="text-4xl font-bold text-green-600 dark:text-green-310">Get in Touch</h2>
             <p>Reach us directly by filling the form or visit us using the map below.</p>
             <div>
               <h4 className="font-semibold">Address:</h4>
@@ -87,7 +87,7 @@ const Contact = () => {
                     value={formData[field]}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/80 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-white/70 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/80 shadow-lg placeholder:text-gray-600 text-gray-800"
                   />
                 ) : (
                   <textarea
@@ -97,7 +97,7 @@ const Contact = () => {
                     value={formData[field]}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-white/80 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-4 py-3 bg-white/70 backdrop-blur-md border border-white/70 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/80 shadow-lg placeholder:text-gray-600 text-gray-800"
                   />
                 )}
               </motion.div>
