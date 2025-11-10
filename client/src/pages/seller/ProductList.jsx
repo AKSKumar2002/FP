@@ -10,6 +10,67 @@ const ProductList = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Bundle packages', 'Dairy products', 'Greens', 'Grocery', 'Agro']);
 
+    const [draggedItem, setDraggedItem] = useState(null);
+    const [localProducts, setLocalProducts] = useState([]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        setLocalProducts(products);
+    }, [products]);
+
+    const handleDragStart = (e, index) => {
+        setDraggedItem(index);
+        e.dataTransfer.effectAllowed = 'move';
+        e.currentTarget.style.opacity = '0.4';
+    };
+
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        if (draggedItem === null || draggedItem === index) return;
+
+        const newProducts = [...localProducts];
+        const draggedProduct = newProducts[draggedItem];
+        
+        newProducts.splice(draggedItem, 1);
+        newProducts.splice(index, 0, draggedProduct);
+        
+        setDraggedItem(index);
+        setLocalProducts(newProducts);
+    };
+
+    const handleDragEnd = async (e) => {
+        e.currentTarget.style.opacity = '1';
+        
+        const productOrders = localProducts.map((product, index) => ({
+            id: product._id,
+            displayOrder: index
+        }));
+
+        try {
+            const { data } = await axios.put('/api/product/reorder', { productOrders });
+            if (data.success) {
+                toast.success('Product order updated successfully');
+                fetchProducts();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error('Error saving order:', error);
+            toast.error('Failed to save product order');
+        }
+
+        setDraggedItem(null);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+    };
+
     const handleEdit = (product) => {
         setEditingProduct({
             ...product,
@@ -111,8 +172,8 @@ const ProductList = () => {
 
     // Filter products based on selected category
     const filteredProducts = selectedCategory === 'All' 
-        ? products 
-        : products.filter(product => {
+        ? localProducts 
+        : localProducts.filter(product => {
             const categoryName = product.category?.name?.toLowerCase() || '';
             const selectedLower = selectedCategory.toLowerCase();
             return categoryName.includes(selectedLower) || categoryName === selectedLower;
@@ -190,10 +251,28 @@ const ProductList = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredProducts.map((product) => (
-                                        <tr key={product._id} className="hover:bg-gray-50 transition-colors">
+                                    filteredProducts.map((product, index) => (
+                                        <tr 
+                                            key={product._id} 
+                                            draggable={true}
+                                            onDragStart={(e) => handleDragStart(e, index)}
+                                            onDragOver={(e) => handleDragOver(e, index)}
+                                            onDragEnd={handleDragEnd}
+                                            onDrop={handleDrop}
+                                            className="hover:bg-gray-50 transition-colors"
+                                            style={{
+                                                cursor: 'grab',
+                                                opacity: draggedItem === index ? 0.5 : 1,
+                                                backgroundColor: draggedItem === index ? '#f0fdf4' : 'transparent'
+                                            }}
+                                        >
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center space-x-4">
+                                                    <div className="text-gray-400 hover:text-gray-600 cursor-grab" title="Drag to reorder">
+                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
+                                                        </svg>
+                                                    </div>
                                                     <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
                                                         <img 
                                                             src={product.image[0]} 

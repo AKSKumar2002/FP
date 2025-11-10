@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
 import ProductCard from '../components/ProductCard'
+import './AllProducts.css'; // Import CSS file
 
 const AllProducts = () => {
 
     const {products, categories } = useAppContext()
     const [filteredProducts, setFilteredProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All")
+    const [draggedIndex, setDraggedIndex] = useState(null);
 
     useEffect(()=>{
         if (selectedCategory === "All") {
@@ -19,6 +21,45 @@ const AllProducts = () => {
             );
           }
     },[selectedCategory, products])
+
+    const handleDragStart = (index) => {
+        setDraggedIndex(index);
+      };
+    
+      const handleDragEnter = (index) => {
+        if (draggedIndex === null || draggedIndex === index) return;
+    
+        const newProducts = [...products];
+        const draggedItem = newProducts[draggedIndex];
+        
+        newProducts.splice(draggedIndex, 1);
+        newProducts.splice(index, 0, draggedItem);
+        
+        setDraggedIndex(index);
+        setProducts(newProducts);
+      };
+    
+      const handleDragEnd = async () => {
+        if (draggedIndex === null) return;
+    
+        const productOrders = products.map((product, index) => ({
+          id: product._id,
+          displayOrder: index + 1
+        }));
+    
+        try {
+          await fetch('/api/products/reorder', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productOrders })
+          });
+          console.log('Order saved successfully');
+        } catch (error) {
+          console.error('Error saving order:', error);
+        }
+    
+        setDraggedIndex(null);
+      };
 
   return (
     <div className="mt-11">
@@ -77,8 +118,20 @@ const AllProducts = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product._id} product={product} />
+          {filteredProducts.map((product, index) => (
+            <div
+              key={product._id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => e.preventDefault()}
+              className={`${
+                draggedIndex === index ? 'dragging' : ''
+              }`}
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       )}

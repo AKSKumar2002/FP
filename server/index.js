@@ -1,10 +1,11 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
 const app = express();
 
 // Import routes
-const userRoutes = require('./routes/userRoutes');
+import userRoutes from './routes/userRoutes.js';
+import productRoute from './routes/productRoute.js';
 
 // Middleware
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes - Make sure this line exists!
 app.use('/api/user', userRoutes);
+app.use('/api/product', productRoute);
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase', {
@@ -35,4 +37,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;
