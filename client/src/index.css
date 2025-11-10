@@ -25,7 +25,7 @@
 }
 
 .animate-spin-slower {
-  animation: spin-slower 2.5s linear infinite;
+  animation: spin-slower 2s linear infinite;
 }
 
 @keyframes floatLeaf {
