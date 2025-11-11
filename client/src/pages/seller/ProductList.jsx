@@ -220,79 +220,137 @@ const ProductList = () => {
         });
 
     return (
-        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
+        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll bg-gradient-to-br from-gray-50 via-white to-gray-50">
             <div className="w-full p-6 md:p-10">
-                {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">All Products</h1>
-                    <p className="text-gray-500">Manage your product inventory and stock status</p>
+                {/* Header with enhanced design */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+                                Product Inventory
+                            </h1>
+                            <p className="text-gray-600 flex items-center gap-2">
+                                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Manage your product inventory and stock status
+                            </p>
+                        </div>
+                        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-gray-200">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium text-gray-700">{products.length} Products</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Category Filter Tabs */}
-                <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    {filterCategories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all ${
-                                selectedCategory === category
-                                    ? 'bg-primary text-white shadow-md'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                        >
-                            {category}
-                            <span className="ml-2 text-xs opacity-75">
-                                ({category === 'All' 
-                                    ? products.length 
-                                    : products.filter(p => {
-                                        const catName = p.category?.name?.toLowerCase() || '';
-                                        const filterLower = category.toLowerCase();
-                                        return catName.includes(filterLower) || catName === filterLower;
-                                    }).length})
-                            </span>
-                        </button>
-                    ))}
+                {/* Enhanced Category Filter Tabs */}
+                <div className="mb-8 relative">
+                    <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-hide">
+                        {filterCategories.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`relative px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all duration-300 transform hover:scale-105 ${
+                                    selectedCategory === category
+                                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/50'
+                                        : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
+                                }`}
+                            >
+                                <span className="relative z-10">{category}</span>
+                                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                                    selectedCategory === category
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-gray-100 text-gray-600'
+                                }`}>
+                                    {category === 'All' 
+                                        ? products.length 
+                                        : products.filter(p => {
+                                            const catName = p.category?.name?.toLowerCase() || '';
+                                            const filterLower = category.toLowerCase();
+                                            return catName.includes(filterLower) || catName === filterLower;
+                                        }).length}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Products Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                {/* Enhanced Products Table */}
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-max">
-                            <thead className="bg-gray-50 border-b border-gray-200">
+                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-green-500">
                                 <tr>
-                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-16">
-                                        S.No
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-20">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                            </svg>
+                                            No.
+                                        </div>
                                     </th>
-                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-24">
-                                        Order
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-28">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                            </svg>
+                                            Reorder
+                                        </div>
                                     </th>
-                                    <th className="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">
-                                        Product
+                                    <th className="px-6 py-5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider min-w-[250px]">
+                                        <div className="flex items-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                            </svg>
+                                            Product Details
+                                        </div>
                                     </th>
-                                    <th className="px-3 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-                                        Category
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                            Category
+                                        </div>
                                     </th>
-                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-20">
-                                        Best
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                            </svg>
+                                            Featured
+                                        </div>
                                     </th>
-                                    <th className="px-3 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-                                        Stock
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Availability
+                                        </div>
                                     </th>
-                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
-                                        Actions
+                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
+                                        <div className="flex items-center justify-center gap-1">
+                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                                            </svg>
+                                            Actions
+                                        </div>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200">
+                            <tbody className="divide-y divide-gray-100">
                                 {filteredProducts.length === 0 ? (
                                     <tr>
-                                        <td colSpan="7" className="px-6 py-12 text-center">
+                                        <td colSpan="7" className="px-6 py-16 text-center">
                                             <div className="flex flex-col items-center justify-center text-gray-400">
-                                                <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                                </svg>
-                                                <p className="text-lg font-medium mb-1">No products yet</p>
-                                                <p className="text-sm">Add your first product to get started</p>
+                                                <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-4">
+                                                    <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-xl font-semibold text-gray-600 mb-2">No products found</p>
+                                                <p className="text-sm text-gray-500">Add your first product to get started with your inventory</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -305,133 +363,134 @@ const ProductList = () => {
                                             onDragOver={(e) => handleDragOver(e, index)}
                                             onDragEnd={handleDragEnd}
                                             onDrop={handleDrop}
-                                            className="hover:bg-gray-50 transition-colors"
+                                            className="hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200 group"
                                             style={{
                                                 cursor: 'grab',
                                                 opacity: draggedItem === index ? 0.5 : 1,
                                                 backgroundColor: draggedItem === index ? '#f0fdf4' : 'transparent'
                                             }}
                                         >
-                                            <td className="px-3 py-4 text-center">
-                                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                                            <td className="px-4 py-5 text-center">
+                                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white font-bold text-sm shadow-md">
                                                     {index + 1}
                                                 </span>
                                             </td>
-                                            <td className="px-3 py-4">
-                                                <div className="flex items-center justify-center gap-1">
+                                            <td className="px-4 py-5">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => moveProductUp(index)}
                                                         disabled={index === 0}
-                                                        className={`p-1.5 rounded transition-colors ${
+                                                        className={`p-2 rounded-lg transition-all duration-200 ${
                                                             index === 0
-                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                                : 'bg-green-500 text-white hover:bg-green-600'
+                                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                                : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
                                                         }`}
                                                         title="Move up"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
                                                         </svg>
                                                     </button>
                                                     <button
                                                         onClick={() => moveProductDown(index)}
                                                         disabled={index === filteredProducts.length - 1}
-                                                        className={`p-1.5 rounded transition-colors ${
+                                                        className={`p-2 rounded-lg transition-all duration-200 ${
                                                             index === filteredProducts.length - 1
-                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                                : 'bg-green-500 text-white hover:bg-green-600'
+                                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                                : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
                                                         }`}
                                                         title="Move down"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                                                         </svg>
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-4">
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="text-gray-400 hover:text-gray-600 cursor-grab flex-shrink-0" title="Drag to reorder">
-                                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <td className="px-6 py-5">
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="text-gray-400 hover:text-green-600 cursor-grab flex-shrink-0 transition-colors" title="Drag to reorder">
+                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                             <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
                                                         </svg>
                                                     </div>
-                                                    <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
+                                                    <div className="relative flex-shrink-0 w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border-2 border-gray-200 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                                                         <img 
                                                             src={product.image[0]} 
                                                             alt={product.name}
-                                                            className="w-full h-full object-cover"
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                         />
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                                        <p className="text-sm font-bold text-gray-900 truncate group-hover:text-green-600 transition-colors">
                                                             {product.name}
                                                         </p>
-                                                        <p className="text-xs text-gray-500 mt-0.5">
-                                                            {product.variants?.length || 0} variant(s)
-                                                        </p>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700">
+                                                                {product.variants?.length || 0} variants
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-3 py-4">
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                            <td className="px-4 py-5 text-center">
+                                                <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm">
                                                     {product.category?.name || 'Uncategorized'}
                                                 </span>
                                             </td>
-                                            <td className="px-3 py-4 text-center">
+                                            <td className="px-4 py-5 text-center">
                                                 <button
                                                     onClick={() => toggleBestSeller(product._id, !product.isBestSeller)}
-                                                    className="p-1.5 hover:bg-yellow-50 rounded-lg transition-colors"
+                                                    className={`p-2.5 rounded-xl transition-all duration-200 transform hover:scale-110 active:scale-95 ${
+                                                        product.isBestSeller 
+                                                            ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/50' 
+                                                            : 'bg-gray-100 hover:bg-gray-200'
+                                                    }`}
                                                     title={product.isBestSeller ? "Remove from Best Sellers" : "Add to Best Sellers"}
                                                 >
                                                     <svg 
-                                                        className={`w-5 h-5 ${product.isBestSeller ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                                                        fill={product.isBestSeller ? "currentColor" : "none"}
-                                                        stroke="currentColor" 
+                                                        className={`w-5 h-5 ${product.isBestSeller ? 'text-white' : 'text-gray-400'}`}
+                                                        fill="currentColor"
                                                         viewBox="0 0 24 24"
                                                     >
-                                                        <path 
-                                                            strokeLinecap="round" 
-                                                            strokeLinejoin="round" 
-                                                            strokeWidth={2} 
-                                                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" 
-                                                        />
+                                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                                     </svg>
                                                 </button>
                                             </td>
-                                            <td className="px-3 py-4">
-                                                <label className="relative inline-flex items-center cursor-pointer">
+                                            <td className="px-4 py-5">
+                                                <label className="relative inline-flex items-center cursor-pointer group/toggle">
                                                     <input
                                                         type="checkbox"
                                                         checked={product.inStock}
                                                         onChange={() => toggleStock(product._id, !product.inStock)}
                                                         className="sr-only peer"
                                                     />
-                                                    <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-primary transition-colors duration-200 relative">
-                                                        <span className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
+                                                    <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-emerald-600 transition-all duration-300 relative shadow-inner">
+                                                        <span className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 ease-in-out peer-checked:translate-x-5 shadow-md"></span>
                                                     </div>
-                                                    <span className="ml-2 text-xs font-medium text-gray-700">
-                                                        {product.inStock ? 'In' : 'Out'}
+                                                    <span className={`ml-3 text-xs font-bold ${product.inStock ? 'text-green-600' : 'text-gray-500'}`}>
+                                                        {product.inStock ? '● In Stock' : '○ Out'}
                                                     </span>
                                                 </label>
                                             </td>
-                                            <td className="px-3 py-4">
-                                                <div className="flex items-center justify-center gap-1">
+                                            <td className="px-4 py-5">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => handleEdit(product)}
-                                                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
-                                                        title="Edit"
+                                                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 hover:text-white rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                                                        title="Edit Product"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                         </svg>
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(product._id)}
-                                                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                                                        title="Delete"
+                                                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-600 bg-red-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
+                                                        title="Delete Product"
                                                     >
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
                                                     </button>
@@ -445,31 +504,40 @@ const ProductList = () => {
                     </div>
                 </div>
 
-                {/* Edit Product Modal */}
+                {/* Enhanced Edit Product Modal - keeping existing structure with better styling */}
                 {isEditModalOpen && editingProduct && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-                            {/* Modal Header */}
-                            <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-gray-50">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-gray-800">Edit Product</h2>
-                                    <p className="text-sm text-gray-500 mt-1">Update product information and variants</p>
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn">
+                        <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+                            {/* Modal Header - Enhanced */}
+                            <div className="px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                                            Edit Product
+                                        </h2>
+                                        <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Update product information and variants
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setIsEditModalOpen(false);
+                                            setEditingProduct(null);
+                                        }}
+                                        className="p-2.5 hover:bg-red-100 rounded-xl transition-all duration-200 group"
+                                    >
+                                        <svg className="w-6 h-6 text-gray-500 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        setIsEditModalOpen(false);
-                                        setEditingProduct(null);
-                                    }}
-                                    className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-                                >
-                                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
                             </div>
 
-                            {/* Modal Body */}
-                            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+                            {/* Modal Body - keep existing content structure */}
+                            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
                                 {/* Product Name */}
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -662,20 +730,20 @@ const ProductList = () => {
                                 </div>
                             </div>
 
-                            {/* Modal Footer */}
-                            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex gap-3">
+                            {/* Modal Footer - Enhanced */}
+                            <div className="px-8 py-5 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 flex gap-4">
                                 <button
                                     onClick={handleEditSubmit}
-                                    className="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-primary-dull transition-colors font-semibold shadow-sm hover:shadow-md"
+                                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3.5 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 font-bold shadow-lg shadow-green-500/30 hover:shadow-xl hover:scale-105 active:scale-95"
                                 >
-                                    Save Changes
+                                    💾 Save Changes
                                 </button>
                                 <button
                                     onClick={() => {
                                         setIsEditModalOpen(false);
                                         setEditingProduct(null);
                                     }}
-                                    className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+                                    className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-100 transition-all duration-200 font-bold hover:scale-105 active:scale-95"
                                 >
                                     Cancel
                                 </button>
