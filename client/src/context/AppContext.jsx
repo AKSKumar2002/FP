@@ -21,7 +21,7 @@ export const AppContextProvider = ({ children }) => {
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
-  const [searchQuery, setSearchQuery] = useState({});
+  const [searchQuery, setSearchQuery] = useState(''); // ✅ Initialize as empty string
   const [categories, setCategories] = useState([]);
   const [animateCart, setAnimateCart] = useState(false);
   const [sellerToken, setSellerToken] = useState(localStorage.getItem('sellerToken') || '');

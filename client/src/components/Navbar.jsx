@@ -10,6 +10,7 @@ import { faHome, faBoxOpen, faInfoCircle, faPhone, faShoppingBag, faSignInAlt, f
 const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState(localStorage.getItem('siteMode') || 'B2C')
+  const [showSearchResults, setShowSearchResults] = useState(false)
 
   const {
     user,
@@ -21,6 +22,8 @@ const Navbar = () => {
     getCartCount,
     axios,
     animateCart,
+    products,
+    currency,
   } = useAppContext()
 
   const logout = async () => {
@@ -49,10 +52,36 @@ const Navbar = () => {
     else navigate('/')
   }
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value
+    setSearchQuery(value)
+    setShowSearchResults(value.length > 0)
+  }
+
+  const handleSearchResultClick = (product) => {
+    setSearchQuery('')
+    setShowSearchResults(false)
+    navigate(`/products/${product.category?.name?.toLowerCase()}/${product._id}`)
+    window.scrollTo(0, 0)
+  }
+
+  // ✅ Fix: Ensure searchQuery is always a string and handle the filter safely
+  const filteredSearchResults = products
+    .filter(product => {
+      if (!product.inStock) return false;
+      
+      const query = String(searchQuery || '').toLowerCase();
+      const productName = String(product.name || '').toLowerCase();
+      
+      return productName.includes(query);
+    })
+    .slice(0, 5)
+
   useEffect(() => {
-    if (searchQuery.length > 0) {
-      navigate('/products')
-    }
+    // Remove the auto-navigation effect
+    // if (searchQuery.length > 0) {
+    //   navigate('/products')
+    // }
   }, [searchQuery])
 
   return (
@@ -74,9 +103,58 @@ const Navbar = () => {
         <NavLink to='/About' className="hover:scale-110 hover:text-primary transition duration-200">About</NavLink>
         <NavLink to='/Contact' className="hover:scale-110 hover:text-primary transition duration-200">Contact Us</NavLink>
 
-        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-2 py-1 rounded-full bg-white/50 backdrop-blur">
-          <input onChange={(e) => setSearchQuery(e.target.value)} className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black" type="text" placeholder="Search products" />
+        <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-2 py-1 rounded-full bg-white/50 backdrop-blur relative">
+          <input 
+            onChange={handleSearchChange} 
+            value={searchQuery || ''} // ✅ Ensure it's always a string
+            onFocus={() => (searchQuery || '').length > 0 && setShowSearchResults(true)}
+            onBlur={() => setTimeout(() => setShowSearchResults(false), 300)} // ✅ Increased delay to 300ms
+            className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black" 
+            type="text" 
+            placeholder="Search products" 
+          />
           <img src={assets.search_icon} alt='search' className='w-4 h-4 opacity-70' />
+
+          {/* Search Results Dropdown */}
+          {showSearchResults && filteredSearchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-[60] max-h-96 overflow-y-auto">
+              {filteredSearchResults.map((product) => (
+                <div
+                  key={product._id}
+                  onMouseDown={(e) => e.preventDefault()} // ✅ Prevent blur from firing
+                  onClick={() => handleSearchResultClick(product)}
+                  className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                >
+                  <img 
+                    src={product.image[0]} 
+                    alt={product.name}
+                    className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {product.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {product.category?.name}
+                    </p>
+                    <p className="text-xs text-primary font-medium">
+                      {currency}{product.variants[0].offerPrice}
+                    </p>
+                  </div>
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* No Results Message */}
+          {showSearchResults && (searchQuery || '').length > 0 && filteredSearchResults.length === 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-[60] p-4 text-center">
+              <p className="text-sm text-gray-500">No products found for "{searchQuery}"</p>
+            </div>
+          )}
         </div>
 
         <div onClick={() => navigate("/cart")} className="relative cursor-pointer">
