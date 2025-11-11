@@ -93,12 +93,18 @@ const Navbar = () => {
 
         {!user ? (
           <button onClick={() => setShowUserLogin(true)} className="cursor-pointer px-6 py-1.5 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm">
-            Login
+            Login / Signup
           </button>
         ) : (
-          <div className='relative group'>
-            <img src={assets.profile_icon} className='w-8' alt="profile" />
-            <ul className='hidden group-hover:block absolute top-8 right-0 bg-white shadow border border-gray-200 py-2 w-28 rounded-md text-sm z-40 text-black'>
+          <div className='relative group flex items-center gap-3'>
+            {/* ✅ Display User Name */}
+            <span className="hidden md:block text-sm font-medium text-gray-700">
+              Hi, <span className="text-primary font-semibold">{user.name}</span>
+            </span>
+            
+            <img src={assets.profile_icon} className='w-8 cursor-pointer' alt="profile" />
+            
+            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2 w-32 rounded-md text-sm z-40 text-black'>
               <li onClick={() => navigate("my-orders")} className='p-1 pl-3 hover:bg-primary/10 cursor-pointer'>My Orders</li>
               <li onClick={logout} className='p-1 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
             </ul>
@@ -125,6 +131,14 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
+          {/* ✅ Show user name in mobile menu */}
+          {user && (
+            <div className="px-4 py-2 bg-primary/10 rounded-lg">
+              <p className="text-sm text-gray-600">Logged in as</p>
+              <p className="font-semibold text-primary">{user.name}</p>
+            </div>
+          )}
+          
           <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faHome} className="w-4 h-4" />
             Home
@@ -156,7 +170,7 @@ const Navbar = () => {
               className="flex items-center gap-2 cursor-pointer px-5 py-1.5 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm"
             >
               <FontAwesomeIcon icon={faSignInAlt} className="w-4 h-4" />
-              Login
+              Login / Signup
             </button>
           ) : (
             <button

@@ -9,7 +9,7 @@ import Details from '../components/VoiceOfTrust'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
-  const { products, currency, addToCart } = useAppContext();
+  const { products, currency, addToCart, user, setShowUserLogin } = useAppContext();
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -53,6 +53,10 @@ const Home = () => {
   };
 
   const handleAddToCart = () => {
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     if (selectedProduct && selectedVariant) {
       const variantIndex = selectedProduct.variants.indexOf(selectedVariant);
       addToCart(`${selectedProduct._id}|${variantIndex}`);
@@ -61,6 +65,10 @@ const Home = () => {
   };
 
   const handleBuyNow = () => {
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     if (selectedProduct && selectedVariant) {
       const variantIndex = selectedProduct.variants.indexOf(selectedVariant);
       addToCart(`${selectedProduct._id}|${variantIndex}`);
@@ -71,12 +79,20 @@ const Home = () => {
 
   const handleQuickAddToCart = (e, product) => {
     e.stopPropagation();
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     const variantIndex = 0;
     addToCart(`${product._id}|${variantIndex}`);
   };
 
   const handleQuickBuyNow = (e, product) => {
     e.stopPropagation();
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     const variantIndex = 0;
     addToCart(`${product._id}|${variantIndex}`);
     document.body.style.overflow = 'unset';

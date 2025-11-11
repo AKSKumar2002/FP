@@ -5,7 +5,7 @@ import { assets } from "../assets/assets";
 import ProductCard from "../components/ProductCard";
 
 const ProductDetails = () => {
-    const { products, navigate, currency, addToCart } = useAppContext();
+    const { products, navigate, currency, addToCart, user, setShowUserLogin } = useAppContext();
     const { id } = useParams();
 
     const [relatedProducts, setRelatedProducts] = useState([]);
@@ -35,7 +35,7 @@ const ProductDetails = () => {
 
     return (
         product && selectedVariant && (
-            <div className="mt-11">
+            <div className='mt-11'>
                 <p>
                     <Link to={"/"}>Home</Link> /
                     <Link to={"/products"}> Products</Link> /
@@ -130,7 +130,13 @@ const ProductDetails = () => {
 
                         <div className="flex items-center mt-10 gap-4 text-base">
                             <button
-                                onClick={() => addToCart(`${product._id}|${product.variants.indexOf(selectedVariant)}`)}
+                                onClick={() => {
+                                    if (!user) {
+                                        setShowUserLogin(true);
+                                        return;
+                                    }
+                                    addToCart(`${product._id}|${product.variants.indexOf(selectedVariant)}`);
+                                }}
                                 className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
                             >
                                 Add to Cart
@@ -138,6 +144,10 @@ const ProductDetails = () => {
 
                             <button
                                 onClick={() => {
+                                    if (!user) {
+                                        setShowUserLogin(true);
+                                        return;
+                                    }
                                     addToCart(`${product._id}|${product.variants.indexOf(selectedVariant)}`);
                                     navigate("/cart");
                                 }}
@@ -145,7 +155,6 @@ const ProductDetails = () => {
                             >
                                 Buy now
                             </button>
-
                         </div>
                     </div>
                 </div>

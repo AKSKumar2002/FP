@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import './AllProducts.css';
 
 const AllProducts = () => {
-    const { products, categories, currency, addToCart } = useAppContext()
+    const { products, categories, currency, addToCart, user, setShowUserLogin } = useAppContext()
     const navigate = useNavigate()
     const [filteredProducts, setFilteredProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All")
@@ -40,15 +40,45 @@ const AllProducts = () => {
         document.body.style.overflow = 'unset'
     }
 
+    const handleQuickAddToCart = (e, product) => {
+        e.stopPropagation();
+        if (!user) {
+            setShowUserLogin(true);
+            return;
+        }
+        const variantIndex = 0;
+        addToCart(`${product._id}|${variantIndex}`);
+    };
+
+    const handleQuickBuyNow = (e, product) => {
+        e.stopPropagation();
+        if (!user) {
+            setShowUserLogin(true);
+            return;
+        }
+        const variantIndex = 0;
+        addToCart(`${product._id}|${variantIndex}`);
+        document.body.style.overflow = 'unset';
+        navigate('/cart');
+    };
+
     const handleAddToCart = () => {
+        if (!user) {
+            setShowUserLogin(true);
+            return;
+        }
         if (selectedProduct && selectedVariant) {
-            const variantIndex = selectedProduct.variants.indexOf(selectedVariant)
+            const variantIndex = selectedProduct.variants.indexOf(selectedVariant);
             addToCart(`${selectedProduct._id}|${variantIndex}`)
             closeProductPopup()
         }
     }
 
     const handleBuyNow = () => {
+        if (!user) {
+            setShowUserLogin(true);
+            return;
+        }
         if (selectedProduct && selectedVariant) {
             const variantIndex = selectedProduct.variants.indexOf(selectedVariant)
             addToCart(`${selectedProduct._id}|${variantIndex}`)
@@ -56,20 +86,6 @@ const AllProducts = () => {
             document.body.style.overflow = 'unset'
             navigate('/cart')
         }
-    }
-
-    const handleQuickAddToCart = (e, product) => {
-        e.stopPropagation(); // Prevent opening popup
-        const variantIndex = 0; // Default to first variant
-        addToCart(`${product._id}|${variantIndex}`)
-    }
-
-    const handleQuickBuyNow = (e, product) => {
-        e.stopPropagation(); // Prevent opening popup
-        const variantIndex = 0; // Default to first variant
-        addToCart(`${product._id}|${variantIndex}`)
-        document.body.style.overflow = 'unset'
-        navigate('/cart')
     }
 
     // ✅ Also reset overflow when component unmounts

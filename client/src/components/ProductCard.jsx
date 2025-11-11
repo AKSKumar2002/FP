@@ -34,7 +34,7 @@ function flyToCart(startEl, endEl, imageUrl) {
 }
 
 const ProductCard = ({ product }) => {
-  const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
+  const { addToCart, removeFromCart, cartItems, navigate, user, setShowUserLogin } = useAppContext();
 
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const selectedVariant = product.variants[selectedVariantIndex];
@@ -101,6 +101,10 @@ const ProductCard = ({ product }) => {
                 className="flex items-center justify-center gap-1 bg-primary/10 border border-primary/40 md:w-[80px] w-[64px] h-[34px] rounded"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (!user) {
+                    setShowUserLogin(true);
+                    return;
+                  }
                   const [productId, variantIndex] = cartKey.split('|');
                   addToCart(productId, Number(variantIndex));
                   flyToCart(e.currentTarget, document.querySelector('#cart-icon'), product.image[0]);

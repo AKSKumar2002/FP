@@ -172,12 +172,12 @@ const Login = () => {
     return (
         <div
             onClick={() => setShowUserLogin(false)}
-            className="fixed inset-0 z-30 flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto"
+            className="fixed inset-0 z-[100] flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto"
         >
             <form
                 onSubmit={isForgotPassword ? onResetPasswordHandler : (isSignUp ? onSignUpHandler : onLoginHandler)}
                 onClick={(e) => e.stopPropagation()}
-                className="flex flex-col gap-6 m-auto items-start p-6 py-6 min-w-[340px] sm:w-[420px] max-w-full rounded-xl shadow-2xl border border-gray-200 bg-white mt-12 mb-8 h-auto max-h-[90vh] overflow-y-auto"
+                className="flex flex-col gap-6 m-auto items-start p-6 py-6 min-w-[340px] sm:w-[420px] max-w-full rounded-xl shadow-2xl border border-gray-200 bg-white mt-12 mb-8 h-auto max-h-[90vh] overflow-y-auto relative z-[101]"
                 style={{
                     boxShadow: "0 8px 32px 0 rgba(60,60,60,0.18), 0 1.5px 8px 0 rgba(60,60,60,0.10)"
                 }}

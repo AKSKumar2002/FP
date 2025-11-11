@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const ProductCategory = () => {
-  const { products, categories, currency, addToCart } = useAppContext();
+  const { products, categories, currency, addToCart, user, setShowUserLogin } = useAppContext();
   const { category } = useParams();
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -33,6 +33,10 @@ const ProductCategory = () => {
   };
 
   const handleAddToCart = () => {
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     if (selectedProduct && selectedVariant) {
       const variantIndex = selectedProduct.variants.indexOf(selectedVariant);
       addToCart(`${selectedProduct._id}|${variantIndex}`);
@@ -41,6 +45,10 @@ const ProductCategory = () => {
   };
 
   const handleBuyNow = () => {
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     if (selectedProduct && selectedVariant) {
       const variantIndex = selectedProduct.variants.indexOf(selectedVariant);
       addToCart(`${selectedProduct._id}|${variantIndex}`);
@@ -51,12 +59,20 @@ const ProductCategory = () => {
 
   const handleQuickAddToCart = (e, product) => {
     e.stopPropagation();
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     const variantIndex = 0;
     addToCart(`${product._id}|${variantIndex}`);
   };
 
   const handleQuickBuyNow = (e, product) => {
     e.stopPropagation();
+    if (!user) {
+      setShowUserLogin(true);
+      return;
+    }
     const variantIndex = 0;
     addToCart(`${product._id}|${variantIndex}`);
     document.body.style.overflow = 'unset';
