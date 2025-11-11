@@ -71,6 +71,46 @@ const ProductList = () => {
         e.preventDefault();
     };
 
+    const moveProductUp = async (index) => {
+        if (index === 0) return; // Already at top
+        
+        const newProducts = [...localProducts];
+        [newProducts[index - 1], newProducts[index]] = [newProducts[index], newProducts[index - 1]];
+        setLocalProducts(newProducts);
+        
+        await saveProductOrder(newProducts);
+    };
+
+    const moveProductDown = async (index) => {
+        if (index === localProducts.length - 1) return; // Already at bottom
+        
+        const newProducts = [...localProducts];
+        [newProducts[index], newProducts[index + 1]] = [newProducts[index + 1], newProducts[index]];
+        setLocalProducts(newProducts);
+        
+        await saveProductOrder(newProducts);
+    };
+
+    const saveProductOrder = async (products) => {
+        const productOrders = products.map((product, index) => ({
+            id: product._id,
+            displayOrder: index
+        }));
+
+        try {
+            const { data } = await axios.put('/api/product/reorder', { productOrders });
+            if (data.success) {
+                toast.success('Product order updated successfully');
+                fetchProducts();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error('Error saving order:', error);
+            toast.error('Failed to save product order');
+        }
+    };
+
     const handleEdit = (product) => {
         setEditingProduct({
             ...product,
@@ -217,22 +257,28 @@ const ProductList = () => {
                 {/* Products Table */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full min-w-max">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-16">
+                                        S.No
+                                    </th>
+                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-24">
+                                        Order
+                                    </th>
+                                    <th className="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">
                                         Product
                                     </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="px-3 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
                                         Category
                                     </th>
-                                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                        Best Seller
+                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-20">
+                                        Best
                                     </th>
-                                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                        In Stock
+                                    <th className="px-3 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
+                                        Stock
                                     </th>
-                                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="px-3 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider w-32">
                                         Actions
                                     </th>
                                 </tr>
@@ -240,7 +286,7 @@ const ProductList = () => {
                             <tbody className="divide-y divide-gray-200">
                                 {filteredProducts.length === 0 ? (
                                     <tr>
-                                        <td colSpan="4" className="px-6 py-12 text-center">
+                                        <td colSpan="7" className="px-6 py-12 text-center">
                                             <div className="flex flex-col items-center justify-center text-gray-400">
                                                 <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -266,14 +312,51 @@ const ProductList = () => {
                                                 backgroundColor: draggedItem === index ? '#f0fdf4' : 'transparent'
                                             }}
                                         >
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center space-x-4">
-                                                    <div className="text-gray-400 hover:text-gray-600 cursor-grab" title="Drag to reorder">
-                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <td className="px-3 py-4 text-center">
+                                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
+                                                    {index + 1}
+                                                </span>
+                                            </td>
+                                            <td className="px-3 py-4">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <button
+                                                        onClick={() => moveProductUp(index)}
+                                                        disabled={index === 0}
+                                                        className={`p-1.5 rounded transition-colors ${
+                                                            index === 0
+                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                                                : 'bg-green-500 text-white hover:bg-green-600'
+                                                        }`}
+                                                        title="Move up"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => moveProductDown(index)}
+                                                        disabled={index === filteredProducts.length - 1}
+                                                        className={`p-1.5 rounded transition-colors ${
+                                                            index === filteredProducts.length - 1
+                                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                                                : 'bg-green-500 text-white hover:bg-green-600'
+                                                        }`}
+                                                        title="Move down"
+                                                    >
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="text-gray-400 hover:text-gray-600 cursor-grab flex-shrink-0" title="Drag to reorder">
+                                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                             <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
                                                         </svg>
                                                     </div>
-                                                    <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
+                                                    <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
                                                         <img 
                                                             src={product.image[0]} 
                                                             alt={product.name}
@@ -284,25 +367,25 @@ const ProductList = () => {
                                                         <p className="text-sm font-medium text-gray-900 truncate">
                                                             {product.name}
                                                         </p>
-                                                        <p className="text-xs text-gray-500 mt-1">
+                                                        <p className="text-xs text-gray-500 mt-0.5">
                                                             {product.variants?.length || 0} variant(s)
                                                         </p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                            <td className="px-3 py-4">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                                                     {product.category?.name || 'Uncategorized'}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-3 py-4 text-center">
                                                 <button
                                                     onClick={() => toggleBestSeller(product._id, !product.isBestSeller)}
-                                                    className="p-2 hover:bg-yellow-50 rounded-lg transition-colors"
+                                                    className="p-1.5 hover:bg-yellow-50 rounded-lg transition-colors"
                                                     title={product.isBestSeller ? "Remove from Best Sellers" : "Add to Best Sellers"}
                                                 >
                                                     <svg 
-                                                        className={`w-6 h-6 ${product.isBestSeller ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                                                        className={`w-5 h-5 ${product.isBestSeller ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
                                                         fill={product.isBestSeller ? "currentColor" : "none"}
                                                         stroke="currentColor" 
                                                         viewBox="0 0 24 24"
@@ -316,7 +399,7 @@ const ProductList = () => {
                                                     </svg>
                                                 </button>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-4">
                                                 <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
@@ -324,33 +407,33 @@ const ProductList = () => {
                                                         onChange={() => toggleStock(product._id, !product.inStock)}
                                                         className="sr-only peer"
                                                     />
-                                                    <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-primary transition-colors duration-200 relative">
-                                                        <span className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
+                                                    <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-primary transition-colors duration-200 relative">
+                                                        <span className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
                                                     </div>
-                                                    <span className="ml-3 text-sm font-medium text-gray-700">
-                                                        {product.inStock ? 'Available' : 'Out of Stock'}
+                                                    <span className="ml-2 text-xs font-medium text-gray-700">
+                                                        {product.inStock ? 'In' : 'Out'}
                                                     </span>
                                                 </label>
                                             </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2">
+                                            <td className="px-3 py-4">
+                                                <div className="flex items-center justify-center gap-1">
                                                     <button
                                                         onClick={() => handleEdit(product)}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                                        title="Edit"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                         </svg>
-                                                        Edit
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(product._id)}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                                                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                                                        title="Delete"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
-                                                        Delete
                                                     </button>
                                                 </div>
                                             </td>
