@@ -13,12 +13,19 @@ const ProductCategory = () => {
     (c) => c.name.toLowerCase() === category
   );
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.category &&
-      product.category.name.toLowerCase() === category &&
-      product.inStock
-  );
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.category &&
+        product.category.name.toLowerCase() === category &&
+        product.inStock
+    )
+    .sort((a, b) => {
+      // Sort by displayOrder, fallback to 999 if undefined
+      const orderA = a.displayOrder !== undefined ? a.displayOrder : 999;
+      const orderB = b.displayOrder !== undefined ? b.displayOrder : 999;
+      return orderA - orderB;
+    });
 
   const openProductPopup = (product) => {
     setSelectedProduct(product);
@@ -268,14 +275,16 @@ const ProductCategory = () => {
                   <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                     <ul className="space-y-1 text-sm text-gray-700">
                       {Array.isArray(selectedProduct.description) ? (
-                        selectedProduct.description.map((desc, idx) => (
-                          <li key={idx} className="flex items-start gap-2">
-                            <svg className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>{desc}</span>
-                          </li>
-                        ))
+                        selectedProduct.description
+                          .filter(desc => desc && desc.trim() !== "") // <-- Only render non-empty lines
+                          .map((desc, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <svg className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>{desc}</span>
+                            </li>
+                          ))
                       ) : (
                         <li className="flex items-start gap-2">
                           <svg className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
