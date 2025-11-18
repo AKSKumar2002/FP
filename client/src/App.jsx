@@ -30,6 +30,7 @@ import ProductList from './pages/seller/ProductList';
 import Orders from './pages/seller/Orders';
 import SellerCategories from './pages/seller/SellerCategories';
 import SetProductOrder from './pages/seller/SetProductOrder';
+import ResetPassword from './components/ResetPassword';
 
 const B2BPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-green-50 text-green-800 px-4 text-center">
@@ -157,6 +158,7 @@ const App = () => {
           <Route path="/return-policy" element={<ReturnRefundPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/login" element={<Login />} /> {/* Ensure this route exists */}
+          <Route path="/reset-password" element={<ResetPassword/>} /> {/* For password reset */}
 
           <Route path="/seller" element={isSeller ? <SellerLayout /> : <SellerLogin />}>
             <Route index element={<Navigate to="add-product" />} />

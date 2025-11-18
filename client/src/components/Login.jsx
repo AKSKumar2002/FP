@@ -62,17 +62,23 @@ const Login = () => {
         };
 
         try {
-            await emailjs.send(
-                'service_12lyrkq',
-                'template_lr1iwkq',
-                templateParams,
-                'oLMFFwhse8y8oWg3S'
-            );
-            toast.success('OTP sent successfully to your email!', {
+            // await emailjs.send(
+            //     'service_12lyrkq',
+            //     'template_lr1iwkq',
+            //     templateParams,
+            //     'oLMFFwhse8y8oWg3S'
+            // );
+
+
+
+
+            await axios.post('http://localhost:4000/api/user/forget-password', { email });
+            toast.success('Reset Link send successfully to your email!', {
                 duration: 10000,
             });
             setStep(2);
         } catch (error) {
+            console.log("testing wether the message coming or not",error)
             toast.error('Failed to send OTP. Please try again.');
         }
     };
@@ -197,7 +203,7 @@ const Login = () => {
                                     <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
                                 </div>
                                 <button type="button" onClick={sendForgotPasswordOtp} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Send OTP
+                                   Submit
                                 </button>
                                 <div className="w-full text-center mt-2">
                                     <button type="button" onClick={() => { setIsForgotPassword(false); setStep(1); }} className="text-gray-600">
