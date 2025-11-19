@@ -19,6 +19,7 @@ const Login = () => {
     const [password, setPassword] = React.useState("");
     const [confirmPassword, setConfirmPassword] = React.useState(""); // State for confirm password
     const [passwordVisible, setPasswordVisible] = React.useState(false); // State for toggling password visibility
+    const [showSuccessTick, setShowSuccessTick] = React.useState(false); // State for showing success tick
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -153,14 +154,18 @@ const Login = () => {
             });
 
             if (data.success) {
+                setShowSuccessTick(true); // Show tick
                 toast.success('Password reset successfully!');
-                setIsForgotPassword(false);
-                setIsSignUp(false);
-                setStep(1);
-                setEmail('');
-                setPassword('');
-                setConfirmPassword('');
-                setOtp('');
+                setTimeout(() => {
+                    setShowSuccessTick(false);
+                    setIsForgotPassword(false);
+                    setIsSignUp(false);
+                    setStep(1);
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setOtp('');
+                }, 1500); // Show tick for 1.5s
             } else {
                 toast.error(data.message);
             }
@@ -187,6 +192,24 @@ const Login = () => {
                         {isForgotPassword ? 'Reset Password' : (isSignUp ? 'User Sign Up' : 'User Login')}
                     </span>
                 </p>
+
+                {/* Success Tick Animation */}
+                {showSuccessTick && (
+                    <div className="w-full flex justify-center my-4">
+                        {/* Green circle with white tick */}
+                        <svg className="animate-flipIn" width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="32" fill="#4fbf8b"/>
+                            <polyline
+                                points="20,34 30,44 44,26"
+                                fill="none"
+                                stroke="#fff"
+                                strokeWidth="4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </div>
+                )}
 
                 {isForgotPassword ? (
                     <>
