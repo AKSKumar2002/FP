@@ -11,6 +11,9 @@ const Navbar = () => {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState(localStorage.getItem('siteMode') || 'B2C')
   const [showSearchResults, setShowSearchResults] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownFixed, setDropdownFixed] = useState(false);
+  const dropdownCloseTimeout = React.useRef(null);
 
   const {
     user,
@@ -65,7 +68,59 @@ const Navbar = () => {
     window.scrollTo(0, 0)
   }
 
-  // ✅ Fix: Ensure searchQuery is always a string and handle the filter safely
+  const handleProfileMouseEnter = () => {
+    if (dropdownCloseTimeout.current) {
+      clearTimeout(dropdownCloseTimeout.current);
+      dropdownCloseTimeout.current = null;
+    }
+    setDropdownOpen(true);
+  };
+
+  const handleProfileMouseLeave = () => {
+    if (!dropdownFixed) {
+      dropdownCloseTimeout.current = setTimeout(() => {
+        setDropdownOpen(false);
+      }, 180);
+    }
+  };
+
+  const handleProfileClick = () => {
+    if (dropdownCloseTimeout.current) {
+      clearTimeout(dropdownCloseTimeout.current);
+      dropdownCloseTimeout.current = null;
+    }
+    setDropdownOpen(true);
+    setDropdownFixed(true);
+  };
+
+  const closeDropdown = () => {
+    setDropdownOpen(false);
+    setDropdownFixed(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (dropdownCloseTimeout.current) {
+        clearTimeout(dropdownCloseTimeout.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        !event.target.closest('.profile-dropdown-trigger') &&
+        !event.target.closest('.profile-dropdown-menu')
+      ) {
+        closeDropdown();
+      }
+    };
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
+
   const filteredSearchResults = products
     .filter(product => {
       if (!product.inStock) return false;
@@ -106,22 +161,21 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-2 py-1 rounded-full bg-white/50 backdrop-blur relative">
           <input 
             onChange={handleSearchChange} 
-            value={searchQuery || ''} // ✅ Ensure it's always a string
+            value={searchQuery || ''} 
             onFocus={() => (searchQuery || '').length > 0 && setShowSearchResults(true)}
-            onBlur={() => setTimeout(() => setShowSearchResults(false), 300)} // ✅ Increased delay to 300ms
+            onBlur={() => setTimeout(() => setShowSearchResults(false), 300)} 
             className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black" 
             type="text" 
             placeholder="Search products" 
           />
           <img src={assets.search_icon} alt='search' className='w-4 h-4 opacity-70' />
 
-          {/* Search Results Dropdown */}
           {showSearchResults && filteredSearchResults.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-[60] max-h-96 overflow-y-auto">
               {filteredSearchResults.map((product) => (
                 <div
                   key={product._id}
-                  onMouseDown={(e) => e.preventDefault()} // ✅ Prevent blur from firing
+                  onMouseDown={(e) => e.preventDefault()} 
                   onClick={() => handleSearchResultClick(product)}
                   className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
                 >
@@ -149,7 +203,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* No Results Message */}
           {showSearchResults && (searchQuery || '').length > 0 && filteredSearchResults.length === 0 && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-[60] p-4 text-center">
               <p className="text-sm text-gray-500">No products found for "{searchQuery}"</p>
@@ -174,18 +227,55 @@ const Navbar = () => {
             Login / Signup
           </button>
         ) : (
-          <div className='relative group flex items-center gap-3'>
-            {/* ✅ Display User Name */}
-            <span className="hidden md:block text-sm font-medium text-gray-700">
-              Hi, <span className="text-primary font-semibold">{user.name}</span>
-            </span>
-            
-            <img src={assets.profile_icon} className='w-8 cursor-pointer' alt="profile" />
-            
-            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2 w-32 rounded-md text-sm z-40 text-black'>
-              <li onClick={() => navigate("my-orders")} className='p-1 pl-3 hover:bg-primary/10 cursor-pointer'>My Orders</li>
-              <li onClick={logout} className='p-1 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
-            </ul>
+          <div className="relative flex items-center">
+            {/* Profile trigger */}
+            <div
+              className="profile-dropdown-trigger flex items-center cursor-pointer select-none"
+              onMouseEnter={handleProfileMouseEnter}
+              onMouseLeave={handleProfileMouseLeave}
+              onClick={handleProfileClick}
+              tabIndex={0}
+              style={{ minWidth: '120px' }}
+            >
+              <span className="hidden md:block text-sm font-medium text-gray-700">
+                Hi, <span className="text-primary font-semibold">{user.name}</span>
+              </span>
+              <img src={assets.profile_icon} className='w-8 h-8 cursor-pointer ml-2 rounded-full border border-gray-200 bg-white' alt="profile" />
+            </div>
+            {/* Dropdown menu */}
+            {dropdownOpen && (
+              <div
+                className="profile-dropdown-menu absolute right-0 top-[calc(100%+8px)] w-48 bg-white rounded-xl shadow-2xl z-[100] border border-gray-200 animate-fadeIn"
+                onMouseEnter={handleProfileMouseEnter}
+                onMouseLeave={handleProfileMouseLeave}
+                style={{
+                  minWidth: '180px',
+                  padding: '0.5rem 0',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                }}
+              >
+                <ul className='py-1 text-sm text-black'>
+                  <li
+                    onClick={() => {
+                      navigate("my-orders");
+                      closeDropdown();
+                    }}
+                    className='px-5 py-2 hover:bg-primary/10 cursor-pointer rounded transition'
+                  >
+                    My Orders
+                  </li>
+                  <li
+                    onClick={() => {
+                      logout();
+                      closeDropdown();
+                    }}
+                    className='px-5 py-2 hover:bg-primary/10 cursor-pointer rounded transition'
+                  >
+                    Logout
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -209,7 +299,6 @@ const Navbar = () => {
 
       {open && (
         <div className="md:hidden absolute top-[60px] left-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-lg py-4 px-4 flex flex-col gap-3 text-black rounded-b-xl text-sm">
-          {/* ✅ Show user name in mobile menu */}
           {user && (
             <div className="px-4 py-2 bg-primary/10 rounded-lg">
               <p className="text-sm text-gray-600">Logged in as</p>
