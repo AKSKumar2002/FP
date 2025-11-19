@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { useAppContext } from './context/AppContext';
+import axios from 'axios';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
