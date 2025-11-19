@@ -20,6 +20,7 @@ const Login = () => {
     const [confirmPassword, setConfirmPassword] = React.useState(""); // State for confirm password
     const [passwordVisible, setPasswordVisible] = React.useState(false); // State for toggling password visibility
     const [showSuccessTick, setShowSuccessTick] = React.useState(false); // State for showing success tick
+    const [showPopper, setShowPopper] = React.useState(false); // State for showing popper animation
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -155,9 +156,11 @@ const Login = () => {
 
             if (data.success) {
                 setShowSuccessTick(true); // Show tick
+                setShowPopper(true); // Show popper animation
                 toast.success('Password reset successfully!');
                 setTimeout(() => {
                     setShowSuccessTick(false);
+                    setShowPopper(false);
                     setIsForgotPassword(false);
                     setIsSignUp(false);
                     setStep(1);
@@ -165,7 +168,10 @@ const Login = () => {
                     setPassword('');
                     setConfirmPassword('');
                     setOtp('');
-                }, 1500); // Show tick for 1.5s
+                }, 1800); // Show tick & popper for 1.8s
+                setTimeout(() => {
+                    setShowUserLogin(false);
+                }, 2000); // Close modal after tick/popup animation
             } else {
                 toast.error(data.message);
             }
@@ -196,7 +202,7 @@ const Login = () => {
                 {/* Success Tick Animation */}
                 {showSuccessTick && (
                     <div className="w-full flex justify-center my-4">
-                        {/* Green circle with white tick */}
+                        {/* Green circle with animated tick */}
                         <svg className="animate-flipIn" width="64" height="64" viewBox="0 0 64 64" fill="none">
                             <circle cx="32" cy="32" r="32" fill="#4fbf8b"/>
                             <polyline
@@ -208,6 +214,26 @@ const Login = () => {
                                 strokeLinejoin="round"
                             />
                         </svg>
+                    </div>
+                )}
+
+                {/* Popper Animation */}
+                {showPopper && (
+                    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] animate-fadeIn">
+                        <div className="bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 font-semibold text-lg">
+                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                                <circle cx="14" cy="14" r="14" fill="#fff" opacity="0.2"/>
+                                <polyline
+                                    points="8,15 12,19 20,11"
+                                    fill="none"
+                                    stroke="#fff"
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            Password reset successfully!
+                        </div>
                     </div>
                 )}
 
