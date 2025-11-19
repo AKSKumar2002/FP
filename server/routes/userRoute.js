@@ -24,9 +24,9 @@ userRouter.post('/reset-password', async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
-    res.status(200).json({ message: 'Password has been reset successfully.' });
+    res.status(200).json({ success: true, message: 'Password has been reset successfully.' });
   } catch (err) {
-    res.status(500).json({ message: 'Server error. Please try again.' });
+    res.status(500).json({ success: false, message: 'Server error. Please try again.' });
   }
 });
 

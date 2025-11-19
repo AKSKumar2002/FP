@@ -44,6 +44,7 @@ const Login = () => {
                 'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
             );
             toast.success('OTP sent successfully to your email!', {
+                icon: '✅',
                 duration: 10000, // 10 seconds (adjust as needed)
             });
             setStep(2); // Move to the next step
@@ -71,6 +72,7 @@ const Login = () => {
                 'oLMFFwhse8y8oWg3S'
             );
             toast.success('OTP sent successfully to your email!', {
+                icon: '✅',
                 duration: 10000,
             });
             setStep(2);
@@ -81,7 +83,9 @@ const Login = () => {
 
     const verifyOtpHandler = () => {
         if (otp === generatedOtp) {
-            toast.success('OTP verified successfully!');
+            toast.success('OTP verified successfully!', {
+                icon: '✅',
+            });
             setOtpVerified(true);
             setStep(3); // Move to the next step
         } else {
@@ -100,7 +104,9 @@ const Login = () => {
             );
 
             if (data.success) {
-                toast.success('Account created successfully!');
+                toast.success('Account created successfully!', {
+                    icon: '✅',
+                });
                 navigate('/'); // Navigate to the main site
                 setUser(data.user);
                 setShowUserLogin(false);
@@ -123,7 +129,9 @@ const Login = () => {
             );
 
             if (data.success) {
-                toast.success('Logged in successfully!');
+                toast.success('Logged in successfully!', {
+                    icon: '✅',
+                });
                 navigate('/'); // Navigate to the main site
                 setUser(data.user);
                 setShowUserLogin(false);
@@ -151,13 +159,20 @@ const Login = () => {
         try {
             const { data } = await axios.post('/api/user/reset-password', {
                 email,
-                newPassword: password // <-- Change 'password' to 'newPassword'
+                newPassword: password
             });
 
             if (data.success) {
                 setShowSuccessTick(true); // Show tick
                 setShowPopper(true); // Show popper animation
-                toast.success('Password reset successfully!');
+                toast.success('Password reset successfully!', {
+                    icon: '✅', // Green checkmark
+                    style: {
+                        background: '#10B981', // Green background
+                        color: '#fff',
+                    },
+                    duration: 3000,
+                });
                 setTimeout(() => {
                     setShowSuccessTick(false);
                     setShowPopper(false);
@@ -168,10 +183,8 @@ const Login = () => {
                     setPassword('');
                     setConfirmPassword('');
                     setOtp('');
+                    setShowUserLogin(false); // Close modal immediately after animation
                 }, 1800); // Show tick & popper for 1.8s
-                setTimeout(() => {
-                    setShowUserLogin(false);
-                }, 2000); // Close modal after tick/popup animation
             } else {
                 toast.error(data.message);
             }

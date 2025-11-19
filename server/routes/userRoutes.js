@@ -23,7 +23,7 @@ router.post('/check-email', async (req, res) => {
 // Reset password
 router.post('/reset-password', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, newPassword } = req.body;
         
         console.log('Reset password request:', email); // Debug log
         
@@ -35,7 +35,7 @@ router.post('/reset-password', async (req, res) => {
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+        user.password = await bcrypt.hash(newPassword, salt);
         await user.save();
         
         console.log('Password reset successful for:', email); // Debug log
