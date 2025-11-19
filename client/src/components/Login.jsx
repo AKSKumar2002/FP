@@ -149,7 +149,7 @@ const Login = () => {
         try {
             const { data } = await axios.post('/api/user/reset-password', {
                 email,
-                password
+                newPassword: password // <-- Change 'password' to 'newPassword'
             });
 
             if (data.success) {
