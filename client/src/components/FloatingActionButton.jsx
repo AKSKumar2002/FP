@@ -5,7 +5,7 @@ const FloatingActionButton = ({ icon, onClick, badge = null }) => {
     return (
         <button
             onClick={onClick}
-            className="md:hidden fixed bottom-20 right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary-dull text-white rounded-full shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200 flex items-center justify-center z-40"
+            className="md:hidden fixed bottom-[100px] right-6 w-14 h-14 bg-gradient-to-br from-primary to-primary-dull text-white rounded-full shadow-2xl hover:shadow-3xl active:scale-95 transition-all duration-200 flex items-center justify-center z-40"
             style={{
                 boxShadow: '0 8px 24px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.1)'
             }}

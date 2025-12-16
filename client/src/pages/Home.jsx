@@ -221,7 +221,7 @@ const Home = () => {
       </div>
 
       {/* Enhanced Daily Freshies Section */}
-      <div className="relative mt-12 md:mt-20 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl md:rounded-3xl p-4 md:p-12 shadow-xl md:mx-0 mx-2">
+      <div className="relative mt-4 md:mt-20 bg-gradient-to-br from-green-50 to-emerald-50 md:rounded-3xl p-2 md:p-12 md:shadow-xl md:mx-0 mx-0">
         <div className="text-center mb-6 md:mb-10">
           <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2 md:mb-3">
             🌿 Daily Freshies
@@ -243,7 +243,7 @@ const Home = () => {
       </div>
 
       {/* Enhanced Newsletter Section */}
-      <div className="relative mt-12 md:mt-20 bg-gradient-to-r from-green-100 via-emerald-100 to-teal-100 rounded-2xl md:rounded-3xl p-4 md:p-12 shadow-xl md:mx-0 mx-2">
+      <div className="relative mt-8 md:mt-20 bg-gradient-to-r from-green-100 via-emerald-100 to-teal-100 md:rounded-3xl p-2 md:p-12 md:shadow-xl md:mx-0 mx-0">
         <NewsLetter />
       </div>
 
