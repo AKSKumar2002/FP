@@ -110,12 +110,12 @@ const Home = () => {
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-20 left-10 w-64 h-64 bg-green-200/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-emerald-200/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-teal-200/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-emerald-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-teal-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <MainBanner />
-      
+
       {/* Enhanced Categories Section */}
       <div className="relative mt-16">
         <div className="text-center mb-10">
@@ -127,7 +127,7 @@ const Home = () => {
         </div>
         <Categories />
       </div>
-      
+
       {/* ✅ Enhanced Best Sellers with Continuous Scroll & Flip Animation */}
       <div id="best-sellers" className="relative mt-20">
         <div className="text-center mb-10">
@@ -141,10 +141,10 @@ const Home = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mx-auto mt-3"></div>
         </div>
 
-        <div 
+        <div
           ref={scrollContainerRef}
           className="overflow-x-auto scrollbar-hide mt-10 pb-4"
-          style={{ 
+          style={{
             scrollBehavior: 'auto',
             WebkitOverflowScrolling: 'touch'
           }}
@@ -187,7 +187,7 @@ const Home = () => {
                         {product.variants[0].weight} {product.variants[0].unit}
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={(e) => handleQuickAddToCart(e, product)}
@@ -249,16 +249,16 @@ const Home = () => {
 
       {/* Floating Action Buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-40">
-        <a 
-          href="#best-sellers" 
+        <a
+          href="#best-sellers"
           className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
         >
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
         </a>
-        
-        <button 
+
+        <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
         >
@@ -271,11 +271,11 @@ const Home = () => {
       {/* ✅ Flip Animation Popup */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
-          <div 
+          <div
             className="absolute inset-0"
             onClick={closeProductPopup}
           ></div>
-          
+
           <div className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white rounded-lg animate-flipIn">
             <button
               onClick={closeProductPopup}
@@ -295,7 +295,7 @@ const Home = () => {
                     className="w-full h-80 object-cover"
                   />
                 </div>
-                
+
                 {selectedProduct.image.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
                     {selectedProduct.image.map((img, idx) => (
@@ -341,11 +341,10 @@ const Home = () => {
                       <button
                         key={idx}
                         onClick={() => setSelectedVariant(variant)}
-                        className={`p-3 rounded-lg font-medium transition border-2 ${
-                          selectedVariant === variant
-                            ? 'bg-primary text-white border-primary'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                        }`}
+                        className={`p-3 rounded-lg font-medium transition border-2 ${selectedVariant === variant
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
+                          }`}
                       >
                         <div className="text-base">{variant.weight} {variant.unit}</div>
                         <div className="text-sm">{currency}{variant.offerPrice}</div>
