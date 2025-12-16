@@ -147,7 +147,7 @@ const ProductCategory = () => {
                       {product.variants[0].weight} {product.variants[0].unit}
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={(e) => handleQuickAddToCart(e, product)}
@@ -174,7 +174,7 @@ const ProductCategory = () => {
             <p className='text-xl font-semibold text-gray-700 mb-2'>
               No products found in this category.
             </p>
-            <button 
+            <button
               onClick={() => navigate('/products')}
               className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dull transition"
             >
@@ -187,11 +187,11 @@ const ProductCategory = () => {
       {/* ✅ Flip Animation Popup */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
-          <div 
+          <div
             className="absolute inset-0"
             onClick={closeProductPopup}
           ></div>
-          
+
           <div className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white rounded-lg animate-flipIn">
             <button
               onClick={closeProductPopup}
@@ -211,7 +211,7 @@ const ProductCategory = () => {
                     className="w-full h-80 object-cover"
                   />
                 </div>
-                
+
                 {selectedProduct.image.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
                     {selectedProduct.image.map((img, idx) => (
@@ -257,11 +257,10 @@ const ProductCategory = () => {
                       <button
                         key={idx}
                         onClick={() => setSelectedVariant(variant)}
-                        className={`p-3 rounded-lg font-medium transition border-2 ${
-                          selectedVariant === variant
+                        className={`p-3 rounded-lg font-medium transition border-2 ${selectedVariant === variant
                             ? 'bg-primary text-white border-primary'
                             : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                        }`}
+                          }`}
                       >
                         <div className="text-base">{variant.weight} {variant.unit}</div>
                         <div className="text-sm">{currency}{variant.offerPrice}</div>
@@ -297,19 +296,21 @@ const ProductCategory = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={handleAddToCart}
-                    className="flex-1 py-3 bg-white border-2 border-primary text-primary font-semibold rounded-lg hover:bg-gray-50 transition"
-                  >
-                    🛒 Add to Cart
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    className="flex-1 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dull transition"
-                  >
-                    ⚡ Buy Now
-                  </button>
+                <div className="sticky bottom-0 -mx-6 -mb-6 p-4 bg-white border-t border-gray-100 md:static md:border-none md:p-0 md:mx-0 md:mb-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleAddToCart}
+                      className="flex-1 py-3 bg-white border-2 border-primary text-primary font-semibold rounded-lg hover:bg-gray-50 transition active:scale-95"
+                    >
+                      🛒 Add to Cart
+                    </button>
+                    <button
+                      onClick={handleBuyNow}
+                      className="flex-1 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dull transition active:scale-95 shadow-md"
+                    >
+                      ⚡ Buy Now
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
