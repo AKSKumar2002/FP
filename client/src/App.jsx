@@ -22,6 +22,7 @@ import Loading from './components/Loading';
 import FAQ from './pages/FAQ';
 import DeliveryInfo from './pages/DeliveryInfo';
 import ReturnRefundPolicy from './pages/ReturnRefundPolicy';
+import Blog from './pages/Blog';
 
 // Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
@@ -154,6 +155,7 @@ const App = () => {
           <Route path="/loader" element={<Loading />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/deliveryinfo" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnRefundPolicy />} />
           <Route path="/faq" element={<FAQ />} />

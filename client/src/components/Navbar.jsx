@@ -5,7 +5,7 @@ import { assets } from '../assets/assets'
 import { useAppContext } from '../context/AppContext'
 import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBoxOpen, faInfoCircle, faPhone, faShoppingBag, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faBoxOpen, faInfoCircle, faPhone, faShoppingBag, faSignInAlt, faSignOutAlt, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
@@ -124,10 +124,10 @@ const Navbar = () => {
   const filteredSearchResults = products
     .filter(product => {
       if (!product.inStock) return false;
-      
+
       const query = String(searchQuery || '').toLowerCase();
       const productName = String(product.name || '').toLowerCase();
-      
+
       return productName.includes(query);
     })
     .slice(0, 5)
@@ -156,17 +156,18 @@ const Navbar = () => {
         <NavLink to='/' className="hover:scale-110 hover:text-primary transition duration-200">Home</NavLink>
         <NavLink to='/products' className="hover:scale-110 hover:text-primary transition duration-200">All Products</NavLink>
         <NavLink to='/About' className="hover:scale-110 hover:text-primary transition duration-200">About</NavLink>
+        <NavLink to='/blog' className="hover:scale-110 hover:text-primary transition duration-200">Blog</NavLink>
         <NavLink to='/Contact' className="hover:scale-110 hover:text-primary transition duration-200">Contact Us</NavLink>
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-2 py-1 rounded-full bg-white/50 backdrop-blur relative">
-          <input 
-            onChange={handleSearchChange} 
-            value={searchQuery || ''} 
+          <input
+            onChange={handleSearchChange}
+            value={searchQuery || ''}
             onFocus={() => (searchQuery || '').length > 0 && setShowSearchResults(true)}
-            onBlur={() => setTimeout(() => setShowSearchResults(false), 300)} 
-            className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black" 
-            type="text" 
-            placeholder="Search products" 
+            onBlur={() => setTimeout(() => setShowSearchResults(false), 300)}
+            className="py-1 w-full bg-transparent outline-none placeholder-gray-500 text-black"
+            type="text"
+            placeholder="Search products"
           />
           <img src={assets.search_icon} alt='search' className='w-4 h-4 opacity-70' />
 
@@ -175,12 +176,12 @@ const Navbar = () => {
               {filteredSearchResults.map((product) => (
                 <div
                   key={product._id}
-                  onMouseDown={(e) => e.preventDefault()} 
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={() => handleSearchResultClick(product)}
                   className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
                 >
-                  <img 
-                    src={product.image[0]} 
+                  <img
+                    src={product.image[0]}
                     alt={product.name}
                     className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
                   />
@@ -305,7 +306,7 @@ const Navbar = () => {
               <p className="font-semibold text-primary">{user.name}</p>
             </div>
           )}
-          
+
           <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faHome} className="w-4 h-4" />
             Home
@@ -317,6 +318,10 @@ const Navbar = () => {
           <NavLink to="/About" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
             About
+          </NavLink>
+          <NavLink to="/blog" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
+            <FontAwesomeIcon icon={faNewspaper} className="w-4 h-4" />
+            Blog
           </NavLink>
           <NavLink to="/Contact" onClick={() => setOpen(false)} className="flex items-center gap-2 hover:scale-110 hover:text-primary transition duration-200">
             <FontAwesomeIcon icon={faPhone} className="w-4 h-4" />
