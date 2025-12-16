@@ -47,17 +47,17 @@ const Footer = () => {
             </div>
 
             <p className="py-4 text-center text-sm md:text-base text-gray-500/80">
-  Copyright {new Date().getFullYear()} ©{' '}
-  <a
-    href="https://quboin.vercel.app/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-green-600 hover:underline"
-  >
-    Qubo technologies
-  </a>{' '}
-  | Farmpick All Rights Reserved.
-</p>
+                Copyright {new Date().getFullYear()} ©{' '}
+                <a
+                    href="https://quboin.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-600 hover:underline"
+                >
+                    Qubo.company
+                </a>{' '}
+                | Farmpick All Rights Reserved.
+            </p>
 
         </div>
     );

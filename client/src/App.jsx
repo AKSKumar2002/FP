@@ -28,6 +28,7 @@ import Loading from './components/Loading';
 import FAQ from './pages/FAQ';
 import DeliveryInfo from './pages/DeliveryInfo';
 import ReturnRefundPolicy from './pages/ReturnRefundPolicy';
+import Settings from './pages/Settings';
 import Blog from './pages/Blog';
 
 // Seller Routes
@@ -177,13 +178,17 @@ const App = () => {
           <Route path="/products" element={<AllProducts />} />
           <Route path="/products/:category" element={<ProductCategory />} />
           <Route path="/products/:category/:id" element={<ProductDetails />} />
+
+          <Route path='/my-orders' element={<MyOrders />} />
+          <Route path='/blog' element={<Blog />} />
+          <Route path='/settings' element={<Settings />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/add-address" element={<AddAddress />} />
-          <Route path="/my-orders" element={<MyOrders />} />
+          {/* <Route path="/my-orders" element={<MyOrders />} /> This was duplicated, keeping the one above */}
           <Route path="/loader" element={<Loading />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
+          {/* <Route path="/blog" element={<Blog />} /> This was duplicated, keeping the one above */}
           <Route path="/deliveryinfo" element={<DeliveryInfo />} />
           <Route path="/return-policy" element={<ReturnRefundPolicy />} />
           <Route path="/faq" element={<FAQ />} />

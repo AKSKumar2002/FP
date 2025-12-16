@@ -380,19 +380,22 @@ const AllProducts = () => {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="flex gap-3 pt-2">
-                                    <button
-                                        onClick={handleAddToCart}
-                                        className="flex-1 py-3 bg-white border-2 border-primary text-primary font-semibold rounded-lg hover:bg-gray-50 transition"
-                                    >
-                                        🛒 Add to Cart
-                                    </button>
-                                    <button
-                                        onClick={handleBuyNow}
-                                        className="flex-1 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dull transition"
-                                    >
-                                        ⚡ Buy Now
-                                    </button>
+                                {/* Action Buttons - Sticky on Mobile */}
+                                <div className="sticky bottom-0 -mx-6 -mb-6 p-4 bg-white border-t border-gray-100 md:static md:border-none md:p-0 md:mx-0 md:mb-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none">
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={handleAddToCart}
+                                            className="flex-1 py-3 bg-white border-2 border-primary text-primary font-semibold rounded-lg hover:bg-gray-50 transition active:scale-95"
+                                        >
+                                            🛒 Add to Cart
+                                        </button>
+                                        <button
+                                            onClick={handleBuyNow}
+                                            className="flex-1 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dull transition active:scale-95 shadow-md"
+                                        >
+                                            ⚡ Buy Now
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -37,11 +37,11 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
             ></div>
 
             {/* Drawer */}
-            <div className="md:hidden fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl animate-slideInLeft overflow-y-auto">
+            <div className="md:hidden fixed top-0 left-0 h-[100dvh] w-80 max-w-[85vw] bg-white z-50 shadow-2xl animate-slideInLeft rounded-r-3xl flex flex-col">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-primary to-primary-dull text-white p-6 pb-8">
+                <div className="bg-gradient-to-r from-primary to-primary-dull text-white p-6 pb-8 rounded-tr-3xl flex-shrink-0">
                     <div className="flex items-center justify-between mb-6">
-                        <img src={assets.logo2} alt="Farm Pick" className="h-10" />
+                        <img src={assets.logo2} alt="Farm Pick" className="h-10 rounded-xl bg-white/90 px-2 py-1 shadow-sm" />
                         <button
                             onClick={onClose}
                             className="p-2 rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"
@@ -54,8 +54,8 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
 
                     {user ? (
                         <div className="flex items-center gap-3">
-                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl backdrop-blur-sm">
-                                👤
+                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl backdrop-blur-sm border-2 border-white/30">
+                                🧑‍🌾
                             </div>
                             <div>
                                 <p className="font-bold text-lg">Hi, {user.name}</p>
@@ -68,53 +68,102 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
                                 setShowUserLogin(true);
                                 onClose();
                             }}
-                            className="w-full bg-white/20 backdrop-blur-sm py-3 rounded-xl font-semibold hover:bg-white/30 transition-colors"
+                            className="w-full bg-white/20 backdrop-blur-sm py-3 rounded-xl font-semibold hover:bg-white/30 transition-colors border border-white/30 shadow-sm"
                         >
                             Login / Sign Up
                         </button>
                     )}
                 </div>
 
-                {/* Menu Items */}
-                <div className="py-4">
-                    {menuItems.map((item) => (
-                        <NavLink
-                            key={item.path}
-                            to={item.path}
-                            onClick={onClose}
-                            className={({ isActive }) =>
-                                `flex items-center gap-4 px-6 py-4 hover:bg-gray-100 active:bg-gray-200 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-semibold' : 'text-gray-700'
-                                }`
-                            }
-                        >
-                            <span className="text-2xl">{item.icon}</span>
-                            <span className="text-base">{item.label}</span>
-                        </NavLink>
-                    ))}
+                {/* Menu Items - Scrollable Area */}
+                <div className="py-4 flex-1 overflow-y-auto min-h-0">
+                    <NavLink
+                        to="/"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">🏡</span>
+                        <span className="text-base">Home</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/products"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">🧺</span>
+                        <span className="text-base">All Products</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/blog"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">📑</span>
+                        <span className="text-base">Blog</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/about"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">🌻</span>
+                        <span className="text-base">About Us</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/settings"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">⚙️</span>
+                        <span className="text-base">Settings</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/contact"
+                        onClick={onClose}
+                        className={({ isActive }) =>
+                            `flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors ${isActive ? 'bg-green-50 border-r-4 border-primary text-primary font-bold' : 'text-gray-700 font-medium'
+                            }`
+                        }
+                    >
+                        <span className="text-2xl drop-shadow-sm">📞</span>
+                        <span className="text-base">Contact Us</span>
+                    </NavLink>
 
                     {user && (
                         <>
-                            <div className="my-2 border-t border-gray-200"></div>
+                            <div className="my-2 border-t border-gray-100 mx-6"></div>
                             <NavLink
                                 to="/my-orders"
                                 onClick={onClose}
-                                className="flex items-center gap-4 px-6 py-4 hover:bg-gray-100 active:bg-gray-200 transition-colors text-gray-700"
+                                className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 active:bg-green-50 transition-colors text-gray-700 font-medium"
                             >
-                                <span className="text-2xl">📦</span>
+                                <span className="text-2xl drop-shadow-sm">📦</span>
                                 <span className="text-base">My Orders</span>
                             </NavLink>
                         </>
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gray-50 border-t border-gray-200">
-                    <p className="text-xs text-gray-500 text-center">
-                        Farm Pick © 2025
-                        <br />
-                        Fresh & Organic
-                    </p>
-                </div>
             </div>
 
             <style jsx>{`
