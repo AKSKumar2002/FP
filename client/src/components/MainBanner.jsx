@@ -88,7 +88,7 @@ const MainBanner = () => {
 
   return (
     <div
-      className='relative rounded-[2rem] md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-3 md:mx-0 mt-3 md:mt-8 select-none'
+      className='relative rounded-[2rem] md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-3 md:mx-0 mt-5 md:mt-8 select-none'
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
