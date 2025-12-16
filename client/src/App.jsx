@@ -172,7 +172,7 @@ const App = () => {
       <Toaster />
 
       {/* Add bottom padding on mobile for bottom nav */}
-      <div className={`${isSellerPath ? '' : 'px-0 md:px-16 lg:px-24 xl:px-32'} ${!isSellerPath ? 'pb-20 md:pb-0' : ''}`}>
+      <div className={`${isSellerPath ? '' : 'px-0 md:px-6 lg:px-10 xl:px-16'} ${!isSellerPath ? 'pb-20 md:pb-0' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/b2b" element={<B2BPage />} />

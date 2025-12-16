@@ -124,12 +124,7 @@ export const categories = [
     image: bottles_image,
     bgColor: "#F0F5DE",
   },
-  {
-    text: "Business",
-    path: "Instant",
-    image: maggi_image,
-    bgColor: "#E1F5EC",
-  },
+
   {
     text: "Dairy Products",
     path: "Dairy",

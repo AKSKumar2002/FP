@@ -88,7 +88,7 @@ const MainBanner = () => {
 
   return (
     <div
-      className='relative rounded-[2rem] md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-3 md:mx-0 mt-3 md:mt-0 select-none'
+      className='relative rounded-[2rem] md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-3 md:mx-0 mt-3 md:mt-8 select-none'
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -108,12 +108,12 @@ const MainBanner = () => {
               style={{ height: '350px' }}
             />
 
-            {/* Mobile Image - Optimized Aspect Ratio (4:5 or 1:1) */}
+            {/* Mobile Image - Full Width Landscape */}
             <img
               src={banner.imageSm}
               alt={`banner ${index + 1}`}
               className='w-full md:hidden object-cover'
-              style={{ aspectRatio: '1/1', maxHeight: '360px' }}
+              style={{ aspectRatio: '4/3', maxHeight: '280px' }}
             />
 
 

@@ -9,7 +9,7 @@ import Details from '../components/VoiceOfTrust'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
-  const { products, currency, addToCart, user, setShowUserLogin } = useAppContext();
+  const { products, currency, addToCart, user, setShowUserLogin, setSearch } = useAppContext();
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -106,7 +106,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className='mt-10 relative'>
+    <div className='relative bg-gray-50 min-h-screen pb-20'>
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-20 left-10 w-64 h-64 bg-green-200/20 rounded-full blur-3xl animate-pulse"></div>
@@ -114,22 +114,38 @@ const Home = () => {
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-teal-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
+      {/* Mobile Search Bar - Sticky */}
+      <div className="md:hidden px-3 pt-3 pb-2 bg-white sticky top-[48px] z-40 shadow-sm">
+        <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 border border-gray-200">
+          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search for products, brands and more"
+            className="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder-gray-400"
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('/products')}
+          />
+        </div>
+      </div>
+
       <MainBanner />
 
       {/* Enhanced Categories Section */}
-      <div className="relative mt-16">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
+      <div className="relative mt-2 md:mt-6">
+        <div className="text-center mb-4 md:mb-5">
+          <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2 md:mb-2">
             Shop by Category
           </h2>
-          <p className="text-gray-600 text-lg">Browse through our fresh selection</p>
-          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-3"></div>
+          <p className="text-gray-600 text-sm md:text-base">Browse through our fresh selection</p>
+          <div className="w-16 md:w-20 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-2 md:mt-2"></div>
         </div>
         <Categories />
       </div>
 
       {/* ✅ Enhanced Best Sellers with Continuous Scroll & Flip Animation */}
-      <div id="best-sellers" className="relative mt-20">
+      <div id="best-sellers" className="relative mt-32">
         <div className="text-center mb-10">
           <div className="inline-block relative">
             <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
@@ -249,14 +265,7 @@ const Home = () => {
 
       {/* Floating Action Buttons */}
       <div className="hidden md:flex fixed bottom-8 right-8 flex-col gap-4 z-40">
-        <a
-          href="#best-sellers"
-          className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        </a>
+
 
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
