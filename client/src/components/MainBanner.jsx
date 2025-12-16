@@ -59,8 +59,40 @@ const MainBanner = () => {
     setCurrentIndex((currentIndex + 1) % banners.length);
   };
 
+  // Touch handlers for manual swipe
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNext();
+    } else if (isRightSwipe) {
+      goToPrevious();
+    }
+  };
+
   return (
-    <div className='relative rounded-xl md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-4 md:mx-0 mt-4 md:mt-0'>
+    <div
+      className='relative rounded-[2rem] md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-3 md:mx-0 mt-3 md:mt-0 select-none'
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Banners Slider */}
       <div
         className="flex transition-transform duration-500 ease-out h-full"
