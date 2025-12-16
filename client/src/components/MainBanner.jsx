@@ -113,18 +113,18 @@ const MainBanner = () => {
               src={banner.imageSm}
               alt={`banner ${index + 1}`}
               className='w-full md:hidden object-cover'
-              style={{ aspectRatio: '4/5', maxHeight: '500px' }}
+              style={{ aspectRatio: '1/1', maxHeight: '360px' }}
             />
 
 
-            <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-12 md:pb-0 px-6 md:pl-18 lg:pl-24 bg-gradient-to-t from-black/50 via-transparent to-transparent md:bg-none'>
-              <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left text-white md:text-gray-800 max-w-xs md:max-w-md lg:max-w-lg leading-tight drop-shadow-md md:drop-shadow-none'>
+            <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-10 md:pb-0 px-6 md:pl-18 lg:pl-24 bg-gradient-to-t from-black/60 via-transparent to-transparent md:bg-none'>
+              <h1 className='text-2xl md:text-3xl lg:text-5xl font-bold text-center md:text-left text-white md:text-gray-800 max-w-xs md:max-w-md lg:max-w-lg leading-tight drop-shadow-md md:drop-shadow-none'>
                 {banner.title}
               </h1>
 
               {banner.showButtons && (
-                <div className='flex items-center mt-6 font-medium'>
-                  <Link to={"/products"} className='group flex items-center gap-2 px-8 py-3 bg-primary hover:bg-primary-dull transition rounded-full md:rounded-lg text-white cursor-pointer shadow-lg'>
+                <div className='flex items-center mt-5 font-medium'>
+                  <Link to={"/products"} className='group flex items-center gap-2 px-7 py-2.5 bg-primary hover:bg-primary-dull transition rounded-full md:rounded-lg text-white cursor-pointer shadow-lg text-sm md:text-base'>
                     Shop now
                     <img className='md:hidden transition group-focus:translate-x-1' src={assets.white_arrow_icon} alt="arrow" />
                   </Link>

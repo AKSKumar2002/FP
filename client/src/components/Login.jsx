@@ -191,6 +191,16 @@ const Login = () => {
                     boxShadow: "0 8px 32px 0 rgba(60,60,60,0.18), 0 1.5px 8px 0 rgba(60,60,60,0.10)"
                 }}
             >
+                <button
+                    onClick={() => setShowUserLogin(false)}
+                    type="button"
+                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
                 <p className="text-2xl font-medium m-auto mb-2">
                     <span className="text-primary">
                         {isForgotPassword ? 'Reset Password' : (isSignUp ? 'User Sign Up' : 'User Login')}
@@ -202,7 +212,7 @@ const Login = () => {
                     <div className="w-full flex justify-center my-4">
                         {/* Green circle with animated tick */}
                         <svg className="animate-flipIn" width="64" height="64" viewBox="0 0 64 64" fill="none">
-                            <circle cx="32" cy="32" r="32" fill="#4fbf8b"/>
+                            <circle cx="32" cy="32" r="32" fill="#4fbf8b" />
                             <polyline
                                 points="20,34 30,44 44,26"
                                 fill="none"
@@ -220,7 +230,7 @@ const Login = () => {
                     <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] animate-fadeIn">
                         <div className="bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 font-semibold text-lg">
                             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                                <circle cx="14" cy="14" r="14" fill="#fff" opacity="0.2"/>
+                                <circle cx="14" cy="14" r="14" fill="#fff" opacity="0.2" />
                                 <polyline
                                     points="8,15 12,19 20,11"
                                     fill="none"
@@ -269,20 +279,20 @@ const Login = () => {
                                 <div className="w-full mb-4 relative">
                                     <label className="block mb-2">New Password</label>
                                     <div className="relative">
-                                        <input 
-                                            onChange={(e) => setPassword(e.target.value)} 
-                                            value={password} 
-                                            placeholder="type here" 
-                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
-                                            type={passwordVisible ? "text" : "password"} 
-                                            required 
+                                        <input
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            value={password}
+                                            placeholder="type here"
+                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
+                                            type={passwordVisible ? "text" : "password"}
+                                            required
                                         />
                                         <button
                                             type="button"
                                             onClick={togglePasswordVisibility}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
                                             tabIndex={-1}
-                                            style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                            style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
                                         >
                                             {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
                                         </button>
@@ -290,13 +300,13 @@ const Login = () => {
                                 </div>
                                 <div className="w-full mb-4 relative">
                                     <label className="block mb-2">Confirm Password</label>
-                                    <input 
-                                        onChange={(e) => setConfirmPassword(e.target.value)} 
-                                        value={confirmPassword} 
-                                        placeholder="type here" 
-                                        className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" 
-                                        type="password" 
-                                        required 
+                                    <input
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        value={confirmPassword}
+                                        placeholder="type here"
+                                        className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base"
+                                        type="password"
+                                        required
                                     />
                                 </div>
                                 <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
@@ -347,20 +357,20 @@ const Login = () => {
                                 <div className="w-full mb-4 relative">
                                     <label className="block mb-2">Password</label>
                                     <div className="relative">
-                                        <input 
-                                            onChange={(e) => setPassword(e.target.value)} 
-                                            value={password} 
-                                            placeholder="type here" 
-                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
-                                            type={passwordVisible ? "text" : "password"} 
-                                            required 
+                                        <input
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            value={password}
+                                            placeholder="type here"
+                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
+                                            type={passwordVisible ? "text" : "password"}
+                                            required
                                         />
                                         <button
                                             type="button"
                                             onClick={togglePasswordVisibility}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
                                             tabIndex={-1}
-                                            style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                            style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
                                         >
                                             {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
                                         </button>
@@ -381,20 +391,20 @@ const Login = () => {
                         <div className="w-full mb-4 relative">
                             <label className="block mb-2">Password</label>
                             <div className="relative">
-                                <input 
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                    value={password} 
-                                    placeholder="type here" 
-                                    className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base" 
-                                    type={passwordVisible ? "text" : "password"} 
-                                    required 
+                                <input
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={password}
+                                    placeholder="type here"
+                                    className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
+                                    type={passwordVisible ? "text" : "password"}
+                                    required
                                 />
                                 <button
                                     type="button"
                                     onClick={togglePasswordVisibility}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
                                     tabIndex={-1}
-                                    style={{padding: 0, margin: 0, height: "32px", width: "32px"}}
+                                    style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
                                 >
                                     {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
                                 </button>
@@ -404,9 +414,9 @@ const Login = () => {
                             Login
                         </button>
                         <div className="w-full text-center mt-2">
-                            <button 
-                                type="button" 
-                                onClick={() => { setIsForgotPassword(true); setStep(1); }} 
+                            <button
+                                type="button"
+                                onClick={() => { setIsForgotPassword(true); setStep(1); }}
                                 className="text-green-500 underline text-sm"
                             >
                                 Forgot Password?
