@@ -3,9 +3,26 @@ import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { assets } from '../assets/assets';
+import { toast } from 'react-hot-toast';
 
 const MobileSideDrawer = ({ isOpen, onClose }) => {
-    const { user, setShowUserLogin } = useAppContext();
+    const { user, setShowUserLogin, setUser, navigate, axios } = useAppContext();
+
+    const logout = async () => {
+        try {
+            const { data } = await axios.get('/api/user/logout');
+            if (data.success) {
+                toast.success(data.message);
+                setUser(null);
+                onClose();
+                navigate('/');
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -41,7 +58,17 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
                 {/* Header */}
                 <div className="bg-gradient-to-r from-primary to-primary-dull text-white p-6 pb-8 rounded-tr-3xl flex-shrink-0">
                     <div className="flex items-center justify-between mb-6">
-                        <img src={assets.logo2} alt="Farm Pick" className="h-10 rounded-xl bg-white/90 px-2 py-1 shadow-sm" />
+                        <div className="flex items-center gap-3">
+                            <img src={assets.logo2} alt="Farm Pick" className="h-10 rounded-xl bg-white/90 px-2 py-1 shadow-sm" />
+                            {user && (
+                                <button
+                                    onClick={logout}
+                                    className="h-10 px-4 rounded-xl bg-red-500 text-white font-bold text-sm shadow-sm active:scale-95 transition-transform flex items-center justify-center border-2 border-white/20"
+                                >
+                                    Logout
+                                </button>
+                            )}
+                        </div>
                         <button
                             onClick={onClose}
                             className="p-2 rounded-full hover:bg-white/20 active:bg-white/30 transition-colors"

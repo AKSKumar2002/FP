@@ -15,6 +15,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 import MobileSideDrawer from './components/MobileSideDrawer';
 import FloatingActionButton from './components/FloatingActionButton';
 import MobileAppHeader from './components/MobileAppHeader';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import Home from './pages/Home';
@@ -146,6 +147,7 @@ const App = () => {
 
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
+      <ScrollToTop />
       {/* Desktop Navbar */}
       {!isSellerPath && <Navbar onMenuClick={() => setMobileDrawerOpen(true)} />}
 
