@@ -34,8 +34,8 @@ const MobileBottomNav = () => {
     ];
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-green-100 shadow-2xl z-50 rounded-t-2xl" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-            <div className="grid grid-cols-5 h-16 relative">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-green-100 shadow-2xl z-50 rounded-t-3xl" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            <div className="grid grid-cols-5 h-[80px] relative items-center">
                 {navItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (

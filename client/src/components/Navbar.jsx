@@ -141,9 +141,9 @@ const Navbar = ({ onMenuClick }) => {
 
 
   return (
-    <nav className="backdrop-blur-md bg-[rgba(255,255,255,0.65)] text-black border-b border-gray-300 shadow-md px-6 md:px-12 lg:px-20 xl:px-28 py-2 sticky top-0 z-50 transition-all">
+    <nav className="backdrop-blur-md bg-[rgba(255,255,255,0.65)] text-black border-b border-gray-300 shadow-md px-4 md:px-12 lg:px-20 xl:px-28 py-4 sticky top-0 z-50 transition-all">
       {/* ========== MOBILE ONLY - Logo + Hamburger ========== */}
-      <div className="md:hidden flex items-center justify-between w-full">
+      <div className="md:hidden flex items-center justify-between w-full h-[60px]">
         {/* Logo LEFT */}
         <NavLink
           to="/"
@@ -151,7 +151,7 @@ const Navbar = ({ onMenuClick }) => {
             setOpen(false);
             window.location.href = '/';
           }}
-          className="rounded-lg bg-white/60 backdrop-blur-sm p-1 shadow-sm"
+          className="rounded-xl bg-white/60 backdrop-blur-sm p-1.5 shadow-sm"
         >
           <img className="h-10 w-auto rounded-lg object-contain" src={assets.logo2} alt="logo" />
         </NavLink>
