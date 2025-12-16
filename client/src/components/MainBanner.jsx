@@ -47,17 +47,6 @@ const MainBanner = () => {
     return () => clearInterval(interval);
   }, [banners.length]);
 
-  // Smooth scroll when currentIndex changes
-  useEffect(() => {
-    if (containerRef.current) {
-      const scrollWidth = containerRef.current.scrollWidth / banners.length;
-      containerRef.current.scrollTo({
-        left: scrollWidth * currentIndex,
-        behavior: 'smooth'
-      });
-    }
-  }, [currentIndex, banners.length]);
-
   const handleDotClick = (index) => {
     setCurrentIndex(index);
   };
@@ -71,27 +60,39 @@ const MainBanner = () => {
   };
 
   return (
-    <div className='relative rounded-2xl overflow-hidden'>
-      {/* Banners Container */}
+    <div className='relative rounded-xl md:rounded-2xl overflow-hidden shadow-sm md:shadow-md group mx-4 md:mx-0 mt-4 md:mt-0'>
+      {/* Banners Slider */}
       <div
-        ref={containerRef}
-        className="flex overflow-hidden"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex transition-transform duration-500 ease-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {banners.map((banner, index) => (
-          <div key={banner.id} className='relative min-w-full flex-shrink-0'>
-            <img src={banner.image} alt={`banner ${index + 1}`} className='w-full hidden md:block' style={{ maxHeight: '350px', height: 'auto', objectFit: 'cover' }} />
-            <img src={banner.imageSm} alt={`banner ${index + 1}`} className='w-full md:hidden' style={{ maxHeight: '300px', height: 'auto', objectFit: 'cover' }} />
+          <div key={banner.id} className='relative min-w-full w-full flex-shrink-0'>
+            {/* Desktop Image */}
+            <img
+              src={banner.image}
+              alt={`banner ${index + 1}`}
+              className='w-full hidden md:block object-cover'
+              style={{ height: '350px' }}
+            />
+
+            {/* Mobile Image - Optimized Aspect Ratio (4:5 or 1:1) */}
+            <img
+              src={banner.imageSm}
+              alt={`banner ${index + 1}`}
+              className='w-full md:hidden object-cover'
+              style={{ aspectRatio: '4/5', maxHeight: '500px' }}
+            />
 
 
-            <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-24 md:pb-0 px-4 md:pl-18 lg:pl-24'>
-              <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left max-w-72 md:max-w-80 lg:max-w-105 leading-tight lg:leading-15'>
+            <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-12 md:pb-0 px-6 md:pl-18 lg:pl-24 bg-gradient-to-t from-black/50 via-transparent to-transparent md:bg-none'>
+              <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left text-white md:text-gray-800 max-w-xs md:max-w-md lg:max-w-lg leading-tight drop-shadow-md md:drop-shadow-none'>
                 {banner.title}
               </h1>
 
               {banner.showButtons && (
                 <div className='flex items-center mt-6 font-medium'>
-                  <Link to={"/products"} className='group flex items-center gap-2 px-7 md:px-9 py-3 bg-primary hover:bg-primary-dull transition rounded text-white cursor-pointer'>
+                  <Link to={"/products"} className='group flex items-center gap-2 px-8 py-3 bg-primary hover:bg-primary-dull transition rounded-full md:rounded-lg text-white cursor-pointer shadow-lg'>
                     Shop now
                     <img className='md:hidden transition group-focus:translate-x-1' src={assets.white_arrow_icon} alt="arrow" />
                   </Link>
@@ -108,37 +109,37 @@ const MainBanner = () => {
       </div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
         {banners.map((_, index) => (
           <button
             key={index}
             onClick={() => handleDotClick(index)}
             className={`transition-all duration-300 rounded-full ${currentIndex === index
-              ? 'bg-white w-8 h-3'
-              : 'bg-white/50 w-3 h-3 hover:bg-white/75'
+              ? 'bg-primary w-8 h-2'
+              : 'bg-white/70 w-2 h-2 hover:bg-white'
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
 
-      {/* Manual Navigation Arrows */}
+      {/* Manual Navigation Arrows (Desktop Only) */}
       <button
         onClick={goToPrevious}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-3 rounded-full transition-all z-10"
+        className="hidden md:flex absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/50 hover:bg-white text-gray-800 p-3 rounded-full transition-all z-10 opacity-0 group-hover:opacity-100"
         aria-label="Previous slide"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-3 rounded-full transition-all z-10"
+        className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/50 hover:bg-white text-gray-800 p-3 rounded-full transition-all z-10 opacity-0 group-hover:opacity-100"
         aria-label="Next slide"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>

@@ -75,23 +75,23 @@ const BestSeller = () => {
 
     return (
         <>
-            <div className='mt-16'>
+            <div className='mt-4 md:mt-16'>
                 <p className='text-2xl md:text-3xl font-medium'></p>
-                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 mt-6'>
+                <div className='grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mt-4 md:mt-6'>
                     {products.filter((product) => product.inStock).slice(0, 5).map((product, index) => (
                         <div
                             key={index}
                             onClick={() => openProductPopup(product)}
-                            className="bg-white rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden group"
+                            className="bg-white rounded-2xl md:rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden group border border-gray-100 md:border-none"
                         >
                             <div className="relative">
                                 <img
                                     src={product.image[0]}
                                     alt={product.name}
-                                    className="w-full h-48 object-cover"
+                                    className="w-full h-40 md:h-48 object-cover"
                                 />
                                 {product.isBestSeller && (
-                                    <div className="absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                    <div className="hidden md:flex absolute top-2 right-2 bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold items-center gap-1">
                                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
@@ -99,36 +99,36 @@ const BestSeller = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="p-4">
-                                <h3 className="font-semibold text-gray-800 text-sm mb-2 truncate">
+                            <div className="p-3 md:p-4">
+                                <h3 className="font-semibold text-gray-800 text-sm mb-2 truncate leading-snug">
                                     {product.name}
                                 </h3>
                                 <div className="flex items-center justify-between mb-3">
                                     <div>
                                         <p className="text-xs text-gray-500 line-through">{currency}{product.variants[0].price}</p>
-                                        <p className="text-lg font-bold text-primary">
+                                        <p className="text-base md:text-lg font-bold text-primary">
                                             {currency}{product.variants[0].offerPrice}
                                         </p>
                                     </div>
-                                    <div className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
+                                    <div className="bg-green-50 text-green-700 px-2 py-1 rounded-lg text-xs font-medium border border-green-100">
                                         {product.variants[0].weight} {product.variants[0].unit}
                                     </div>
                                 </div>
-                                
-                                <div className="flex gap-2 mt-2">
+
+                                <div className="flex gap-2">
                                     <button
                                         onClick={(e) => handleQuickAddToCart(e, product)}
-                                        className="flex-1 py-2 bg-white border-2 border-primary text-primary text-xs font-semibold rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-1"
+                                        className="flex-1 py-2 md:py-2.5 bg-white border border-primary text-primary text-xs font-semibold rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-1 active:scale-95"
                                         title="Add to Cart"
                                     >
-                                        🛒 Add
+                                        <span className="hidden md:inline">🛒 </span>Add
                                     </button>
                                     <button
                                         onClick={(e) => handleQuickBuyNow(e, product)}
-                                        className="flex-1 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-dull transition flex items-center justify-center gap-1"
+                                        className="flex-1 py-2 md:py-2.5 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-dull transition flex items-center justify-center gap-1 active:scale-95"
                                         title="Buy Now"
                                     >
-                                        ⚡ Buy
+                                        <span className="hidden md:inline">⚡ </span>Buy
                                     </button>
                                 </div>
                             </div>
@@ -140,11 +140,11 @@ const BestSeller = () => {
             {/* ✅ Flip Animation Popup */}
             {selectedProduct && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
-                    <div 
+                    <div
                         className="absolute inset-0"
                         onClick={closeProductPopup}
                     ></div>
-                    
+
                     <div className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white rounded-lg animate-flipIn">
                         <button
                             onClick={closeProductPopup}
@@ -164,7 +164,7 @@ const BestSeller = () => {
                                         className="w-full h-80 object-cover"
                                     />
                                 </div>
-                                
+
                                 {selectedProduct.image.length > 1 && (
                                     <div className="grid grid-cols-4 gap-2">
                                         {selectedProduct.image.map((img, idx) => (
@@ -210,11 +210,10 @@ const BestSeller = () => {
                                             <button
                                                 key={idx}
                                                 onClick={() => setSelectedVariant(variant)}
-                                                className={`p-3 rounded-lg font-medium transition border-2 ${
-                                                    selectedVariant === variant
-                                                        ? 'bg-primary text-white border-primary'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
-                                                }`}
+                                                className={`p-3 rounded-lg font-medium transition border-2 ${selectedVariant === variant
+                                                    ? 'bg-primary text-white border-primary'
+                                                    : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
+                                                    }`}
                                             >
                                                 <div className="text-base">{variant.weight} {variant.unit}</div>
                                                 <div className="text-sm">{currency}{variant.offerPrice}</div>

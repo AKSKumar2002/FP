@@ -96,8 +96,8 @@ const AllProducts = () => {
     }, [])
 
     return (
-        <div className="min-h-screen bg-gray-100 md:bg-gray-50 md:py-8 md:px-8">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gray-100 md:bg-gray-50 md:py-4 md:px-2">
+            <div className="w-full mx-auto">
                 {/* Header - Mobile Optimized */}
                 <div className="bg-white md:rounded-lg shadow-sm mb-3 md:mb-6 sticky top-14 md:top-0 z-10">
                     <div className="p-4 md:p-6">
@@ -106,7 +106,7 @@ const AllProducts = () => {
                                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-1 md:mb-2">
                                     நம்ம Products
                                 </h1>
-                                <p className="text-sm md:text-base text-gray-600">Fresh products delivered to your door 🌿</p>
+                                <p className="text-sm md:text-base text-gray-600">Greens delivered to your door 🌿</p>
                             </div>
 
                             {/* Search Bar - Android Material Style */}
@@ -146,7 +146,7 @@ const AllProducts = () => {
                             <option value="All">🌟 All Products</option>
                             {categories.map((cat) => (
                                 <option key={cat._id} value={cat.name}>
-                                    {cat.name}
+                                    {cat.name === 'Fresh Farm' ? 'Greens' : cat.name}
                                 </option>
                             ))}
                         </select>
@@ -173,7 +173,7 @@ const AllProducts = () => {
                                         : "bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95"
                                         }`}
                                 >
-                                    {cat.name}
+                                    {cat.name === 'Fresh Farm' ? 'Greens' : cat.name}
                                 </button>
                             ))}
                         </div>
@@ -238,26 +238,23 @@ const AllProducts = () => {
                                         </div>
                                     </div>
 
-                                    {/* Quick Action Buttons - IMPROVED FOR MOBILE */}
+                                    {/* Quick Action Buttons */}
                                     <div className="flex gap-2">
                                         <button
                                             onClick={(e) => handleQuickAddToCart(e, product)}
                                             className="flex-1 py-2 md:py-2.5 bg-white border-2 border-primary text-primary text-xs md:text-sm font-semibold rounded-lg md:rounded-xl hover:bg-green-50 active:scale-95 transition-all flex items-center justify-center gap-1 shadow-sm"
                                             title="Add to Cart"
                                         >
-                                            {/* Farm-themed Green Cart on MOBILE ONLY, regular on desktop */}
-                                            <span className="md:hidden text-base" style={{ filter: 'hue-rotate(90deg) saturate(2)' }}>🛒</span>
-                                            <span className="hidden md:inline">🛒</span>
-                                            <span className="hidden md:inline">Add</span>
+                                            <span className="md:hidden">Add</span>
+                                            <span className="hidden md:inline">Add 🛒</span>
                                         </button>
                                         <button
                                             onClick={(e) => handleQuickBuyNow(e, product)}
-                                            className="flex-1 py-2 md:py-2.5 bg-gradient-to-r from-primary to-primary-dull text-white text-xs md:text-sm font-semibold rounded-lg md:rounded-xl hover:shadow-lg active:scale-95 transition-all flex items-center justify-center shadow-md"
+                                            className="flex-1 py-2 md:py-2.5 bg-gradient-to-r from-primary to-primary-dull text-white text-xs md:text-sm font-semibold rounded-lg md:rounded-xl hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1 shadow-md"
                                             title="Buy Now"
                                         >
-                                            {/* Mobile: just "Buy", Desktop: "⚡ Buy" */}
                                             <span className="md:hidden">Buy</span>
-                                            <span className="hidden md:inline">⚡ Buy</span>
+                                            <span className="hidden md:inline">Buy ⚡</span>
                                         </button>
                                     </div>
                                 </div>
