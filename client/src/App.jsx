@@ -10,6 +10,12 @@ import Login from './components/Login';
 import Contact from './components/Contact';
 import About from './components/About';
 
+// Mobile App Components
+import MobileBottomNav from './components/MobileBottomNav';
+import MobileSideDrawer from './components/MobileSideDrawer';
+import FloatingActionButton from './components/FloatingActionButton';
+import MobileAppHeader from './components/MobileAppHeader';
+
 // Pages
 import Home from './pages/Home';
 import AllProducts from './pages/AllProducts';
@@ -58,9 +64,10 @@ const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isSellerPath = location.pathname.includes('seller');
-  const { showUserLogin, isSeller } = useAppContext();
+  const { showUserLogin, isSeller, cartItems } = useAppContext();
 
   const [showInitialLoader, setShowInitialLoader] = useState(true);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -138,10 +145,27 @@ const App = () => {
 
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
-      {!isSellerPath && <Navbar />}
+      {/* Desktop Navbar */}
+      {!isSellerPath && <Navbar onMenuClick={() => setMobileDrawerOpen(true)} />}
+
+      {/* Mobile Components - Android App Style */}
+      {!isSellerPath && (
+        <>
+          <MobileSideDrawer isOpen={mobileDrawerOpen} onClose={() => setMobileDrawerOpen(false)} />
+          <MobileBottomNav />
+          <FloatingActionButton
+            icon="🛒"
+            onClick={() => navigate('/cart')}
+            badge={cartItems?.length > 0 ? cartItems.length : null}
+          />
+        </>
+      )}
+
       {showUserLogin && <Login />}
       <Toaster />
-      <div className={`${isSellerPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
+
+      {/* Add bottom padding on mobile for bottom nav */}
+      <div className={`${isSellerPath ? '' : 'px-6 md:px-16 lg:px-24 xl:px-32'} ${!isSellerPath ? 'pb-20 md:pb-0' : ''}`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/b2b" element={<B2BPage />} />
