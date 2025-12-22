@@ -10,6 +10,7 @@ const AllProducts = () => {
     const [selectedCategory, setSelectedCategory] = useState("All")
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null)
+    const [selectedImage, setSelectedImage] = useState(null) // For modal image gallery
     const [searchQuery, setSearchQuery] = useState("")
 
     useEffect(() => {
@@ -31,12 +32,14 @@ const AllProducts = () => {
     const openProductPopup = (product) => {
         setSelectedProduct(product)
         setSelectedVariant(product.variants?.[0] || null)
+        setSelectedImage(null) // Reset to show first image
         document.body.style.overflow = 'hidden'
     }
 
     const closeProductPopup = () => {
         setSelectedProduct(null)
         setSelectedVariant(null)
+        setSelectedImage(null) // Reset selected image
         document.body.style.overflow = 'unset'
     }
 
@@ -293,7 +296,7 @@ const AllProducts = () => {
                             <div className="space-y-3">
                                 <div className="bg-gray-100 rounded-lg overflow-hidden">
                                     <img
-                                        src={selectedProduct.image[0]}
+                                        src={selectedImage || selectedProduct.image[0]}
                                         alt={selectedProduct.name}
                                         className="w-full h-80 object-cover"
                                     />
@@ -302,7 +305,14 @@ const AllProducts = () => {
                                 {selectedProduct.image.length > 1 && (
                                     <div className="grid grid-cols-4 gap-2">
                                         {selectedProduct.image.map((img, idx) => (
-                                            <div key={idx} className="bg-gray-100 rounded overflow-hidden">
+                                            <div
+                                                key={idx}
+                                                className={`bg-gray-100 rounded overflow-hidden cursor-pointer border-2 transition-all hover:scale-105 ${(selectedImage || selectedProduct.image[0]) === img
+                                                    ? 'border-primary shadow-md'
+                                                    : 'border-transparent hover:border-gray-300'
+                                                    }`}
+                                                onClick={() => setSelectedImage(img)}
+                                            >
                                                 <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-16 object-cover" />
                                             </div>
                                         ))}
