@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 const AddProduct = () => {
     const { axios, fetchProducts, categories } = useAppContext();
-    
+
     const [productData, setProductData] = useState({
         name: '',
         description: '',
@@ -20,9 +20,9 @@ const AddProduct = () => {
             toast.error('Maximum 4 images allowed');
             return;
         }
-        
+
         setImages([...images, ...files]);
-        
+
         // Create preview URLs
         const previews = files.map(file => URL.createObjectURL(file));
         setImagePreviews([...imagePreviews, ...previews]);
@@ -59,13 +59,13 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validation
         if (!productData.name || !productData.description || !productData.category) {
             toast.error('Please fill all required fields');
             return;
         }
-        
+
         if (images.length === 0) {
             toast.error('Please upload at least one image');
             return;
@@ -118,13 +118,13 @@ const AddProduct = () => {
                             </svg>
                             Product Images
                         </h2>
-                        
+
                         <div className="grid grid-cols-4 gap-4 mb-4">
                             {imagePreviews.map((preview, index) => (
                                 <div key={index} className="relative group aspect-square">
-                                    <img 
-                                        src={preview} 
-                                        alt={`Preview ${index + 1}`} 
+                                    <img
+                                        src={preview}
+                                        alt={`Preview ${index + 1}`}
                                         className="w-full h-full object-cover rounded-lg border-2 border-gray-200"
                                     />
                                     <button
@@ -138,7 +138,7 @@ const AddProduct = () => {
                                     </button>
                                 </div>
                             ))}
-                            
+
                             {imagePreviews.length < 4 && (
                                 <label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors">
                                     <svg className="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ const AddProduct = () => {
                             </svg>
                             Basic Information
                         </h2>
-                        
+
                         <div className="space-y-4">
                             {/* Product Name */}
                             <div>

@@ -119,29 +119,16 @@ export const categories = [
     bgColor: "#FEE0E0",
   },
   {
-    text: "Bundle Packages",
-    path: "Drinks",
-    image: bottles_image,
-    bgColor: "#F0F5DE",
-  },
-
-  {
-    text: "Dairy Products",
-    path: "Dairy",
-    image: dairy_product_image,
-    bgColor: "#FEE6CD",
-  },
-  {
     text: "Greens",
     path: "Greens",
     image: bakery_image,
     bgColor: "#E0F6FE",
   },
   {
-    text: "Grocery",
-    path: "Grains",
-    image: grain_image,
-    bgColor: "#F1E3F9",
+    text: "Bundle Packages",
+    path: "Bundle packages",
+    image: bottles_image,
+    bgColor: "#F0F5DE",
   },
 ];
 

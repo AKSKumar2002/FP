@@ -8,7 +8,7 @@ const ProductList = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Bundle packages', 'Dairy products', 'Greens', 'Grocery', 'Agro']);
+    const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Greens', 'Bundle packages']);
 
     const [draggedItem, setDraggedItem] = useState(null);
     const [localProducts, setLocalProducts] = useState([]);
@@ -30,22 +30,22 @@ const ProductList = () => {
     const handleDragOver = (e, index) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        
+
         if (draggedItem === null || draggedItem === index) return;
 
         const newProducts = [...localProducts];
         const draggedProduct = newProducts[draggedItem];
-        
+
         newProducts.splice(draggedItem, 1);
         newProducts.splice(index, 0, draggedProduct);
-        
+
         setDraggedItem(index);
         setLocalProducts(newProducts);
     };
 
     const handleDragEnd = async (e) => {
         e.currentTarget.style.opacity = '1';
-        
+
         const productOrders = localProducts.map((product, index) => ({
             id: product._id,
             displayOrder: index
@@ -73,21 +73,21 @@ const ProductList = () => {
 
     const moveProductUp = async (index) => {
         if (index === 0) return; // Already at top
-        
+
         const newProducts = [...localProducts];
         [newProducts[index - 1], newProducts[index]] = [newProducts[index], newProducts[index - 1]];
         setLocalProducts(newProducts);
-        
+
         await saveProductOrder(newProducts);
     };
 
     const moveProductDown = async (index) => {
         if (index === localProducts.length - 1) return; // Already at bottom
-        
+
         const newProducts = [...localProducts];
         [newProducts[index], newProducts[index + 1]] = [newProducts[index + 1], newProducts[index]];
         setLocalProducts(newProducts);
-        
+
         await saveProductOrder(newProducts);
     };
 
@@ -211,8 +211,8 @@ const ProductList = () => {
     };
 
     // Filter products based on selected category
-    const filteredProducts = selectedCategory === 'All' 
-        ? localProducts 
+    const filteredProducts = selectedCategory === 'All'
+        ? localProducts
         : localProducts.filter(product => {
             const categoryName = product.category?.name?.toLowerCase() || '';
             const selectedLower = selectedCategory.toLowerCase();
@@ -250,20 +250,18 @@ const ProductList = () => {
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
-                                className={`relative px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all duration-300 transform hover:scale-105 ${
-                                    selectedCategory === category
-                                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/50'
-                                        : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
-                                }`}
+                                className={`relative px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all duration-300 transform hover:scale-105 ${selectedCategory === category
+                                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/50'
+                                    : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
+                                    }`}
                             >
                                 <span className="relative z-10">{category}</span>
-                                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-                                    selectedCategory === category
-                                        ? 'bg-white/20 text-white'
-                                        : 'bg-gray-100 text-gray-600'
-                                }`}>
-                                    {category === 'All' 
-                                        ? products.length 
+                                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${selectedCategory === category
+                                    ? 'bg-white/20 text-white'
+                                    : 'bg-gray-100 text-gray-600'
+                                    }`}>
+                                    {category === 'All'
+                                        ? products.length
                                         : products.filter(p => {
                                             const catName = p.category?.name?.toLowerCase() || '';
                                             const filterLower = category.toLowerCase();
@@ -356,8 +354,8 @@ const ProductList = () => {
                                     </tr>
                                 ) : (
                                     filteredProducts.map((product, index) => (
-                                        <tr 
-                                            key={product._id} 
+                                        <tr
+                                            key={product._id}
                                             draggable={true}
                                             onDragStart={(e) => handleDragStart(e, index)}
                                             onDragOver={(e) => handleDragOver(e, index)}
@@ -380,11 +378,10 @@ const ProductList = () => {
                                                     <button
                                                         onClick={() => moveProductUp(index)}
                                                         disabled={index === 0}
-                                                        className={`p-2 rounded-lg transition-all duration-200 ${
-                                                            index === 0
-                                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                                                                : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
-                                                        }`}
+                                                        className={`p-2 rounded-lg transition-all duration-200 ${index === 0
+                                                            ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                            : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
+                                                            }`}
                                                         title="Move up"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,11 +391,10 @@ const ProductList = () => {
                                                     <button
                                                         onClick={() => moveProductDown(index)}
                                                         disabled={index === filteredProducts.length - 1}
-                                                        className={`p-2 rounded-lg transition-all duration-200 ${
-                                                            index === filteredProducts.length - 1
-                                                                ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                                                                : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
-                                                        }`}
+                                                        className={`p-2 rounded-lg transition-all duration-200 ${index === filteredProducts.length - 1
+                                                            ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
+                                                            : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
+                                                            }`}
                                                         title="Move down"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -415,8 +411,8 @@ const ProductList = () => {
                                                         </svg>
                                                     </div>
                                                     <div className="relative flex-shrink-0 w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border-2 border-gray-200 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
-                                                        <img 
-                                                            src={product.image[0]} 
+                                                        <img
+                                                            src={product.image[0]}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                         />
@@ -442,14 +438,13 @@ const ProductList = () => {
                                             <td className="px-4 py-5 text-center">
                                                 <button
                                                     onClick={() => toggleBestSeller(product._id, !product.isBestSeller)}
-                                                    className={`p-2.5 rounded-xl transition-all duration-200 transform hover:scale-110 active:scale-95 ${
-                                                        product.isBestSeller 
-                                                            ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/50' 
-                                                            : 'bg-gray-100 hover:bg-gray-200'
-                                                    }`}
+                                                    className={`p-2.5 rounded-xl transition-all duration-200 transform hover:scale-110 active:scale-95 ${product.isBestSeller
+                                                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/50'
+                                                        : 'bg-gray-100 hover:bg-gray-200'
+                                                        }`}
                                                     title={product.isBestSeller ? "Remove from Best Sellers" : "Add to Best Sellers"}
                                                 >
-                                                    <svg 
+                                                    <svg
                                                         className={`w-5 h-5 ${product.isBestSeller ? 'text-white' : 'text-gray-400'}`}
                                                         fill="currentColor"
                                                         viewBox="0 0 24 24"

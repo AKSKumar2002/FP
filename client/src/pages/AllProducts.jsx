@@ -144,7 +144,7 @@ const AllProducts = () => {
                             }}
                         >
                             <option value="All">🌟 All Products</option>
-                            {categories.map((cat) => (
+                            {categories.filter(cat => ['Vegetables', 'Fruits', 'Greens', 'Fresh Farm', 'Bundle packages'].includes(cat.name)).map((cat) => (
                                 <option key={cat._id} value={cat.name}>
                                     {cat.name === 'Fresh Farm' ? 'Greens' : cat.name}
                                 </option>
@@ -164,7 +164,7 @@ const AllProducts = () => {
                             >
                                 All Products
                             </button>
-                            {categories.map((cat) => (
+                            {categories.filter(cat => ['Vegetables', 'Fruits', 'Greens', 'Fresh Farm', 'Bundle packages'].includes(cat.name)).map((cat) => (
                                 <button
                                     key={cat._id}
                                     onClick={() => setSelectedCategory(cat.name)}
