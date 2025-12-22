@@ -10,7 +10,8 @@ const ProductList = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [filterCategories] = useState(['All', 'Vegetables', 'Fruits', 'Greens', 'Bundle packages']);
 
-    const [draggedItem, setDraggedItem] = useState(null);
+    const [editingOrder, setEditingOrder] = useState(null); // Track which product order is being edited
+    const [tempOrderValue, setTempOrderValue] = useState(''); // Temporary value for order input
     const [localProducts, setLocalProducts] = useState([]);
 
     useEffect(() => {
@@ -71,22 +72,29 @@ const ProductList = () => {
         e.preventDefault();
     };
 
-    const moveProductUp = async (index) => {
-        if (index === 0) return; // Already at top
+    // Handle order change by number input
+    const handleOrderChange = async (productId, currentIndex, newPosition) => {
+        // Convert to 0-indexed
+        const targetIndex = parseInt(newPosition) - 1;
 
+        // Validate the position
+        if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= localProducts.length) {
+            toast.error('Invalid position. Enter a number between 1 and ' + localProducts.length);
+            return;
+        }
+
+        if (targetIndex === currentIndex) {
+            setEditingOrder(null);
+            return; // No change needed
+        }
+
+        // Create new array and move the product
         const newProducts = [...localProducts];
-        [newProducts[index - 1], newProducts[index]] = [newProducts[index], newProducts[index - 1]];
+        const [movedProduct] = newProducts.splice(currentIndex, 1);
+        newProducts.splice(targetIndex, 0, movedProduct);
+
         setLocalProducts(newProducts);
-
-        await saveProductOrder(newProducts);
-    };
-
-    const moveProductDown = async (index) => {
-        if (index === localProducts.length - 1) return; // Already at bottom
-
-        const newProducts = [...localProducts];
-        [newProducts[index], newProducts[index + 1]] = [newProducts[index + 1], newProducts[index]];
-        setLocalProducts(newProducts);
+        setEditingOrder(null);
 
         await saveProductOrder(newProducts);
     };
@@ -220,8 +228,8 @@ const ProductList = () => {
         });
 
     return (
-        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll bg-gradient-to-br from-gray-50 via-white to-gray-50">
-            <div className="w-full p-6 md:p-10">
+        <div className="no-scrollbar flex-1 h-[95vh] overflow-y-auto bg-gradient-to-br from-gray-50 via-white to-gray-50">
+            <div className="w-full p-4 md:p-6">
                 {/* Header with enhanced design */}
                 <div className="mb-8">
                     <div className="flex items-center justify-between">
@@ -274,33 +282,25 @@ const ProductList = () => {
                 </div>
 
                 {/* Enhanced Products Table */}
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-max">
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-200">
+                    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300">
+                        <table className="w-full" style={{ minWidth: '900px' }}>
                             <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-green-500">
                                 <tr>
-                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-20">
+                                    <th className="px-3 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-16">
                                         <div className="flex items-center justify-center gap-1">
-                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
                                             </svg>
-                                            No.
+                                            Order
                                         </div>
                                     </th>
-                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-28">
-                                        <div className="flex items-center justify-center gap-1">
-                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                                            </svg>
-                                            Reorder
-                                        </div>
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-xs font-bold text-gray-700 uppercase tracking-wider min-w-[250px]">
+                                    <th className="px-3 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider min-w-[180px]">
                                         <div className="flex items-center gap-1">
-                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                             </svg>
-                                            Product Details
+                                            Product
                                         </div>
                                     </th>
                                     <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
@@ -311,25 +311,25 @@ const ProductList = () => {
                                             Category
                                         </div>
                                     </th>
-                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
+                                    <th className="px-2 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-20">
                                         <div className="flex items-center justify-center gap-1">
-                                            <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                             </svg>
-                                            Featured
+                                            ⭐
                                         </div>
                                     </th>
-                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
+                                    <th className="px-2 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
                                         <div className="flex items-center justify-center gap-1">
-                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
-                                            Availability
+                                            Stock
                                         </div>
                                     </th>
-                                    <th className="px-4 py-5 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-36">
+                                    <th className="px-2 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
                                         <div className="flex items-center justify-center gap-1">
-                                            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                                             </svg>
                                             Actions
@@ -356,96 +356,79 @@ const ProductList = () => {
                                     filteredProducts.map((product, index) => (
                                         <tr
                                             key={product._id}
-                                            draggable={true}
-                                            onDragStart={(e) => handleDragStart(e, index)}
-                                            onDragOver={(e) => handleDragOver(e, index)}
-                                            onDragEnd={handleDragEnd}
-                                            onDrop={handleDrop}
                                             className="hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200 group"
-                                            style={{
-                                                cursor: 'grab',
-                                                opacity: draggedItem === index ? 0.5 : 1,
-                                                backgroundColor: draggedItem === index ? '#f0fdf4' : 'transparent'
-                                            }}
                                         >
-                                            <td className="px-4 py-5 text-center">
-                                                <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white font-bold text-sm shadow-md">
-                                                    {index + 1}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-5">
-                                                <div className="flex items-center justify-center gap-2">
+                                            {/* Editable Order Number Input */}
+                                            <td className="px-2 py-2 text-center">
+                                                {editingOrder === product._id ? (
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        max={filteredProducts.length}
+                                                        autoFocus
+                                                        value={tempOrderValue}
+                                                        onChange={(e) => setTempOrderValue(e.target.value)}
+                                                        onBlur={() => {
+                                                            handleOrderChange(product._id, index, tempOrderValue);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                handleOrderChange(product._id, index, tempOrderValue);
+                                                            }
+                                                            if (e.key === 'Escape') {
+                                                                setEditingOrder(null);
+                                                            }
+                                                        }}
+                                                        className="w-8 h-8 text-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white font-bold text-xs shadow-sm border-2 border-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                                                    />
+                                                ) : (
                                                     <button
-                                                        onClick={() => moveProductUp(index)}
-                                                        disabled={index === 0}
-                                                        className={`p-2 rounded-lg transition-all duration-200 ${index === 0
-                                                            ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                                                            : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
-                                                            }`}
-                                                        title="Move up"
+                                                        onClick={() => {
+                                                            setEditingOrder(product._id);
+                                                            setTempOrderValue(String(index + 1));
+                                                        }}
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white font-bold text-xs shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 cursor-text"
+                                                        title="Click to change order"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
-                                                        </svg>
+                                                        {index + 1}
                                                     </button>
-                                                    <button
-                                                        onClick={() => moveProductDown(index)}
-                                                        disabled={index === filteredProducts.length - 1}
-                                                        className={`p-2 rounded-lg transition-all duration-200 ${index === filteredProducts.length - 1
-                                                            ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                                                            : 'bg-gradient-to-br from-green-500 to-emerald-600 text-white hover:shadow-lg hover:scale-110 active:scale-95'
-                                                            }`}
-                                                        title="Move down"
-                                                    >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
+                                                )}
                                             </td>
-                                            <td className="px-6 py-5">
-                                                <div className="flex items-center space-x-4">
-                                                    <div className="text-gray-400 hover:text-green-600 cursor-grab flex-shrink-0 transition-colors" title="Drag to reorder">
-                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path d="M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div className="relative flex-shrink-0 w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl border-2 border-gray-200 overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+                                            <td className="px-2 py-2">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="relative flex-shrink-0 w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border border-gray-200 overflow-hidden shadow-sm">
                                                         <img
                                                             src={product.image[0]}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                         />
-                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-bold text-gray-900 truncate group-hover:text-green-600 transition-colors">
+                                                        <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-green-600 transition-colors">
                                                             {product.name}
                                                         </p>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700">
-                                                                {product.variants?.length || 0} variants
-                                                            </span>
-                                                        </div>
+                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-100 text-blue-700">
+                                                            {product.variants?.length || 0} variants
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-5 text-center">
-                                                <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm">
-                                                    {product.category?.name || 'Uncategorized'}
+                                            <td className="px-2 py-2 text-center">
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-semibold bg-purple-100 text-purple-700">
+                                                    {product.category?.name || 'N/A'}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-5 text-center">
+                                            <td className="px-2 py-2 text-center">
                                                 <button
                                                     onClick={() => toggleBestSeller(product._id, !product.isBestSeller)}
-                                                    className={`p-2.5 rounded-xl transition-all duration-200 transform hover:scale-110 active:scale-95 ${product.isBestSeller
-                                                        ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/50'
+                                                    className={`p-1.5 rounded-lg transition-all duration-200 ${product.isBestSeller
+                                                        ? 'bg-yellow-400 shadow-sm'
                                                         : 'bg-gray-100 hover:bg-gray-200'
                                                         }`}
                                                     title={product.isBestSeller ? "Remove from Best Sellers" : "Add to Best Sellers"}
                                                 >
                                                     <svg
-                                                        className={`w-5 h-5 ${product.isBestSeller ? 'text-white' : 'text-gray-400'}`}
+                                                        className={`w-4 h-4 ${product.isBestSeller ? 'text-white' : 'text-gray-400'}`}
                                                         fill="currentColor"
                                                         viewBox="0 0 24 24"
                                                     >
@@ -453,39 +436,39 @@ const ProductList = () => {
                                                     </svg>
                                                 </button>
                                             </td>
-                                            <td className="px-4 py-5">
-                                                <label className="relative inline-flex items-center cursor-pointer group/toggle">
+                                            <td className="px-2 py-2">
+                                                <label className="relative inline-flex items-center cursor-pointer">
                                                     <input
                                                         type="checkbox"
                                                         checked={product.inStock}
                                                         onChange={() => toggleStock(product._id, !product.inStock)}
                                                         className="sr-only peer"
                                                     />
-                                                    <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-emerald-600 transition-all duration-300 relative shadow-inner">
-                                                        <span className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 ease-in-out peer-checked:translate-x-5 shadow-md"></span>
+                                                    <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-green-500 transition-all duration-200 relative">
+                                                        <span className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-all duration-200 peer-checked:translate-x-4 shadow-sm"></span>
                                                     </div>
-                                                    <span className={`ml-3 text-xs font-bold ${product.inStock ? 'text-green-600' : 'text-gray-500'}`}>
-                                                        {product.inStock ? '● In Stock' : '○ Out'}
+                                                    <span className={`ml-2 text-[10px] font-semibold ${product.inStock ? 'text-green-600' : 'text-gray-400'}`}>
+                                                        {product.inStock ? 'In Stock' : 'Out'}
                                                     </span>
                                                 </label>
                                             </td>
-                                            <td className="px-4 py-5">
-                                                <div className="flex items-center justify-center gap-2">
+                                            <td className="px-2 py-2">
+                                                <div className="flex items-center justify-center gap-1">
                                                     <button
                                                         onClick={() => handleEdit(product)}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 hover:text-white rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
-                                                        title="Edit Product"
+                                                        className="p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-500 hover:text-white rounded-lg transition-all duration-200"
+                                                        title="Edit"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                         </svg>
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(product._id)}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-600 bg-red-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm hover:shadow-md"
-                                                        title="Delete Product"
+                                                        className="p-1.5 text-red-600 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg transition-all duration-200"
+                                                        title="Delete"
                                                     >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>
                                                     </button>

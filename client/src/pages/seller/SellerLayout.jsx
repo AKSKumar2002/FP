@@ -41,7 +41,7 @@ const SellerLayout = () => {
                 </div>
             </div>
             <div className="flex">
-                <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col">
+                <div className="md:w-56 w-16 border-r min-h-[95vh] text-base border-gray-300 pt-4 flex flex-col flex-shrink-0">
                     {sidebarLinks.map((item) => (
                         <NavLink to={item.path} key={item.name} end={item.path === "/seller"}
                             className={({ isActive }) => `flex items-center py-3 px-4 gap-3 
@@ -55,7 +55,9 @@ const SellerLayout = () => {
                         </NavLink>
                     ))}
                 </div>
-                <Outlet />
+                <div className="flex-1 overflow-x-auto min-w-0">
+                    <Outlet />
+                </div>
             </div>
 
         </>
