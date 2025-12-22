@@ -6,7 +6,7 @@ const MainBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef(null);
 
-  // Array of 4 banner slides - you can modify these
+  // Array of 4 banner slides
   const banners = [
     {
       id: 1,
@@ -19,21 +19,21 @@ const MainBanner = () => {
       id: 2,
       image: assets.main_banner_bg,
       imageSm: assets.main_banner_bg_sm,
-      title: "Product Banner 2 - Replace with your content!",
+      title: "Farm Fresh Vegetables Delivered to Your Doorstep!",
       showButtons: true
     },
     {
       id: 3,
       image: assets.main_banner_bg,
       imageSm: assets.main_banner_bg_sm,
-      title: "Product Banner 3 - Replace with your content!",
+      title: "Organic & Healthy, Direct from Farmers!",
       showButtons: true
     },
     {
       id: 4,
       image: assets.main_banner_bg,
       imageSm: assets.main_banner_bg_sm,
-      title: "Product Banner 4 - Replace with your content!",
+      title: "Bundle Deals - Save More, Eat Fresh!",
       showButtons: true
     }
   ];

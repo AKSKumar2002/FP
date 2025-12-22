@@ -119,19 +119,19 @@ const Home = () => {
       <MainBanner />
 
       {/* Enhanced Categories Section */}
-      <div className="relative mt-2 md:mt-6">
-        <div className="text-center mb-4 md:mb-5">
-          <h2 className="text-3xl md:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2 md:mb-2">
+      <div className="relative mt-6 md:mt-10">
+        <div className="text-center mb-4 md:mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-1">
             Shop by Category
           </h2>
-          <p className="text-gray-600 text-sm md:text-base">Browse through our fresh selection</p>
-          <div className="w-16 md:w-20 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-2 md:mt-2"></div>
+          <p className="text-gray-500 text-xs sm:text-sm md:text-base">Browse through our fresh selection</p>
+          <div className="w-12 sm:w-16 md:w-20 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mt-2"></div>
         </div>
         <Categories />
       </div>
 
       {/* ✅ Enhanced Best Sellers with Continuous Scroll & Flip Animation */}
-      <div id="best-sellers" className="relative mt-32">
+      <div id="best-sellers" className="relative mt-12 md:mt-20">
         <div className="text-center mb-10">
           <div className="inline-block relative">
             <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
