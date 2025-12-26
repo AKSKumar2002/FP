@@ -7,26 +7,24 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 /**
  * FLOW STEPS:
- * 1. INPUT_MOBILE: User inputs mobile number.
- * 2. VERIFY_OTP: User verifies OTP sent to mobile.
- * 3. CHECK_USER_EXISTENCE (Internal): After OTP, check if user exists.
- *    - If EXISTS: Show LOGIN_OPTIONS (Password or Auto-Login).
- *    - If NEW: Go to SIGNUP_FORM.
- * 4. SIGNUP_FORM: Fill Name, Email, DOB, New Password.
- * 5. SUCCESS: Logged in.
+ * 0. INITIAL_SELECTION: User chooses "Login" or "Signup".
+ * 1. INPUT_MOBILE: User inputs mobile number (For Signup OR Login via OTP).
+ * 2. VERIFY_OTP: User verifies OTP.
+ * 3. LOGIN_PASSWORD: User logs in with Password.
+ * 4. SIGNUP_FORM: User fills details to create account.
  */
 
 const Login = () => {
     const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
     // Flow State
-    const [step, setStep] = React.useState('INPUT_MOBILE'); // INPUT_MOBILE, VERIFY_OTP, SIGNUP_FORM, LOGIN_PASSWORD
+    const [step, setStep] = React.useState('INITIAL_SELECTION');
+    const [authMode, setAuthMode] = React.useState(null); // 'LOGIN' or 'SIGNUP'
     const [isLoading, setIsLoading] = React.useState(false);
 
     // Data State
     const [mobile, setMobile] = React.useState("");
     const [otp, setOtp] = React.useState("");
-    const [generatedOtp, setGeneratedOtp] = React.useState("");
 
     // Cleanup Form Data
     const [name, setName] = React.useState("");
@@ -37,7 +35,8 @@ const Login = () => {
 
     // Reset everything when opening
     useEffect(() => {
-        setStep('INPUT_MOBILE');
+        setStep('INITIAL_SELECTION');
+        setAuthMode(null);
         setMobile('');
         setOtp('');
         setName('');
@@ -71,14 +70,9 @@ const Login = () => {
                 window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                     'size': 'invisible',
                     'callback': (response) => {
-                        // reCAPTCHA solved, allow signInWithPhoneNumber.
+                        // reCAPTCHA solved
                     }
                 });
-            } else {
-                // Clear previous verifier instance to avoid "RecaptchaVerifier is already initialized" or stale state?
-                // Actually, reusing the same instance is fine, but sometimes it gets stuck.
-                // The 'argument-error' usually comes from invalid phone number format or missing appVerifier.
-                // Let's ensure reset if we want to be safe, BUT the error might be the phone format.
             }
 
             const appVerifier = window.recaptchaVerifier;
@@ -86,7 +80,7 @@ const Login = () => {
 
             const confirmationResult = await signInWithPhoneNumber(auth, formatMobile, appVerifier);
 
-            // Save confirmationResult to window or state to verify later
+            // Save confirmationResult to window
             window.confirmationResult = confirmationResult;
 
             toast.success(`OTP Sent to ${formatMobile}`);
@@ -95,14 +89,14 @@ const Login = () => {
         } catch (error) {
             console.error(error);
             if (error.code === 'auth/billing-not-enabled') {
-                toast.error("Firebase Billing not enabled. Please use a Test Number or upgrade to Blaze plan.");
+                toast.error("Firebase Billing not enabled. Please use a Test Number.");
             } else if (error.code === 'auth/invalid-phone-number') {
                 toast.error("Invalid Phone Number format.");
             } else {
                 toast.error("Failed to send SMS: " + error.message);
             }
 
-            // Reset Recaptcha if failed so it can be re-rendered
+            // Reset Recaptcha if failed
             if (window.recaptchaVerifier) {
                 window.recaptchaVerifier.clear();
                 window.recaptchaVerifier = null;
@@ -116,7 +110,7 @@ const Login = () => {
     const handleVerifyOtp = async (e) => {
         if (e) e.preventDefault();
 
-        if (otp.length !== 6) { // Firebase OTPs are usually 6 digits
+        if (otp.length !== 6) {
             toast.error("Please enter 6-digit OTP");
             return;
         }
@@ -130,16 +124,30 @@ const Login = () => {
 
             console.log("Firebase Verified:", user);
 
-            // Now check valid user in OUR backend using just the mobile number
-            // In production, send user.accessToken to backend to verify identity.
-
             // Check if user exists in our DB
             const { data } = await axios.post('/api/user/check-mobile', { mobile });
 
             if (data.exists) {
-                handleLoginWithOtp();
+                // User exists
+                if (authMode === 'SIGNUP') {
+                    // Warn user they already have an account, but log them in anyway (or prevent?)
+                    // Usually better to just log them in.
+                    toast.success("User already exists. Logging you in.");
+                    handleLoginWithOtp();
+                } else {
+                    // Login Mode
+                    handleLoginWithOtp();
+                }
             } else {
-                setStep('SIGNUP_FORM');
+                // User does NOT exist
+                if (authMode === 'LOGIN') {
+                    toast.error("Account not found. Please Sign Up.");
+                    setAuthMode('SIGNUP');
+                    setStep('SIGNUP_FORM');
+                } else {
+                    // Signup Mode -> Proceed to fill form
+                    setStep('SIGNUP_FORM');
+                }
             }
 
         } catch (error) {
@@ -174,7 +182,7 @@ const Login = () => {
 
         try {
             const { data } = await axios.post('/api/user/register', {
-                name, email, mobile, password, dob, otp // Send OTP again to verify ownership before creating
+                name, email, mobile, password, dob, otp
             }, { withCredentials: true });
 
             if (data.success) {
@@ -192,12 +200,11 @@ const Login = () => {
         }
     };
 
-    // Alternate: Login with Password (from first screen link)
+    // Alternate: Login with Password
     const handlePasswordLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            // Note: Login API now supports mobile as 'email' field
             const { data } = await axios.post('/api/user/login', {
                 email: mobile, // Sending mobile as identifier
                 password
@@ -231,13 +238,16 @@ const Login = () => {
                 {/* Header Image / Branding */}
                 <div className="bg-green-50 p-6 text-center border-b border-green-100">
                     <h2 className="text-2xl font-bold text-gray-800">
-                        {step === 'SIGNUP_FORM' ? 'Complete Profile' : 'Welcome to FarmPick'}
+                        {step === 'INITIAL_SELECTION' && 'Welcome to FarmPick'}
+                        {authMode === 'SIGNUP' && step !== 'INITIAL_SELECTION' && 'Create Account'}
+                        {authMode === 'LOGIN' && step !== 'INITIAL_SELECTION' && 'Welcome Back'}
                     </h2>
                     <p className="text-gray-500 text-sm mt-1">
-                        {step === 'INPUT_MOBILE' && 'Enter your mobile number to get started'}
+                        {step === 'INITIAL_SELECTION' && 'Freshness You Trust, Savings You Love!'}
+                        {step === 'INPUT_MOBILE' && 'Enter your mobile number to verify'}
                         {step === 'VERIFY_OTP' && `Enter OTP sent to +91 ${mobile}`}
-                        {step === 'SIGNUP_FORM' && 'Just a few more details to set up your account'}
-                        {step === 'LOGIN_PASSWORD' && 'Enter your password to login'}
+                        {step === 'SIGNUP_FORM' && 'Complete your profile'}
+                        {step === 'LOGIN_PASSWORD' && 'Login to continue'}
                     </p>
                 </div>
 
@@ -252,7 +262,31 @@ const Login = () => {
                 <div className="p-6 overflow-y-auto">
                     <div id="recaptcha-container"></div>
 
-                    {/* STEP 1: INPUT MOBILE */}
+                    {/* STEP 0: INITIAL SELECTION */}
+                    {step === 'INITIAL_SELECTION' && (
+                        <div className="flex flex-col gap-4 mt-2">
+                            <div className="text-center mb-4">
+                                <img src="/assets/logo.png" alt="FarmPick" className="h-16 mx-auto mb-2 opacity-80" onError={(e) => e.target.style.display = 'none'} />
+                                <p className="text-gray-500">Get started with the best farm-fresh delivery app.</p>
+                            </div>
+
+                            <button
+                                onClick={() => { setAuthMode('LOGIN'); setStep('LOGIN_PASSWORD'); }}
+                                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-md"
+                            >
+                                Login
+                            </button>
+
+                            <button
+                                onClick={() => { setAuthMode('SIGNUP'); setStep('INPUT_MOBILE'); }}
+                                className="w-full border-2 border-green-500 text-green-600 hover:bg-green-50 font-bold py-3.5 rounded-xl transition-all"
+                            >
+                                Create New Account
+                            </button>
+                        </div>
+                    )}
+
+                    {/* STEP 1: INPUT MOBILE (For Signup OR Login via OTP) */}
                     {step === 'INPUT_MOBILE' && (
                         <div className="space-y-4">
                             <div>
@@ -278,20 +312,10 @@ const Login = () => {
                                 disabled={mobile.length !== 10 || isLoading}
                                 className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:translate-y-0.5"
                             >
-                                {isLoading ? 'Sending...' : 'Continue'}
+                                {isLoading ? 'Sending...' : 'Send OTP'}
                             </button>
 
-                            <div className="relative py-2">
-                                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-                                <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-gray-400">Or login with</span></div>
-                            </div>
-
-                            <button
-                                onClick={() => mobile.length === 10 ? setStep('LOGIN_PASSWORD') : toast.error("Enter mobile number first")}
-                                className="w-full border-2 border-gray-200 hover:border-green-500 hover:text-green-600 text-gray-600 font-semibold py-3 rounded-xl transition-all"
-                            >
-                                Password
-                            </button>
+                            <button onClick={() => setStep('INITIAL_SELECTION')} className="w-full text-center text-gray-400 hover:text-gray-600 text-xs mt-2">Back</button>
                         </div>
                     )}
 
@@ -309,8 +333,6 @@ const Login = () => {
                                     autoFocus
                                 />
                             </div>
-
-
 
                             <button
                                 onClick={handleVerifyOtp}
@@ -330,9 +352,22 @@ const Login = () => {
                     {/* STEP 3: LOGIN WITH PASSWORD */}
                     {step === 'LOGIN_PASSWORD' && (
                         <form onSubmit={handlePasswordLogin} className="space-y-4">
-                            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
-                                <span className="font-medium text-gray-700">+91 {mobile}</span>
-                                <button type="button" onClick={() => setStep('INPUT_MOBILE')} className="text-xs text-primary font-semibold uppercase">Change</button>
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Mobile Number</label>
+                                <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-green-500 transition-all">
+                                    <span className="bg-gray-100 px-3 py-3 text-gray-500 font-medium flex items-center border-r">+91</span>
+                                    <input
+                                        type="tel"
+                                        className="flex-1 px-4 py-3 outline-none text-gray-800 font-medium"
+                                        placeholder="98765 43210"
+                                        value={mobile}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/\D/g, '');
+                                            if (val.length <= 10) setMobile(val);
+                                        }}
+                                        autoFocus
+                                    />
+                                </div>
                             </div>
 
                             <div>
@@ -345,7 +380,6 @@ const Login = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        autoFocus
                                     />
                                     <button
                                         type="button"
@@ -368,19 +402,29 @@ const Login = () => {
                                 {isLoading ? 'Logging in...' : 'Login'}
                             </button>
 
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+                                <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-gray-400">OR</span></div>
+                            </div>
+
                             <button
                                 type="button"
-                                onClick={() => handleSendOtp()}
-                                className="w-full text-green-600 font-semibold py-2 hover:bg-green-50 rounded-lg transition-colors"
+                                onClick={() => setStep('INPUT_MOBILE')}
+                                className="w-full text-green-600 font-semibold py-2 hover:bg-green-50 rounded-lg transition-colors border border-green-100 bg-green-50"
                             >
-                                Login via OTP instead
+                                Login via OTP
                             </button>
+
+                            <button type="button" onClick={() => setStep('INITIAL_SELECTION')} className="w-full text-center text-gray-400 hover:text-gray-600 text-xs mt-1">Back</button>
                         </form>
                     )}
 
                     {/* STEP 4: SIGNUP FORM (Only for new users) */}
                     {step === 'SIGNUP_FORM' && (
                         <form onSubmit={handleSignupSubmit} className="space-y-4">
+                            <div className="bg-blue-50 p-2 rounded text-xs text-blue-700 mb-2 border border-blue-100">
+                                Mobile Verified: +91 {mobile}
+                            </div>
                             <div className="grid grid-cols-1 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
