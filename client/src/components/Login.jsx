@@ -92,6 +92,8 @@ const Login = () => {
                 toast.error("Firebase Billing not enabled. Please use a Test Number.");
             } else if (error.code === 'auth/invalid-phone-number') {
                 toast.error("Invalid Phone Number format.");
+            } else if (error.code === 'auth/too-many-requests') {
+                toast.error("Too many attempts. Please try again later or use a Test Number.");
             } else {
                 toast.error("Failed to send SMS: " + error.message);
             }
