@@ -304,7 +304,7 @@ const Login = () => {
                                     maxLength={6}
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                    className="w-40 text-center text-3xl font-bold tracking-[0.5em] py-2 border-b-2 border-green-500 outline-none focus:border-green-700 transition-colors bg-transparent"
+                                    className="w-48 text-center text-3xl font-bold tracking-[0.5em] py-2 border-b-2 border-green-500 outline-none focus:border-green-700 transition-colors bg-transparent"
                                     placeholder="••••••"
                                     autoFocus
                                 />
