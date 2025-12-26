@@ -57,7 +57,7 @@ const Login = () => {
 
         setIsLoading(true);
         try {
-            // Initialize Recaptcha (only once)
+            // Initialize Recaptcha
             if (!window.recaptchaVerifier) {
                 window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                     'size': 'invisible',
@@ -65,6 +65,11 @@ const Login = () => {
                         // reCAPTCHA solved, allow signInWithPhoneNumber.
                     }
                 });
+            } else {
+                // Clear previous verifier instance to avoid "RecaptchaVerifier is already initialized" or stale state?
+                // Actually, reusing the same instance is fine, but sometimes it gets stuck.
+                // The 'argument-error' usually comes from invalid phone number format or missing appVerifier.
+                // Let's ensure reset if we want to be safe, BUT the error might be the phone format.
             }
 
             const appVerifier = window.recaptchaVerifier;
