@@ -58,6 +58,7 @@ const Login = () => {
         setIsLoading(true);
         try {
             // Initialize Recaptcha
+            console.log("Initializing Recaptcha with:", { auth, container: 'recaptcha-container' });
             if (!window.recaptchaVerifier) {
                 window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                     'size': 'invisible',
@@ -229,6 +230,7 @@ const Login = () => {
                 </button>
 
                 <div className="p-6 overflow-y-auto">
+                    <div id="recaptcha-container"></div>
 
                     {/* STEP 1: INPUT MOBILE */}
                     {step === 'INPUT_MOBILE' && (
@@ -288,7 +290,7 @@ const Login = () => {
                                 />
                             </div>
 
-                            <div id="recaptcha-container"></div>
+
 
                             <button
                                 onClick={handleVerifyOtp}
