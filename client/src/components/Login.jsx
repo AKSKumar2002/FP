@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import toast from 'react-hot-toast';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { auth } from '../firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 /**
  * FLOW STEPS:
@@ -48,22 +50,37 @@ const Login = () => {
     const handleSendOtp = async (e) => {
         if (e) e.preventDefault();
 
-        if (!mobile || mobile.length !== 10) {
-            toast.error("Please enter a valid 10-digit mobile number");
+        if (!mobile || mobile.length < 10) {
+            toast.error("Please enter a valid mobile number");
             return;
         }
+
         setIsLoading(true);
         try {
-            const { data } = await axios.post('/api/user/send-otp', { mobile });
-            if (data.success) {
-                toast.success(data.message || `OTP Sent to ${mobile}`, { icon: 'sms' });
-                setStep('VERIFY_OTP');
-            } else {
-                toast.error(data.message);
+            // Initialize Recaptcha (only once)
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': (response) => {
+                        // reCAPTCHA solved, allow signInWithPhoneNumber.
+                    }
+                });
             }
+
+            const appVerifier = window.recaptchaVerifier;
+            const formatMobile = "+91" + mobile; // Ensure country code
+
+            const confirmationResult = await signInWithPhoneNumber(auth, formatMobile, appVerifier);
+
+            // Save confirmationResult to window or state to verify later
+            window.confirmationResult = confirmationResult;
+
+            toast.success(`OTP Sent to ${formatMobile}`);
+            setStep('VERIFY_OTP');
+
         } catch (error) {
             console.error(error);
-            toast.error("Failed to send OTP");
+            toast.error("Failed to send SMS: " + error.message);
         } finally {
             setIsLoading(false);
         }
@@ -73,41 +90,35 @@ const Login = () => {
     const handleVerifyOtp = async (e) => {
         if (e) e.preventDefault();
 
-        if (otp.length !== 4) {
-            toast.error("Please enter valid OTP");
+        if (otp.length !== 6) { // Firebase OTPs are usually 6 digits
+            toast.error("Please enter 6-digit OTP");
             return;
         }
 
         setIsLoading(true);
         try {
-            // Try to login directly with OTP (This checks OTP validity AND existence)
-            const { data } = await axios.post('/api/user/login-mobile', { mobile, otp }, { withCredentials: true });
+            // Verify via Firebase
+            const confirmationResult = window.confirmationResult;
+            const result = await confirmationResult.confirm(otp);
+            const user = result.user; // Firebase User
 
-            if (data.success) {
-                // User exists and OTP matches -> Login Success
-                toast.success('Logged in successfully!');
-                setUser(data.user);
-                setShowUserLogin(false);
-                navigate('/');
+            console.log("Firebase Verified:", user);
+
+            // Now check valid user in OUR backend using just the mobile number
+            // In production, send user.accessToken to backend to verify identity.
+
+            // Check if user exists in our DB
+            const { data } = await axios.post('/api/user/check-mobile', { mobile });
+
+            if (data.exists) {
+                handleLoginWithOtp();
             } else {
-                // If failed, check why. 
-                // If "User not found...", it means OTP was correct (or checked after), but user is new.
-                // WE NEED TO KNOW IF OTP WAS VALID or REQUEST FAILED.
-                // My backend `loginWithMobile` returns "Invalid or Expired OTP" if OTP fails.
-
-                if (data.message === "User not found with this mobile number") {
-                    // Means OTP was valid (because it passed that check in backend), but user is new.
-                    // Proceed to Signup
-                    setStep('SIGNUP_FORM');
-                } else {
-                    // Likely "Invalid or Expired OTP"
-                    toast.error(data.message);
-                }
+                setStep('SIGNUP_FORM');
             }
+
         } catch (error) {
-            setIsLoading(false);
             console.error(error);
-            toast.error("Something went wrong");
+            toast.error("Invalid OTP or Verification Failed");
         } finally {
             setIsLoading(false);
         }
@@ -263,18 +274,20 @@ const Login = () => {
                             <div className="flex justify-center gap-2 my-4">
                                 <input
                                     type="text"
-                                    maxLength={4}
+                                    maxLength={6}
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                                     className="w-40 text-center text-3xl font-bold tracking-[0.5em] py-2 border-b-2 border-green-500 outline-none focus:border-green-700 transition-colors bg-transparent"
-                                    placeholder="••••"
+                                    placeholder="••••••"
                                     autoFocus
                                 />
                             </div>
 
+                            <div id="recaptcha-container"></div>
+
                             <button
                                 onClick={handleVerifyOtp}
-                                disabled={otp.length !== 4 || isLoading}
+                                disabled={otp.length !== 6 || isLoading}
                                 className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold py-3.5 rounded-xl transition-all shadow-md"
                             >
                                 {isLoading ? 'Verifying...' : 'Verify & Continue'}
