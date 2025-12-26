@@ -9,7 +9,7 @@ const FloatingActionButton = () => {
 
     const handleWhatsApp = () => {
         // Replace with your actual WhatsApp number
-        window.open('https://wa.me/919876543210', '_blank');
+        window.open('https://wa.me/918825935176', '_blank');
     };
 
     const menuItems = [
@@ -82,8 +82,7 @@ const FloatingActionButton = () => {
                     </svg>
                 ) : (
                     <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12v5.5a2.5 2.5 0 002.5 2.5H7v-7H4v-1c0-4.42 3.58-8 8-8s8 3.58 8 8v1h-3v7h3.5a2.5 2.5 0 002.5-2.5V12C22 6.48 17.52 2 12 2zM6 18H4.5a.5.5 0 01-.5-.5V12h2v6zm13.5-.5a.5.5 0 01-.5.5H17v-6h2v5.5z" />
-                        <circle cx="15" cy="17" r="2.5" />
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.44-5.15-3.75-6.59-6.59l1.97-1.57c.26-.27.35-.66.24-1.01-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3.3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .72-.63.72-1.19v-3.44c0-.54-.45-.99-.99-.99z" />
                     </svg>
                 )}
             </button>
