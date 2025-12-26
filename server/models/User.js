@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
     mobile: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     dob: { type: String, default: '' },
+    otp: { type: String, default: '' },
+    otpExpire: { type: Number, default: 0 },
     cartItems: { type: Object, default: {} },
 }, { minimize: false })
 

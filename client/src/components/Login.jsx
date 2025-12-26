@@ -53,45 +53,63 @@ const Login = () => {
             return;
         }
         setIsLoading(true);
-        // Simulate OTP Generation
-        const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
-        setGeneratedOtp(newOtp);
-
-        // Simulate API delay
-        setTimeout(() => {
+        try {
+            const { data } = await axios.post('/api/user/send-otp', { mobile });
+            if (data.success) {
+                toast.success(data.message || `OTP Sent to ${mobile}`, { icon: 'sms' });
+                setStep('VERIFY_OTP');
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to send OTP");
+        } finally {
             setIsLoading(false);
-            toast.success(`OTP sent to ${mobile}: ${newOtp}`, { icon: 'sms', duration: 6000 });
-            setStep('VERIFY_OTP');
-        }, 1000);
+        }
     };
 
     // 2. Verify OTP Handler
     const handleVerifyOtp = async (e) => {
         if (e) e.preventDefault();
 
-        if (otp !== generatedOtp) {
-            toast.error("Invalid OTP");
+        if (otp.length !== 4) {
+            toast.error("Please enter valid OTP");
             return;
         }
 
         setIsLoading(true);
         try {
-            // Check if user exists
-            const { data } = await axios.post('/api/user/check-mobile', { mobile });
+            // Try to login directly with OTP (This checks OTP validity AND existence)
+            const { data } = await axios.post('/api/user/login-mobile', { mobile, otp }, { withCredentials: true });
 
-            setIsLoading(false);
-
-            if (data.exists) {
-                // User exists -> Log in directly
-                handleLoginWithOtp();
+            if (data.success) {
+                // User exists and OTP matches -> Login Success
+                toast.success('Logged in successfully!');
+                setUser(data.user);
+                setShowUserLogin(false);
+                navigate('/');
             } else {
-                // User is new -> Go to Signup Form
-                setStep('SIGNUP_FORM');
+                // If failed, check why. 
+                // If "User not found...", it means OTP was correct (or checked after), but user is new.
+                // WE NEED TO KNOW IF OTP WAS VALID or REQUEST FAILED.
+                // My backend `loginWithMobile` returns "Invalid or Expired OTP" if OTP fails.
+
+                if (data.message === "User not found with this mobile number") {
+                    // Means OTP was valid (because it passed that check in backend), but user is new.
+                    // Proceed to Signup
+                    setStep('SIGNUP_FORM');
+                } else {
+                    // Likely "Invalid or Expired OTP"
+                    toast.error(data.message);
+                }
             }
         } catch (error) {
             setIsLoading(false);
             console.error(error);
             toast.error("Something went wrong");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -119,7 +137,7 @@ const Login = () => {
 
         try {
             const { data } = await axios.post('/api/user/register', {
-                name, email, mobile, password, dob
+                name, email, mobile, password, dob, otp // Send OTP again to verify ownership before creating
             }, { withCredentials: true });
 
             if (data.success) {
