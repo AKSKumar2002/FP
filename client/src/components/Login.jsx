@@ -44,6 +44,14 @@ const Login = () => {
         setEmail('');
         setDob('');
         setPassword('');
+
+        return () => {
+            // Cleanup Recaptcha Verifier on unmount
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+        }
     }, []);
 
     // 1. Send OTP Handler
@@ -86,7 +94,19 @@ const Login = () => {
 
         } catch (error) {
             console.error(error);
-            toast.error("Failed to send SMS: " + error.message);
+            if (error.code === 'auth/billing-not-enabled') {
+                toast.error("Firebase Billing not enabled. Please use a Test Number or upgrade to Blaze plan.");
+            } else if (error.code === 'auth/invalid-phone-number') {
+                toast.error("Invalid Phone Number format.");
+            } else {
+                toast.error("Failed to send SMS: " + error.message);
+            }
+
+            // Reset Recaptcha if failed so it can be re-rendered
+            if (window.recaptchaVerifier) {
+                window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
         } finally {
             setIsLoading(false);
         }

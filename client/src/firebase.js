@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBH6s4Mg46Ii5SkB6e-ePZnzpTPlcy95vA",
-    authDomain: "farmpick-auth.firebaseapp.com",
-    projectId: "farmpick-auth",
-    storageBucket: "farmpick-auth.firebasestorage.app",
-    messagingSenderId: "183643252260",
-    appId: "1:183643252260:web:489de5bc75f2e6ac355ab1"
+    apiKey: "AIzaSyD9dDVXRfvZpIfWs7WHFEY_CyWZR3q-bA8",
+    authDomain: "farmpick-auth-84ea9.firebaseapp.com",
+    projectId: "farmpick-auth-84ea9",
+    storageBucket: "farmpick-auth-84ea9.firebasestorage.app",
+    messagingSenderId: "479900706938",
+    appId: "1:479900706938:web:550e7ae6988b8832c9b3c3"
 };
 
 // Initialize Firebase
