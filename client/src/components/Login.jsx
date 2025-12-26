@@ -1,435 +1,391 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import toast from 'react-hot-toast';
-import emailjs from 'emailjs-com'; // Import EmailJS
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
+/**
+ * FLOW STEPS:
+ * 1. INPUT_MOBILE: User inputs mobile number.
+ * 2. VERIFY_OTP: User verifies OTP sent to mobile.
+ * 3. CHECK_USER_EXISTENCE (Internal): After OTP, check if user exists.
+ *    - If EXISTS: Show LOGIN_OPTIONS (Password or Auto-Login).
+ *    - If NEW: Go to SIGNUP_FORM.
+ * 4. SIGNUP_FORM: Fill Name, Email, DOB, New Password.
+ * 5. SUCCESS: Logged in.
+ */
 
 const Login = () => {
     const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
-    const [isSignUp, setIsSignUp] = React.useState(true); // Toggle between Sign Up and Login
-    const [isForgotPassword, setIsForgotPassword] = React.useState(false); // State for forgot password
-    const [step, setStep] = React.useState(1); // Step state to control transitions
+    // Flow State
+    const [step, setStep] = React.useState('INPUT_MOBILE'); // INPUT_MOBILE, VERIFY_OTP, SIGNUP_FORM, LOGIN_PASSWORD
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    // Data State
+    const [mobile, setMobile] = React.useState("");
+    const [otp, setOtp] = React.useState("");
+    const [generatedOtp, setGeneratedOtp] = React.useState("");
+
+    // Cleanup Form Data
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
-    const [mobile, setMobile] = React.useState("");
-    const [otp, setOtp] = React.useState(""); // State for OTP
-    const [generatedOtp, setGeneratedOtp] = React.useState(""); // Store generated OTP
-    const [otpVerified, setOtpVerified] = React.useState(false); // State for OTP verification
+    const [dob, setDob] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [confirmPassword, setConfirmPassword] = React.useState(""); // State for confirm password
-    const [passwordVisible, setPasswordVisible] = React.useState(false); // State for toggling password visibility
-    const [showSuccessTick, setShowSuccessTick] = React.useState(false); // State for showing success tick
-    const [showPopper, setShowPopper] = React.useState(false); // State for showing popper animation
+    const [passwordVisible, setPasswordVisible] = React.useState(false);
 
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
+    // Reset everything when opening
+    useEffect(() => {
+        setStep('INPUT_MOBILE');
+        setMobile('');
+        setOtp('');
+        setName('');
+        setEmail('');
+        setDob('');
+        setPassword('');
+    }, []);
 
-    const sendOtpHandler = async () => {
-        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate 6-digit OTP
-        setGeneratedOtp(generatedOtp);
+    // 1. Send OTP Handler
+    const handleSendOtp = async (e) => {
+        if (e) e.preventDefault();
 
-        const templateParams = {
-            to_name: name,
-            to_email: email,
-            otp: generatedOtp,
-        };
-
-        try {
-            await emailjs.send(
-                'service_12lyrkq', // Replace with your EmailJS service ID
-                'template_lr1iwkq', // Replace with your EmailJS template ID
-                templateParams,
-                'oLMFFwhse8y8oWg3S' // Replace with your EmailJS user ID
-            );
-            toast.success('OTP sent successfully to your email!', {
-                duration: 10000, // 10 seconds (adjust as needed)
-            });
-            setStep(2); // Move to the next step
-        } catch (error) {
-            toast.error('Failed to send OTP. Please try again.');
+        if (!mobile || mobile.length !== 10) {
+            toast.error("Please enter a valid 10-digit mobile number");
+            return;
         }
+        setIsLoading(true);
+        // Simulate OTP Generation
+        const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+        setGeneratedOtp(newOtp);
+
+        // Simulate API delay
+        setTimeout(() => {
+            setIsLoading(false);
+            toast.success(`OTP sent to ${mobile}: ${newOtp}`, { icon: 'sms', duration: 6000 });
+            setStep('VERIFY_OTP');
+        }, 1000);
     };
 
-    const sendForgotPasswordOtp = async () => {
-        // Skip email check - just send OTP directly
-        const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        setGeneratedOtp(generatedOtp);
+    // 2. Verify OTP Handler
+    const handleVerifyOtp = async (e) => {
+        if (e) e.preventDefault();
 
-        const templateParams = {
-            to_name: 'User', // Generic name since we're not checking
-            to_email: email,
-            otp: generatedOtp,
-        };
-
-        try {
-            await emailjs.send(
-                'service_12lyrkq',
-                'template_lr1iwkq',
-                templateParams,
-                'oLMFFwhse8y8oWg3S'
-            );
-            toast.success('OTP sent successfully to your email!', {
-                duration: 10000,
-            });
-            setStep(2);
-        } catch (error) {
-            toast.error('Failed to send OTP. Please try again.');
+        if (otp !== generatedOtp) {
+            toast.error("Invalid OTP");
+            return;
         }
-    };
 
-    const verifyOtpHandler = () => {
-        if (otp === generatedOtp) {
-            toast.success('OTP verified successfully!');
-            setOtpVerified(true);
-            setStep(3); // Move to the next step
-        } else {
-            toast.error('Invalid OTP. Please try again.');
-        }
-    };
-
-    const onSignUpHandler = async (event) => {
-        event.preventDefault();
-
+        setIsLoading(true);
         try {
-            const { data } = await axios.post(
-                '/api/user/register',
-                { name, email, password, mobile },
-                { withCredentials: true }
-            );
+            // Check if user exists
+            const { data } = await axios.post('/api/user/check-mobile', { mobile });
 
-            if (data.success) {
-                toast.success('Account created successfully!');
-                navigate('/'); // Navigate to the main site
-                setUser(data.user);
-                setShowUserLogin(false);
+            setIsLoading(false);
+
+            if (data.exists) {
+                // User exists -> Log in directly
+                handleLoginWithOtp();
             } else {
-                toast.error(data.message);
+                // User is new -> Go to Signup Form
+                setStep('SIGNUP_FORM');
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
+            setIsLoading(false);
+            console.error(error);
+            toast.error("Something went wrong");
         }
     };
 
-    const onLoginHandler = async (event) => {
-        event.preventDefault();
-
+    // 3. Login directly with OTP
+    const handleLoginWithOtp = async () => {
         try {
-            const { data } = await axios.post(
-                '/api/user/login',
-                { email, password },
-                { withCredentials: true }
-            );
-
+            const { data } = await axios.post('/api/user/login-mobile', { mobile }, { withCredentials: true });
             if (data.success) {
                 toast.success('Logged in successfully!');
-                navigate('/'); // Navigate to the main site
                 setUser(data.user);
                 setShowUserLogin(false);
+                navigate('/');
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
+            toast.error(error.message);
         }
     };
 
-    const onResetPasswordHandler = async (event) => {
-        event.preventDefault();
-
-        if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
-            return;
-        }
-
-        if (password.length < 6) {
-            toast.error('Password must be at least 6 characters');
-            return;
-        }
+    // 4. Final Signup Submission
+    const handleSignupSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
 
         try {
-            const { data } = await axios.post('/api/user/reset-password', {
-                email,
-                newPassword: password // <-- Change 'password' to 'newPassword'
-            });
+            const { data } = await axios.post('/api/user/register', {
+                name, email, mobile, password, dob
+            }, { withCredentials: true });
 
             if (data.success) {
-                setShowSuccessTick(true); // Show tick
-                setShowPopper(true); // Show popper animation
-                toast.success('Password reset successfully!');
-                setTimeout(() => {
-                    setShowSuccessTick(false);
-                    setShowPopper(false);
-                    setIsForgotPassword(false);
-                    setIsSignUp(false);
-                    setStep(1);
-                    setEmail('');
-                    setPassword('');
-                    setConfirmPassword('');
-                    setOtp('');
-                    setShowUserLogin(false); // Close modal immediately after animation
-                }, 1800); // Show tick & popper for 1.8s
+                toast.success('Account created & Logged in!');
+                setUser(data.user);
+                setShowUserLogin(false);
+                navigate('/');
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || error.message);
+            toast.error(error.response?.data?.message || "Registration failed");
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    // Alternate: Login with Password (from first screen link)
+    const handlePasswordLogin = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        try {
+            // Note: Login API now supports mobile as 'email' field
+            const { data } = await axios.post('/api/user/login', {
+                email: mobile, // Sending mobile as identifier
+                password
+            }, { withCredentials: true });
+
+            if (data.success) {
+                toast.success('Logged in!');
+                setUser(data.user);
+                setShowUserLogin(false);
+                navigate('/');
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Login failed");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
 
     return (
         <div
             onClick={() => setShowUserLogin(false)}
-            className="fixed inset-0 z-[100] flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto"
+            className="fixed inset-0 z-[100] flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto px-4"
         >
-            <form
-                onSubmit={isForgotPassword ? onResetPasswordHandler : (isSignUp ? onSignUpHandler : onLoginHandler)}
+            <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex flex-col gap-6 m-auto items-start p-6 py-6 min-w-[340px] sm:w-[420px] max-w-full rounded-xl shadow-2xl border border-gray-200 bg-white mt-12 mb-8 h-auto max-h-[90vh] overflow-y-auto relative z-[101]"
-                style={{
-                    boxShadow: "0 8px 32px 0 rgba(60,60,60,0.18), 0 1.5px 8px 0 rgba(60,60,60,0.10)"
-                }}
+                className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
             >
+                {/* Header Image / Branding */}
+                <div className="bg-green-50 p-6 text-center border-b border-green-100">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        {step === 'SIGNUP_FORM' ? 'Complete Profile' : 'Welcome to FarmPick'}
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                        {step === 'INPUT_MOBILE' && 'Enter your mobile number to get started'}
+                        {step === 'VERIFY_OTP' && `Enter OTP sent to +91 ${mobile}`}
+                        {step === 'SIGNUP_FORM' && 'Just a few more details to set up your account'}
+                        {step === 'LOGIN_PASSWORD' && 'Enter your password to login'}
+                    </p>
+                </div>
+
+                {/* Close Button */}
                 <button
                     onClick={() => setShowUserLogin(false)}
-                    type="button"
-                    className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-white/50 hover:bg-white rounded-full transition-colors z-10"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
 
-                <p className="text-2xl font-medium m-auto mb-2">
-                    <span className="text-primary">
-                        {isForgotPassword ? 'Reset Password' : (isSignUp ? 'User Sign Up' : 'User Login')}
-                    </span>
-                </p>
+                <div className="p-6 overflow-y-auto">
 
-                {/* Success Tick Animation */}
-                {showSuccessTick && (
-                    <div className="w-full flex justify-center my-4">
-                        {/* Green circle with animated tick */}
-                        <svg className="animate-flipIn" width="64" height="64" viewBox="0 0 64 64" fill="none">
-                            <circle cx="32" cy="32" r="32" fill="#4fbf8b" />
-                            <polyline
-                                points="20,34 30,44 44,26"
-                                fill="none"
-                                stroke="#fff"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </div>
-                )}
-
-                {/* Popper Animation */}
-                {showPopper && (
-                    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] animate-fadeIn">
-                        <div className="bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 font-semibold text-lg">
-                            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                                <circle cx="14" cy="14" r="14" fill="#fff" opacity="0.2" />
-                                <polyline
-                                    points="8,15 12,19 20,11"
-                                    fill="none"
-                                    stroke="#fff"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                            Password reset successfully!
-                        </div>
-                    </div>
-                )}
-
-                {isForgotPassword ? (
-                    <>
-                        {step === 1 && (
-                            <>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">Email</label>
-                                    <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
+                    {/* STEP 1: INPUT MOBILE */}
+                    {step === 'INPUT_MOBILE' && (
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Mobile Number</label>
+                                <div className="flex border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-green-500 transition-all">
+                                    <span className="bg-gray-100 px-3 py-3 text-gray-500 font-medium flex items-center border-r">+91</span>
+                                    <input
+                                        type="tel"
+                                        className="flex-1 px-4 py-3 outline-none text-gray-800 font-medium"
+                                        placeholder="98765 43210"
+                                        value={mobile}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/\D/g, '');
+                                            if (val.length <= 10) setMobile(val);
+                                        }}
+                                        autoFocus
+                                    />
                                 </div>
-                                <button type="button" onClick={sendForgotPasswordOtp} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Send OTP
-                                </button>
-                                <div className="w-full text-center mt-2">
-                                    <button type="button" onClick={() => { setIsForgotPassword(false); setStep(1); }} className="text-gray-600">
-                                        Back to <span className="text-green-500">Login</span>
+                            </div>
+
+                            <button
+                                onClick={handleSendOtp}
+                                disabled={mobile.length !== 10 || isLoading}
+                                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:translate-y-0.5"
+                            >
+                                {isLoading ? 'Sending...' : 'Continue'}
+                            </button>
+
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+                                <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-gray-400">Or login with</span></div>
+                            </div>
+
+                            <button
+                                onClick={() => mobile.length === 10 ? setStep('LOGIN_PASSWORD') : toast.error("Enter mobile number first")}
+                                className="w-full border-2 border-gray-200 hover:border-green-500 hover:text-green-600 text-gray-600 font-semibold py-3 rounded-xl transition-all"
+                            >
+                                Password
+                            </button>
+                        </div>
+                    )}
+
+                    {/* STEP 2: VERIFY OTP */}
+                    {step === 'VERIFY_OTP' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-center gap-2 my-4">
+                                <input
+                                    type="text"
+                                    maxLength={4}
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                                    className="w-40 text-center text-3xl font-bold tracking-[0.5em] py-2 border-b-2 border-green-500 outline-none focus:border-green-700 transition-colors bg-transparent"
+                                    placeholder="••••"
+                                    autoFocus
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleVerifyOtp}
+                                disabled={otp.length !== 4 || isLoading}
+                                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold py-3.5 rounded-xl transition-all shadow-md"
+                            >
+                                {isLoading ? 'Verifying...' : 'Verify & Continue'}
+                            </button>
+
+                            <div className="flex justify-between text-sm">
+                                <button onClick={() => setStep('INPUT_MOBILE')} className="text-gray-500 hover:text-gray-700">Change Number</button>
+                                <button onClick={handleSendOtp} className="text-green-600 font-semibold hover:underline">Resend OTP</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* STEP 3: LOGIN WITH PASSWORD */}
+                    {step === 'LOGIN_PASSWORD' && (
+                        <form onSubmit={handlePasswordLogin} className="space-y-4">
+                            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
+                                <span className="font-medium text-gray-700">+91 {mobile}</span>
+                                <button type="button" onClick={() => setStep('INPUT_MOBILE')} className="text-xs text-primary font-semibold uppercase">Change</button>
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={passwordVisible ? "text" : "password"}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        autoFocus
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setPasswordVisible(!passwordVisible)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    >
+                                        {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                                     </button>
                                 </div>
-                            </>
-                        )}
-                        {step === 2 && (
-                            <>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">OTP</label>
-                                    <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
+                                <div className="text-right mt-1">
+                                    <button type="button" className="text-xs text-gray-500 hover:text-green-600 transition-colors">Forgot Password?</button>
                                 </div>
-                                <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Verify OTP
-                                </button>
-                            </>
-                        )}
-                        {step === 3 && (
-                            <>
-                                <div className="w-full mb-4 relative">
-                                    <label className="block mb-2">New Password</label>
-                                    <div className="relative">
-                                        <input
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            value={password}
-                                            placeholder="type here"
-                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
-                                            type={passwordVisible ? "text" : "password"}
-                                            required
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={togglePasswordVisibility}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
-                                            tabIndex={-1}
-                                            style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
-                                        >
-                                            {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="w-full mb-4 relative">
-                                    <label className="block mb-2">Confirm Password</label>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold py-3.5 rounded-xl transition-all shadow-md"
+                            >
+                                {isLoading ? 'Logging in...' : 'Login'}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => handleSendOtp()}
+                                className="w-full text-green-600 font-semibold py-2 hover:bg-green-50 rounded-lg transition-colors"
+                            >
+                                Login via OTP instead
+                            </button>
+                        </form>
+                    )}
+
+                    {/* STEP 4: SIGNUP FORM (Only for new users) */}
+                    {step === 'SIGNUP_FORM' && (
+                        <form onSubmit={handleSignupSubmit} className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
                                     <input
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        value={confirmPassword}
-                                        placeholder="type here"
-                                        className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base"
-                                        type="password"
+                                        type="text"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         required
                                     />
                                 </div>
-                                <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Reset Password
-                                </button>
-                            </>
-                        )}
-                    </>
-                ) : isSignUp ? (
-                    <>
-                        {step === 1 && (
-                            <>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">Name</label>
-                                    <input onChange={(e) => setName(e.target.value)} value={name} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                                    <input
+                                        type="email"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
                                 </div>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">Email</label>
-                                    <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-gray-600"
+                                        value={dob}
+                                        onChange={(e) => setDob(e.target.value)}
+                                        required
+                                    />
                                 </div>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">Mobile No</label>
-                                    <input onChange={(e) => setMobile(e.target.value)} value={mobile} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="tel" pattern="[0-9]{10}" required />
-                                </div>
-                                <button type="button" onClick={sendOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Send OTP
-                                </button>
-                                <div className="w-full text-center mt-2">
-                                    <button type="button" onClick={() => setIsSignUp(false)} className="text-gray-600">
-                                        Already have an account? <span className="text-green-500">Login</span>
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                        {step === 2 && (
-                            <>
-                                <div className="w-full mb-4">
-                                    <label className="block mb-2">OTP</label>
-                                    <input onChange={(e) => setOtp(e.target.value)} value={otp} placeholder="Enter OTP" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="text" required />
-                                </div>
-                                <button type="button" onClick={verifyOtpHandler} className="mt-2 bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Verify OTP
-                                </button>
-                            </>
-                        )}
-                        {step === 3 && (
-                            <>
-                                <div className="w-full mb-4 relative">
-                                    <label className="block mb-2">Password</label>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Set Password</label>
                                     <div className="relative">
                                         <input
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            value={password}
-                                            placeholder="type here"
-                                            className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
                                             type={passwordVisible ? "text" : "password"}
+                                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             required
                                         />
                                         <button
                                             type="button"
-                                            onClick={togglePasswordVisibility}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
-                                            tabIndex={-1}
-                                            style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
+                                            onClick={() => setPasswordVisible(!passwordVisible)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                                         >
-                                            {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                                            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                                         </button>
                                     </div>
                                 </div>
-                                <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                                    Submit
-                                </button>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <div className="w-full mb-4">
-                            <label className="block mb-2">Email</label>
-                            <input onChange={(e) => setEmail(e.target.value)} value={email} placeholder="type here" className="border border-gray-200 rounded w-full h-12 p-3 outline-primary text-base" type="email" required />
-                        </div>
-                        <div className="w-full mb-4 relative">
-                            <label className="block mb-2">Password</label>
-                            <div className="relative">
-                                <input
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    value={password}
-                                    placeholder="type here"
-                                    className="border border-gray-200 rounded w-full h-12 p-3 outline-primary pr-12 text-base"
-                                    type={passwordVisible ? "text" : "password"}
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    onClick={togglePasswordVisibility}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center bg-transparent border-none outline-none"
-                                    tabIndex={-1}
-                                    style={{ padding: 0, margin: 0, height: "32px", width: "32px" }}
-                                >
-                                    {passwordVisible ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
-                                </button>
                             </div>
-                        </div>
-                        <button type="submit" className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-3 rounded-md cursor-pointer text-base">
-                            Login
-                        </button>
-                        <div className="w-full text-center mt-2">
+
                             <button
-                                type="button"
-                                onClick={() => { setIsForgotPassword(true); setStep(1); }}
-                                className="text-green-500 underline text-sm"
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-bold py-3.5 rounded-xl transition-all shadow-md mt-2"
                             >
-                                Forgot Password?
+                                {isLoading ? 'Creating Account...' : 'Complete Sign Up'}
                             </button>
-                        </div>
-                        <div className="w-full text-center mt-2">
-                            <button type="button" onClick={() => setIsSignUp(true)} className="text-gray-600">
-                                Don't have an account? <span className="text-green-500">Sign Up</span>
-                            </button>
-                        </div>
-                    </>
-                )}
-            </form>
+                        </form>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

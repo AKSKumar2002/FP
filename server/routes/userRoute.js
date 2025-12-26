@@ -1,5 +1,5 @@
 import express from 'express';
-import { isAuth, login, logout, register } from '../controllers/userController.js';
+import { isAuth, login, logout, register, loginWithMobile, checkUserByMobile } from '../controllers/userController.js';
 import authUser from '../middlewares/authUser.js';
 import User from '../models/User.js'; // Make sure this path is correct
 import bcrypt from 'bcryptjs';
@@ -8,6 +8,8 @@ const userRouter = express.Router();
 
 userRouter.post('/register', register)
 userRouter.post('/login', login)
+userRouter.post('/check-mobile', checkUserByMobile)
+userRouter.post('/login-mobile', loginWithMobile)
 userRouter.get('/is-auth', authUser, isAuth)
 userRouter.get('/logout', authUser, logout)
 
