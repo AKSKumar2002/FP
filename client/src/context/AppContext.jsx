@@ -138,6 +138,52 @@ export const AppContextProvider = ({ children }) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+  // PWA & Install Logic
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    // Check if installed (standalone mode)
+    const checkInstalled = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      setIsPwaInstalled(isStandalone);
+    };
+
+    checkInstalled();
+
+    const installHandler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      console.log("PWA Install prompt captured in AppContext");
+    };
+
+    const installedHandler = () => {
+      setIsPwaInstalled(true);
+      setDeferredPrompt(null);
+      toast.success("Farmpick App Installed!");
+    };
+
+    window.addEventListener('beforeinstallprompt', installHandler);
+    window.addEventListener('appinstalled', installedHandler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', installHandler);
+      window.removeEventListener('appinstalled', installedHandler);
+    };
+  }, []);
+
+  const installPwa = async () => {
+    if (!deferredPrompt) {
+      toast.error("Installation not available right now");
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
+
   useEffect(() => {
     fetchUser();
     fetchSeller();
@@ -230,6 +276,9 @@ export const AppContextProvider = ({ children }) => {
     fetchNotifications,
     selectedQuickProduct,
     setSelectedQuickProduct,
+    installPwa,
+    isPwaInstalled,
+    deferredPrompt,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

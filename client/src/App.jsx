@@ -132,6 +132,7 @@ const App = () => {
   //   );
   // }
 
+
   if (showInitialLoader) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white text-green-700">
@@ -147,6 +148,8 @@ const App = () => {
     );
   }
 
+  // Import locally within component or keep it clean by importing at top
+  // But since I'm editing a block, I'll insert it at the top level
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
       <ScrollToTop />
