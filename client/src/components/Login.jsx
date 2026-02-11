@@ -64,41 +64,56 @@ const Login = () => {
 
         setIsLoading(true);
         try {
-            // Initialize Recaptcha
-            console.log("Initializing Recaptcha with:", { auth, container: 'recaptcha-container' });
-            if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                    'size': 'invisible',
-                    'callback': (response) => {
-                        // reCAPTCHA solved
-                    }
-                });
+            // 🧹 Force cleanup existing verifier
+            if (window.recaptchaVerifier) {
+                try {
+                    window.recaptchaVerifier.clear();
+                } catch (e) { console.warn("Cleanup failed", e); }
+                window.recaptchaVerifier = null;
             }
 
-            const appVerifier = window.recaptchaVerifier;
-            const formatMobile = "+91" + mobile; // Ensure country code
+            // Ensure container is empty
+            const container = document.getElementById('recaptcha-container');
+            if (container) container.innerHTML = '';
 
+            // Set language
+            auth.languageCode = 'en';
+
+            console.log("Initializing Recaptcha... (Fallback to v2 expected if Enterprise 401s)");
+
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'normal',
+                'callback': (token) => {
+                    console.log("Recaptcha Token Generated:", token?.substring(0, 20) + "...");
+                },
+                'expired-callback': () => {
+                    toast.error("Recaptcha expired, please try again.");
+                }
+            });
+
+            const appVerifier = window.recaptchaVerifier;
+            const formatMobile = "+91" + mobile;
+
+            console.log("Attempting to send OTP to:", formatMobile);
             const confirmationResult = await signInWithPhoneNumber(auth, formatMobile, appVerifier);
 
-            // Save confirmationResult to window
             window.confirmationResult = confirmationResult;
-
             toast.success(`OTP Sent to ${formatMobile}`);
             setStep('VERIFY_OTP');
 
         } catch (error) {
-            console.error(error);
+            console.error("Firebase Error Details:", error);
+
             if (error.code === 'auth/billing-not-enabled') {
                 toast.error("Firebase Billing not enabled. Please use a Test Number.");
-            } else if (error.code === 'auth/invalid-phone-number') {
-                toast.error("Invalid Phone Number format.");
+            } else if (error.code === 'auth/invalid-app-credential') {
+                toast.error("Invalid Credential: Check if 'localhost' is in Firebase > Auth > Settings > Authorized Domains.");
             } else if (error.code === 'auth/too-many-requests') {
-                toast.error("Too many attempts. Please try again later or use a Test Number.");
+                toast.error("Blocked due to unusual activity. Try again later.");
             } else {
-                toast.error("Failed to send SMS: " + error.message);
+                toast.error(error.message || "Failed to send OTP");
             }
 
-            // Reset Recaptcha if failed
             if (window.recaptchaVerifier) {
                 window.recaptchaVerifier.clear();
                 window.recaptchaVerifier = null;

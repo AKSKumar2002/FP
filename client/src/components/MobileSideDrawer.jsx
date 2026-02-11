@@ -193,7 +193,8 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
 
             </div>
 
-            <style jsx>{`
+            <style dangerouslySetInnerHTML={{
+                __html: `
         @keyframes slideInLeft {
           from {
             transform: translateX(-100%);
@@ -205,7 +206,7 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
         .animate-slideInLeft {
           animation: slideInLeft 0.3s ease-out;
         }
-      `}</style>
+      ` }} />
         </>
     );
 };

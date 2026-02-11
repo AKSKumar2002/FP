@@ -166,7 +166,7 @@ const Blog = () => {
                 </div>
 
                 {/* Add shimmer animation */}
-                <style jsx>{`
+                <style dangerouslySetInnerHTML={{ __html: `
           @keyframes shimmer {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
@@ -176,7 +176,7 @@ const Blog = () => {
             50% { transform: translate(10px, 10px); }
             100% { transform: translate(0, 0); }
           }
-        `}</style>
+        ` }} />
             </div>
 
             <div className="max-w-7xl mx-auto px-6 py-16">
