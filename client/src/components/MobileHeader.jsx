@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Search, Bell, Mic, ChevronDown, User, Smartphone, Trash2 } from 'lucide-react';
+import { Search, Bell, Mic, ChevronDown, User, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const MobileHeader = () => {
@@ -70,26 +70,28 @@ const MobileHeader = () => {
 
                 {/* Icons */}
                 <div className="flex items-center gap-2">
-                    {/* PWA Install / Status Link */}
-                    {isPwaInstalled ? (
-                        <button
-                            className="bg-white p-2.5 rounded-full shadow-sm text-red-500 active:scale-95 transition-transform"
-                            onClick={() => toast.error("To uninstall, please use your device settings")}
-                        >
-                            <Trash2 size={20} strokeWidth={2.5} />
-                        </button>
-                    ) : (
+                    {/* PWA Install Button (Only visible if not installed) */}
+                    {!isPwaInstalled && (
                         <button
                             className="bg-emerald-500 p-2.5 rounded-full shadow-lg shadow-emerald-200 text-white animate-pulse active:scale-95 transition-transform"
                             onClick={() => {
                                 if (deferredPrompt) {
                                     installPwa();
                                 } else {
-                                    toast('To install: Tap browser menu and select "Install App"', {
-                                        icon: '📱',
-                                        duration: 4000,
-                                        style: { borderRadius: '12px', background: '#333', color: '#fff' },
-                                    });
+                                    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                                    if (isIOS) {
+                                        toast('Tap Share ⎋ → Add to Home Screen ➕', {
+                                            icon: '🍏',
+                                            duration: 5000,
+                                            style: { borderRadius: '12px', background: '#333', color: '#fff' },
+                                        });
+                                    } else {
+                                        toast('Tap browser menu (⋮) → "Install App"', {
+                                            icon: '📱',
+                                            duration: 4000,
+                                            style: { borderRadius: '12px', background: '#333', color: '#fff' },
+                                        });
+                                    }
                                 }
                             }}
                         >
