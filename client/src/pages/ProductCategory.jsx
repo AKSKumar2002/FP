@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const ProductCategory = () => {
-  const { products, categories, currency, addToCart, user, setShowUserLogin } = useAppContext();
+  const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery } = useAppContext();
   const { category } = useParams();
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -18,7 +18,8 @@ const ProductCategory = () => {
       (product) =>
         product.category &&
         product.category.name.toLowerCase() === category &&
-        product.inStock
+        product.inStock &&
+        (searchQuery === "" || product.name.toLowerCase().includes(searchQuery.toLowerCase()))
     )
     .sort((a, b) => {
       // Sort by displayOrder, fallback to 999 if undefined
@@ -258,8 +259,8 @@ const ProductCategory = () => {
                         key={idx}
                         onClick={() => setSelectedVariant(variant)}
                         className={`p-3 rounded-lg font-medium transition border-2 ${selectedVariant === variant
-                            ? 'bg-primary text-white border-primary'
-                            : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-primary'
                           }`}
                       >
                         <div className="text-base">{variant.weight} {variant.unit}</div>

@@ -1,0 +1,104 @@
+import React from 'react';
+import { useAppContext } from '../context/AppContext';
+import { Search, Bell, Mic, ChevronDown } from 'lucide-react';
+
+const MobileHeader = () => {
+    const { user, navigate, searchQuery, setSearchQuery } = useAppContext();
+
+    const handleSearch = (e) => {
+        if (e.key === 'Enter') {
+            navigate('/products');
+        }
+    };
+
+    const handleVoiceSearch = () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Voice search is not supported in this browser.");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.start();
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            setSearchQuery(transcript);
+            navigate('/products');
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error", event.error);
+        };
+    };
+
+    return (
+        <div className="md:hidden bg-[#E7F5EF] px-4 py-4 space-y-4">
+            {/* Top Row: Avatar, Delivery Info, and Icons */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    {/* Avatar */}
+                    <div
+                        className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm flex items-center justify-center bg-white cursor-pointer active:scale-95 transition-transform"
+                        onClick={() => navigate('/settings')}
+                    >
+                        {user?.avatar ? (
+                            <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
+                        ) : (
+                            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User" className="w-full h-full object-cover" />
+                        )}
+                    </div>
+
+                    {/* Delivery Info */}
+                    <div className="flex flex-col cursor-pointer" onClick={() => navigate('/add-address')}>
+                        <span className="text-[11px] text-gray-500 font-medium leading-none">Delivery to</span>
+                        <div className="flex items-center gap-1">
+                            <span className="text-[15px] font-bold text-gray-800">Mesa, New Jera...</span>
+                            <ChevronDown size={14} className="text-[#10B981]" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Icons */}
+                <div className="flex items-center gap-2">
+                    <button
+                        className="p-3 bg-white rounded-full shadow-sm text-gray-600 relative active:scale-95 transition-transform"
+                        onClick={() => navigate('/notifications')}
+                    >
+                        <Bell size={20} strokeWidth={2.5} />
+                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Bottom Row: Search Bar */}
+            <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-11 flex items-center pointer-events-none text-gray-400">
+                    {/* Search icon inside input */}
+                </div>
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                    <Search size={18} />
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search Grocery"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearch}
+                    className="w-full bg-white border-none rounded-[18px] py-3.5 pl-11 pr-12 text-[15px] shadow-sm placeholder:text-gray-400 font-medium outline-none"
+                />
+                <div className="absolute inset-y-0 right-0 pr-2 flex items-center">
+                    <div
+                        onClick={handleVoiceSearch}
+                        className="w-10 h-10 bg-[#D1EBE1] rounded-[14px] flex items-center justify-center text-[#10B981] active:scale-95 transition-all cursor-pointer"
+                    >
+                        <Mic size={20} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MobileHeader;

@@ -102,7 +102,11 @@ export const assets = {
   box_icon,
   logo1,
   logo2,
-  logo3
+  logo3,
+  organic_vegitable_image,
+  fresh_fruits_image,
+  spinach_image_1,
+  bottles_image
 };
 
 export const categories = [

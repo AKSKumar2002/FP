@@ -11,14 +11,14 @@ import Contact from './components/Contact';
 import About from './components/About';
 
 // Mobile App Components
-import MobileBottomNav from './components/MobileBottomNav';
+import MobileBottomNavigation from './components/MobileBottomNavigation';
 import MobileSideDrawer from './components/MobileSideDrawer';
 import FloatingActionButton from './components/FloatingActionButton';
 import MobileAppHeader from './components/MobileAppHeader';
 import ScrollToTop from './components/ScrollToTop';
 
 // Pages
-import Home from './pages/Home';
+import HomePage from './pages/HomePage';
 import AllProducts from './pages/AllProducts';
 import ProductCategory from './pages/ProductCategory';
 import ProductDetails from './pages/ProductDetails';
@@ -31,6 +31,7 @@ import DeliveryInfo from './pages/DeliveryInfo';
 import ReturnRefundPolicy from './pages/ReturnRefundPolicy';
 import Settings from './pages/Settings';
 import Blog from './pages/Blog';
+import Notifications from './pages/Notifications';
 
 // Seller Routes
 import SellerLogin from './components/seller/SellerLogin';
@@ -148,14 +149,18 @@ const App = () => {
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
       <ScrollToTop />
-      {/* Desktop Navbar */}
-      {!isSellerPath && <Navbar onMenuClick={() => setMobileDrawerOpen(true)} />}
+      {/* Desktop Navbar - Hidden on mobile Home to match redesigned UI */}
+      {!isSellerPath && (
+        <div className={location.pathname === '/' ? 'hidden md:block' : 'block'}>
+          <Navbar onMenuClick={() => setMobileDrawerOpen(true)} />
+        </div>
+      )}
 
       {/* Mobile Components - Android App Style */}
       {!isSellerPath && (
         <>
           <MobileSideDrawer isOpen={mobileDrawerOpen} onClose={() => setMobileDrawerOpen(false)} />
-          <MobileBottomNav />
+          <MobileBottomNavigation />
           <FloatingActionButton />
         </>
       )}
@@ -166,7 +171,7 @@ const App = () => {
       {/* Add bottom padding on mobile for bottom nav */}
       <div className={`${isSellerPath ? '' : 'px-0 md:px-6 lg:px-10 xl:px-16'} ${!isSellerPath ? 'pb-20 md:pb-0' : ''}`}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/b2b" element={<B2BPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/products" element={<AllProducts />} />
@@ -176,6 +181,7 @@ const App = () => {
           <Route path='/my-orders' element={<MyOrders />} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/settings' element={<Settings />} />
+          <Route path='/notifications' element={<Notifications />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/add-address" element={<AddAddress />} />
           {/* <Route path="/my-orders" element={<MyOrders />} /> This was duplicated, keeping the one above */}

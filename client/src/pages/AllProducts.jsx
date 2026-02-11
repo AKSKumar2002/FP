@@ -4,14 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import './AllProducts.css';
 
 const AllProducts = () => {
-    const { products, categories, currency, addToCart, user, setShowUserLogin } = useAppContext()
+    const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery, setSearchQuery } = useAppContext()
     const navigate = useNavigate()
     const [filteredProducts, setFilteredProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All")
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null)
     const [selectedImage, setSelectedImage] = useState(null) // For modal image gallery
-    const [searchQuery, setSearchQuery] = useState("")
 
     useEffect(() => {
         let filtered = products.filter((p) => p.inStock)
