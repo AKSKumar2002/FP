@@ -209,7 +209,11 @@ const App = () => {
           </Route>
         </Routes>
       </div>
-      {!isSellerPath && <Footer />}
+      {!isSellerPath && (
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 };
