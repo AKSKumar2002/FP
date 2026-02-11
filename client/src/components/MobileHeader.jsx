@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 const MobileHeader = () => {
     const {
         user, navigate, searchQuery, setSearchQuery, preferredAddress, unreadCount,
-        installPwa, isPwaInstalled, deferredPrompt, products, currency
+        installPwa, isPwaInstalled, deferredPrompt, products, currency, setSelectedQuickProduct
     } = useAppContext();
 
     const [showDropdown, setShowDropdown] = React.useState(false);
@@ -27,8 +27,8 @@ const MobileHeader = () => {
         }
     };
 
-    const handleProductClick = (productId, category) => {
-        navigate(`/products/${category?.toLowerCase() || 'all'}/${productId}`);
+    const handleProductClick = (product) => {
+        setSelectedQuickProduct(product);
         setSearchQuery("");
         setShowDropdown(false);
     };
@@ -166,7 +166,7 @@ const MobileHeader = () => {
                         {filteredProducts.map((product) => (
                             <div
                                 key={product._id}
-                                onClick={() => handleProductClick(product._id, product.category?.name)}
+                                onClick={() => handleProductClick(product)}
                                 className="flex items-center gap-3 p-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer"
                             >
                                 <img

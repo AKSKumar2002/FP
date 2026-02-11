@@ -8,7 +8,7 @@ const Cart = () => {
         removeFromCart, getCartCount,
         updateCartItem, navigate, getCartAmount,
         axios, user, setCartItems,
-        preferredAddress // ✅ Use this
+        preferredAddress, setSelectedQuickProduct // ✅ Added
     } = useAppContext();
 
     const [addresses, setAddresses] = useState([]);
@@ -172,10 +172,7 @@ const Cart = () => {
                                         <div className="flex gap-6">
                                             {/* Product Image */}
                                             <div
-                                                onClick={() => {
-                                                    navigate(`/products/${product.category.toLowerCase()}/${product._id}`);
-                                                    scrollTo(0, 0);
-                                                }}
+                                                onClick={() => setSelectedQuickProduct(product)}
                                                 className="cursor-pointer w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden"
                                             >
                                                 <img
