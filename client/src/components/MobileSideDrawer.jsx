@@ -1,9 +1,9 @@
-// Mobile Side Drawer Component
 import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { assets } from '../assets/assets';
 import { toast } from 'react-hot-toast';
+import { User } from 'lucide-react';
 
 const MobileSideDrawer = ({ isOpen, onClose }) => {
     const { user, setShowUserLogin, setUser, navigate, axios } = useAppContext();
@@ -81,8 +81,8 @@ const MobileSideDrawer = ({ isOpen, onClose }) => {
 
                     {user ? (
                         <div className="flex items-center gap-3">
-                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl backdrop-blur-sm border-2 border-white/30">
-                                🧑‍🌾
+                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30">
+                                <User size={32} />
                             </div>
                             <div>
                                 <p className="font-bold text-lg">Hi, {user.name}</p>

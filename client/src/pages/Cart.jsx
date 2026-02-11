@@ -7,12 +7,13 @@ const Cart = () => {
         products, currency, cartItems,
         removeFromCart, getCartCount,
         updateCartItem, navigate, getCartAmount,
-        axios, user, setCartItems
+        axios, user, setCartItems,
+        preferredAddress // ✅ Use this
     } = useAppContext();
 
     const [addresses, setAddresses] = useState([]);
     const [showAddress, setShowAddress] = useState(false);
-    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [selectedAddress, setSelectedAddress] = useState(preferredAddress); // ✅ Initialize with map address
     const [paymentOption, setPaymentOption] = useState("COD");
 
     const cartArray = Object.keys(cartItems)
@@ -41,7 +42,12 @@ const Cart = () => {
             const { data } = await axios.get('/api/address/get');
             if (data.success) {
                 setAddresses(data.addresses);
-                if (data.addresses.length > 0) {
+
+                // If we have a preferred address from the map, prioritize it
+                // Otherwise, take the first one from backend
+                if (preferredAddress) {
+                    setSelectedAddress(preferredAddress);
+                } else if (data.addresses.length > 0) {
                     setSelectedAddress(data.addresses[0]);
                 }
             } else {
@@ -121,8 +127,12 @@ const Cart = () => {
     };
 
     useEffect(() => {
-        if (user) getUserAddress();
-    }, [user]);
+        if (user) {
+            getUserAddress();
+        } else if (preferredAddress) {
+            setSelectedAddress(preferredAddress);
+        }
+    }, [user, preferredAddress]);
 
     return products.length > 0 && cartItems ? (
         <div className="min-h-screen bg-gray-50 py-8 px-4 md:px-8">
@@ -161,17 +171,17 @@ const Cart = () => {
                                     <div key={index} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition">
                                         <div className="flex gap-6">
                                             {/* Product Image */}
-                                            <div 
+                                            <div
                                                 onClick={() => {
                                                     navigate(`/products/${product.category.toLowerCase()}/${product._id}`);
                                                     scrollTo(0, 0);
                                                 }}
                                                 className="cursor-pointer w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden"
                                             >
-                                                <img 
-                                                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" 
-                                                    src={product.image[0]} 
-                                                    alt={product.name} 
+                                                <img
+                                                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                                                    src={product.image[0]}
+                                                    alt={product.name}
                                                 />
                                             </div>
 
@@ -188,7 +198,7 @@ const Cart = () => {
                                                         <span className="font-medium">Price:</span> {currency}{product.variant.offerPrice}
                                                     </div>
                                                 </div>
-                                                
+
                                                 {/* Quantity Selector */}
                                                 <div className="mt-4 flex items-center gap-4">
                                                     <label className="text-sm font-medium text-gray-700">Quantity:</label>
@@ -209,7 +219,7 @@ const Cart = () => {
                                                 <p className="text-2xl font-bold text-primary">
                                                     {currency}{product.variant.offerPrice * product.quantity}
                                                 </p>
-                                                <button 
+                                                <button
                                                     onClick={() => removeFromCart(product.cartKey)}
                                                     className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-1"
                                                 >
@@ -256,13 +266,13 @@ const Cart = () => {
                                             <p className="text-sm text-gray-500">No address selected</p>
                                         )}
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => setShowAddress(!showAddress)}
                                         className="mt-2 text-primary hover:underline text-sm font-medium"
                                     >
                                         Change Address
                                     </button>
-                                    
+
                                     {showAddress && (
                                         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
                                             {addresses.map((address, idx) => (
@@ -296,8 +306,8 @@ const Cart = () => {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Payment Method
                                 </label>
-                                <select 
-                                    onChange={e => setPaymentOption(e.target.value)} 
+                                <select
+                                    onChange={e => setPaymentOption(e.target.value)}
                                     value={paymentOption}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white"
                                 >
@@ -330,7 +340,7 @@ const Cart = () => {
                             </div>
 
                             {/* Place Order Button */}
-                            <button 
+                            <button
                                 onClick={placeOrder}
                                 disabled={cartArray.length === 0}
                                 className="w-full py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dull transition disabled:opacity-50 disabled:cursor-not-allowed"

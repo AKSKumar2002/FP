@@ -25,6 +25,23 @@ export const AppContextProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [animateCart, setAnimateCart] = useState(false);
   const [sellerToken, setSellerToken] = useState(localStorage.getItem('sellerToken') || '');
+  const [preferredAddress, setPreferredAddress] = useState(JSON.parse(localStorage.getItem('preferredAddress')) || null);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [selectedQuickProduct, setSelectedQuickProduct] = useState(null);
+
+  const fetchNotifications = async () => {
+    if (!user) return;
+    try {
+      const { data } = await axiosInstance.get("/api/notification/list");
+      if (data.success) {
+        setNotifications(data.notifications);
+        setUnreadCount(data.notifications.filter(n => !n.read).length);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
 
   const fetchSeller = async () => {
     try {
@@ -128,6 +145,12 @@ export const AppContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  useEffect(() => {
     const updateCart = async () => {
       try {
         const { data } = await axiosInstance.post("/api/cart/update", {
@@ -143,6 +166,32 @@ export const AppContextProvider = ({ children }) => {
     };
     if (user) updateCart();
   }, [cartItems]);
+
+  // ✅ Automatically sync map-selected address when user logs in
+  useEffect(() => {
+    const syncMapAddressWithUser = async () => {
+      // If user is logged in and we have a preferred address that hasn't been saved to DB yet
+      if (user && preferredAddress && !preferredAddress._id) {
+        try {
+          const { data } = await axiosInstance.post('/api/address/add', {
+            address: preferredAddress,
+            userId: user._id
+          });
+          if (data.success) {
+            // Update preferred address with the one returned from DB (which includes _id)
+            setPreferredAddress(data.address);
+            localStorage.setItem('preferredAddress', JSON.stringify(data.address));
+          }
+        } catch (error) {
+          console.error("Failed to sync map address with user account", error);
+        }
+      }
+    };
+
+    if (user) {
+      syncMapAddressWithUser();
+    }
+  }, [user, preferredAddress]);
 
   const value = {
     navigate,
@@ -172,6 +221,15 @@ export const AppContextProvider = ({ children }) => {
     backendUrl, // ✅ Add this
     sellerToken, // ✅ Add this
     setSellerToken, // ✅ Add this
+    preferredAddress,
+    setPreferredAddress,
+    notifications,
+    setNotifications,
+    unreadCount,
+    setUnreadCount,
+    fetchNotifications,
+    selectedQuickProduct,
+    setSelectedQuickProduct,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

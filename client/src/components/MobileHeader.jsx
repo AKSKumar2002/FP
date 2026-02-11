@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Search, Bell, Mic, ChevronDown } from 'lucide-react';
+import { Search, Bell, Mic, ChevronDown, User } from 'lucide-react';
 
 const MobileHeader = () => {
-    const { user, navigate, searchQuery, setSearchQuery } = useAppContext();
+    const { user, navigate, searchQuery, setSearchQuery, preferredAddress, unreadCount } = useAppContext();
 
     const handleSearch = (e) => {
         if (e.key === 'Enter') {
@@ -40,22 +40,29 @@ const MobileHeader = () => {
                 <div className="flex items-center gap-3">
                     {/* Avatar */}
                     <div
-                        className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm flex items-center justify-center bg-white cursor-pointer active:scale-95 transition-transform"
+                        className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md flex items-center justify-center bg-white cursor-pointer active:scale-95 transition-transform"
                         onClick={() => navigate('/settings')}
                     >
                         {user?.avatar ? (
                             <img src={user.avatar} alt="User" className="w-full h-full object-cover" />
                         ) : (
-                            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User" className="w-full h-full object-cover" />
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-inner">
+                                <User size={24} strokeWidth={2.5} />
+                            </div>
                         )}
                     </div>
 
                     {/* Delivery Info */}
-                    <div className="flex flex-col cursor-pointer" onClick={() => navigate('/add-address')}>
-                        <span className="text-[11px] text-gray-500 font-medium leading-none">Delivery to</span>
-                        <div className="flex items-center gap-1">
-                            <span className="text-[15px] font-bold text-gray-800">Mesa, New Jera...</span>
-                            <ChevronDown size={14} className="text-[#10B981]" />
+                    <div className="flex flex-col cursor-pointer max-w-[180px]" onClick={() => navigate('/add-address', { state: { openMap: true } })}>
+                        <span className="text-[11px] text-gray-500 font-bold uppercase tracking-tight leading-none mb-0.5">Delivery to</span>
+                        <div className="flex items-center gap-1 overflow-hidden">
+                            <span className="text-[14px] font-extrabold text-gray-800 truncate">
+                                {preferredAddress
+                                    ? `${preferredAddress.city || preferredAddress.street.split(',')[0]}...`
+                                    : "Set Location"
+                                }
+                            </span>
+                            <ChevronDown size={14} className="text-primary flex-shrink-0" />
                         </div>
                     </div>
                 </div>
@@ -67,7 +74,9 @@ const MobileHeader = () => {
                         onClick={() => navigate('/notifications')}
                     >
                         <Bell size={20} strokeWidth={2.5} />
-                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                        {unreadCount > 0 && (
+                            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white pulse"></span>
+                        )}
                     </button>
                 </div>
             </div>

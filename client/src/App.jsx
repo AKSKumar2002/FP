@@ -16,6 +16,7 @@ import MobileSideDrawer from './components/MobileSideDrawer';
 import FloatingActionButton from './components/FloatingActionButton';
 import MobileAppHeader from './components/MobileAppHeader';
 import ScrollToTop from './components/ScrollToTop';
+import ProductQuickViewSheet from './components/ProductQuickViewSheet';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -167,6 +168,7 @@ const App = () => {
 
       {showUserLogin && <Login />}
       <Toaster />
+      <ProductQuickViewSheet />
 
       {/* Add bottom padding on mobile for bottom nav */}
       <div className={`${isSellerPath ? '' : 'px-0 md:px-6 lg:px-10 xl:px-16'} ${!isSellerPath ? 'pb-20 md:pb-0' : ''}`}>

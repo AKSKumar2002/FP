@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { FaPlus, FaHeart } from 'react-icons/fa';
 
 const MobileProductCard = ({ product }) => {
-    const { navigate, currency, addToCart, user, setShowUserLogin } = useAppContext();
+    const { navigate, currency, addToCart, user, setShowUserLogin, setSelectedQuickProduct } = useAppContext();
     const variant = product.variants?.[0];
 
     // Calculate savings percentage
@@ -20,7 +20,7 @@ const MobileProductCard = ({ product }) => {
 
     return (
         <div
-            onClick={() => navigate(`/products/${product.category?.name.toLowerCase()}/${product._id}`)}
+            onClick={() => setSelectedQuickProduct(product)}
             className="flex-shrink-0 w-[160px] bg-white rounded-3xl p-3 shadow-[0_8px_20px_rgba(0,0,0,0.04)] border border-gray-50 relative group active:scale-95 transition-all"
         >
             {/* Savings Badge */}

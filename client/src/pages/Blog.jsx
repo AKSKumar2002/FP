@@ -1,245 +1,393 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Search,
+    Calendar,
+    Clock,
+    ChevronRight,
+    User,
+    TrendingUp,
+    Award,
+    Heart,
+    Share2,
+    ArrowRight,
+    SearchX,
+    Leaf,
+    Apple,
+    Sprout,
+    Zap,
+    MessageCircle
+} from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 
 const Blog = () => {
+    const { navigate } = useAppContext();
     const [selectedCategory, setSelectedCategory] = useState('All');
 
     const blogPosts = [
-        { id: 1, title: "10 Amazing Health Benefits of Organic Spinach", excerpt: "Discover why organic spinach is a superfood powerhouse packed with nutrients, antioxidants, and essential vitamins for your health.", image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&q=80", category: "Health", author: "Dr. Sarah Green", date: "Dec 15, 2025", readTime: "5 min read", tags: ["Greens", "Nutrition", "Organic"], views: "2.3K", likes: "145" },
-        { id: 2, title: "Why Organic Vegetables Are Worth Every Penny", excerpt: "Learn about the real value of organic produce and how it benefits your health, the environment, and local farmers.", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80", category: "Organic Living", author: "Farm Pick Team", date: "Dec 14, 2025", readTime: "7 min read", tags: ["Organic", "Sustainability", "Farming"], views: "3.1K", likes: "198" },
-        { id: 3, title: "Fresh Fruit Guide: Seasonal Picks for Winter", excerpt: "Explore the best seasonal fruits for winter and how they boost your immunity during the cold months.", image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=800&q=80", category: "Fruits", author: "Chef Maria", date: "Dec 13, 2025", readTime: "6 min read", tags: ["Fruits", "Seasonal", "Winter"], views: "1.8K", likes: "132" },
-        { id: 4, title: "The Ultimate Guide to Growing Your Own Herbs", excerpt: "Start your home herb garden with these easy tips and tricks. Fresh herbs make every meal healthier and tastier!", image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80", category: "Gardening", author: "John Farmer", date: "Dec 12, 2025", readTime: "8 min read", tags: ["Herbs", "Gardening", "DIY"], views: "4.2K", likes: "267" },
-        { id: 5, title: "Detox Naturally with Green Juice Recipes", excerpt: "Refresh and rejuvenate your body with these power-packed green juice recipes made from fresh organic greens.", image: "https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=800&q=80", category: "Health", author: "Dr. Sarah Green", date: "Dec 11, 2025", readTime: "4 min read", tags: ["Greens", "Detox", "Recipes"], views: "2.9K", likes: "176" },
-        { id: 6, title: "Farm-to-Table: The Journey of Your Vegetables", excerpt: "Ever wondered how your organic veggies reach your table? Take a behind-the-scenes look at our farm-to-table process.", image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80", category: "Farm Life", author: "Farm Pick Team", date: "Dec 10, 2025", readTime: "6 min read", tags: ["Farm", "Process", "Sustainability"], views: "3.5K", likes: "203" },
-        { id: 7, title: "Top 15 Antioxidant-Rich Berries You Should Eat", excerpt: "Boost your health with nature's candy! Learn about the most powerful antioxidant berries and their amazing benefits.", image: "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=800&q=80", category: "Fruits", author: "Chef Maria", date: "Dec 9, 2025", readTime: "6 min read", tags: ["Berries", "Antioxidants", "Health"], views: "2.1K", likes: "154" },
-        { id: 8, title: "Composting 101: Turn Waste into Garden Gold", excerpt: "Learn the art of composting and create nutrient-rich soil for your garden while reducing waste.", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80", category: "Gardening", author: "John Farmer", date: "Dec 8, 2025", readTime: "7 min read", tags: ["Composting", "Sustainability", "Gardening"], views: "1.9K", likes: "128" },
-        { id: 9, title: "5 Superfoods for Boosting Immunity Naturally", excerpt: "Strengthen your immune system with these powerful organic superfoods backed by science.", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80", category: "Health", author: "Dr. Sarah Green", date: "Dec 7, 2025", readTime: "5 min read", tags: ["Immunity", "Superfoods", "Health"], views: "5.2K", likes: "312" }
+        {
+            id: 1,
+            title: "10 Amazing Health Benefits of Organic Spinach You Didn't Know",
+            excerpt: "Discover why organic spinach is a superfood powerhouse packed with nitrates, antioxidants, and essential vitamins that can transform your cardiovascular health and boost energy levels naturally.",
+            image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=1200&q=80",
+            category: "Health",
+            author: "Dr. Sarah Green",
+            date: "Feb 10, 2026",
+            readTime: "5 min read",
+            tags: ["Greens", "Nutrition", "Organic"],
+            views: "12.4K",
+            likes: "842",
+            featured: true
+        },
+        {
+            id: 2,
+            title: "Why Regenerative Agriculture is the Future of Our Food System",
+            excerpt: "Learn how moving beyond organic to regenerative farming practices can heal our soil, capture carbon, and produce more nutrient-dense vegetables for your family.",
+            image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80",
+            category: "Sustainability",
+            author: "Alex Rivera",
+            date: "Feb 08, 2026",
+            readTime: "7 min read",
+            tags: ["Eco", "Soil-Health", "Farming"],
+            views: "8.1K",
+            likes: "567"
+        },
+        {
+            id: 3,
+            title: "The Ultimate Seasonal Guide: Best Fruits to Eat This Winter",
+            excerpt: "Explore the most potent immunity-boosting fruits available this season. From citrus bursts to antioxidant-rich berries, here's what should be in your basket.",
+            image: "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=800&q=80",
+            category: "Nutrition",
+            author: "Chef Mike",
+            date: "Feb 05, 2026",
+            readTime: "6 min read",
+            tags: ["Fruits", "Immunity", "Winter"],
+            views: "15.2K",
+            likes: "1.2K"
+        },
+        {
+            id: 4,
+            title: "Kitchen Herb Gardening: From Windowsill to Your Dinner Plate",
+            excerpt: "Start your indoor herb garden with these expert tips. We cover everything from light requirements to the best potting mixes for basil, mint, and rosemary.",
+            image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80",
+            category: "DIY",
+            author: "Liam Thorne",
+            date: "Jan 28, 2026",
+            readTime: "10 min read",
+            tags: ["Herbs", "Gardening", "Home"],
+            views: "22.6K",
+            likes: "2.4K"
+        },
+        {
+            id: 5,
+            title: "Detox Myths vs. Reality: A Science-Based Approach",
+            excerpt: "Stop falling for expensive 'cleanses'. Learn how your body's natural detox processes work and how high-fiber organic greens support them effectively.",
+            image: "https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=800&q=80",
+            category: "Health",
+            author: "Dr. Sarah Green",
+            date: "Jan 22, 2026",
+            readTime: "8 min read",
+            tags: ["Science", "Detox", "Wellness"],
+            views: "18.9K",
+            likes: "1.1K"
+        },
+        {
+            id: 6,
+            title: "Behind the Scenes: A Day at Farm Pick Primary Fields",
+            excerpt: "Take a walking tour through our Coimbatore fields. See how we manage pests without chemicals and select the perfect produce for your morning delivery.",
+            image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+            category: "Lifestyle",
+            author: "Farmer Raj",
+            date: "Jan 15, 2026",
+            readTime: "4 min read",
+            tags: ["Farm-Life", "Community", "Local"],
+            views: "6.3K",
+            likes: "432"
+        }
     ];
 
-    const categories = ['All', 'Health', 'Organic Living', 'Fruits', 'Gardening', 'Farm Life'];
-    const filteredPosts = selectedCategory === 'All' ? blogPosts : blogPosts.filter(post => post.category === selectedCategory);
-    const featuredPost = blogPosts[0];
-    const trendingPosts = blogPosts.slice(1, 4);
-    const editorsPicks = [blogPosts[4], blogPosts[8]];
+    const categories = ['All', 'Health', 'Sustainability', 'Nutrition', 'DIY', 'Lifestyle'];
 
-    const popularCategories = [
-        { name: "Health & Wellness", icon: "💚", count: 42, color: "from-green-400 to-emerald-500", image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80" },
-        { name: "Organic Recipes", icon: "🥗", count: 38, color: "from-lime-400 to-green-500", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" },
-        { name: "Gardening Tips", icon: "🌿", count: 35, color: "from-teal-400 to-cyan-500", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80" },
-        { name: "Farm Stories", icon: "🚜", count: 28, color: "from-emerald-400 to-teal-500", image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&q=80" }
-    ];
+    const filteredPosts = blogPosts.filter(post =>
+        selectedCategory === 'All' || post.category === selectedCategory
+    );
 
-    const experts = [
-        { name: "Dr. Sarah Green", title: "Nutrition Expert", avatar: "https://i.pravatar.cc/150?img=1", articles: 12, specialty: "Health & Nutrition" },
-        { name: "Chef Maria", title: "Organic Chef", avatar: "https://i.pravatar.cc/150?img=5", articles: 18, specialty: "Recipes & Cooking" },
-        { name: "John Farmer", title: "Master Gardener", avatar: "https://i.pravatar.cc/150?img=12", articles: 15, specialty: "Gardening & Farming" }
-    ];
+    const featuredPost = blogPosts.find(p => p.featured) || blogPosts[0];
 
     const stats = [
-        { number: "500+", label: "Articles Published", icon: "📝" },
-        { number: "50K+", label: "Active Readers", icon: "👥" },
-        { number: "12+", label: "Expert Contributors", icon: "⭐" },
-        { number: "95%", label: "Reader Satisfaction", icon: "❤️" }
+        { label: "Readers", value: "45K+", color: "text-blue-500" },
+        { label: "Authors", value: "24+", color: "text-emerald-500" },
+        { label: "Tips", value: "1.2K", color: "text-amber-500" }
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white via-green-50/20 to-white">
-            {/* ENHANCED STUNNING BANNER SECTION */}
-            <div className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white overflow-hidden min-h-[600px] md:min-h-[700px]">
-                {/* Animated Mesh Gradient Background */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-400/20 via-transparent to-transparent"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-teal-400/20 via-transparent to-transparent"></div>
-
-                {/* Animated Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        animation: 'drift 20s linear infinite'
-                    }}></div>
+        <div className="min-h-screen bg-[#FAFBFC] selection:bg-emerald-100 pb-20">
+            {/* HERO SECTION */}
+            <section className="relative min-h-[85vh] flex items-center py-20 overflow-hidden bg-[#0A0B0B]">
+                <div className="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover opacity-50 scale-105" alt="" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0B0B]/60 to-[#0A0B0B]"></div>
+                    <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#0A0B0B] to-transparent"></div>
                 </div>
 
-                {/* Floating Orbs with Enhanced Animation */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-white/20 to-green-300/10 rounded-full blur-3xl animate-pulse"></div>
-                    <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-gradient-to-br from-emerald-300/10 to-white/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                    <div className="absolute top-1/2 left-1/3 w-72 h-72 bg-gradient-to-br from-teal-300/10 to-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
-                </div>
+                <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] animate-pulse"></div>
+                <div className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-                {/* Floating Emoji Vegetables/Fruits */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-20 left-[10%] text-6xl opacity-30 animate-bounce" style={{ animationDuration: '3s', animationDelay: '0s' }}>🥬</div>
-                    <div className="absolute top-40 right-[15%] text-5xl opacity-25 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>🥕</div>
-                    <div className="absolute bottom-32 left-[20%] text-7xl opacity-20 animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>🍅</div>
-                    <div className="absolute bottom-40 right-[25%] text-6xl opacity-30 animate-bounce" style={{ animationDuration: '4.5s', animationDelay: '2s' }}>🥦</div>
-                    <div className="absolute top-1/2 left-[8%] text-5xl opacity-25 animate-bounce" style={{ animationDuration: '5s', animationDelay: '1.5s' }}>🌽</div>
-                    <div className="absolute top-1/3 right-[10%] text-8xl opacity-15 animate-bounce" style={{ animationDuration: '4s', animationDelay: '2.5s' }}>🍊</div>
-                </div>
+                <div className="max-w-7xl mx-auto px-6 relative z-10 w-full mt-10 md:mt-0">
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="text-center lg:text-left"
+                        >
+                            <div className="flex items-center gap-3 mb-8 justify-center lg:justify-start">
+                                <span className="bg-emerald-500 text-white text-[10px] font-black uppercase tracking-[3px] px-4 py-1.5 rounded-sm">Digital Journal</span>
+                                <div className="h-[1px] w-12 bg-white/20"></div>
+                                <span className="text-white/40 text-[10px] font-bold uppercase tracking-[2px]">EST. 2025</span>
+                            </div>
+                            <h1 className="text-7xl md:text-9xl font-black text-white leading-[0.85] tracking-tighter mb-10">
+                                PICK <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-white to-amber-200">FRESH</span> <br />
+                                INSIGHTS
+                            </h1>
+                            <p className="text-gray-400 text-lg md:text-xl max-w-lg mb-12 font-medium leading-relaxed mx-auto lg:mx-0">
+                                Join our community of 45,000+ healthy living enthusiasts. Expert-backed guides for an organic lifestyle.
+                            </p>
 
-                {/* Main Content */}
-                <div className="max-w-7xl mx-auto relative z-10 px-6 py-20 md:py-28">
-                    <div className="text-center">
-                        {/* Badge with Glow Effect */}
-                        <div className="inline-flex items-center gap-2 mb-8 px-6 py-3 bg-white/20 backdrop-blur-lg rounded-full text-sm font-semibold shadow-2xl border border-white/30 animate-fadeIn" style={{ boxShadow: '0 0 30px rgba(255,255,255,0.3)' }}>
-                            <span className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
-                            </span>
-                            <span>🌱 Your Organic Living Hub</span>
-                        </div>
-
-                        {/* Main Heading with Gradient Text Effect */}
-                        <h1 className="text-6xl md:text-8xl font-black mb-6 animate-fadeIn leading-tight tracking-tight">
-                            <span className="inline-block transform hover:scale-105 transition-transform duration-300">Farm</span>
-                            {' '}
-                            <span className="inline-block transform hover:scale-105 transition-transform duration-300 bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-green-200 to-emerald-200">
-                                Pick
-                            </span>
-                            {' '}
-                            <span className="inline-block transform hover:scale-105 transition-transform duration-300">Blog</span>
-                        </h1>
-
-                        {/* Subtitle with Better Typography */}
-                        <p className="text-xl md:text-3xl text-green-50 max-w-4xl mx-auto mb-12 leading-relaxed font-light">
-                            Discover <span className="font-semibold text-white">expert insights</span> on organic living,
-                            <br className="hidden md:block" />
-                            nutrition, gardening, and <span className="font-semibold text-white">sustainable farming</span>
-                        </p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                            <button className="group px-8 py-4 bg-white text-green-600 rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2">
-                                <span>Explore Articles</span>
-                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </button>
-                            <button className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-full font-bold text-lg hover:bg-white/20 transition-all duration-300 flex items-center gap-2">
-                                <span>Subscribe Free</span>
-                                <span className="text-2xl">📬</span>
-                            </button>
-                        </div>
-
-                        {/* Enhanced Stats Cards with 3D Effect */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto">
-                            {stats.map((stat, index) => (
-                                <div
-                                    key={index}
-                                    className="group relative bg-white/10 backdrop-blur-lg rounded-3xl p-6 md:p-8 transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 cursor-pointer border border-white/20 animate-fadeIn"
-                                    style={{
-                                        animationDelay: `${index * 0.15}s`,
-                                        boxShadow: '0 10px 40px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
-                                    }}
-                                >
-                                    {/* Glow Effect on Hover */}
-                                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/0 to-white/0 group-hover:from-white/10 group-hover:to-white/5 transition-all duration-500"></div>
-
-                                    <div className="relative z-10">
-                                        <div className="text-5xl md:text-6xl mb-3 transform group-hover:scale-125 group-hover:rotate-12 transition-all duration-500">{stat.icon}</div>
-                                        <div className="text-4xl md:text-5xl font-black mb-2 text-white drop-shadow-lg">{stat.number}</div>
-                                        <div className="text-xs md:text-sm text-green-100 font-semibold uppercase tracking-wider">{stat.label}</div>
+                            <div className="flex flex-wrap gap-8 justify-center lg:justify-start pt-4 border-t border-white/5">
+                                {stats.map((s, i) => (
+                                    <div key={i} className="flex flex-col items-center lg:items-start">
+                                        <span className={`text-4xl font-black ${s.color} mb-1 transition-all hover:scale-110`}>{s.value}</span>
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[2px]">{s.label}</span>
                                     </div>
-
-                                    {/* Animated Border */}
-                                    <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-                                        background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)',
-                                        backgroundSize: '200% 200%',
-                                        animation: 'shimmer 3s infinite'
-                                    }}></div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Scroll Indicator */}
-                        <div className="mt-16 flex flex-col items-center gap-2 animate-bounce">
-                            <span className="text-sm text-green-100 font-semibold">Scroll to explore</span>
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Wave Decoration */}
-                <div className="absolute bottom-0 left-0 right-0">
-                    <svg className="w-full h-16 md:h-24" viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                        <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V120Z" fill="white" />
-                    </svg>
-                </div>
-
-                {/* Add shimmer animation */}
-                <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-          }
-          @keyframes drift {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(10px, 10px); }
-            100% { transform: translate(0, 0); }
-          }
-        ` }} />
-            </div>
-
-            <div className="max-w-7xl mx-auto px-6 py-16">
-                {/* Trending Section - keeping implementation brief for length */}
-                <div className="mb-20">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-8">🔥 Trending Now</h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {trendingPosts.map((post, idx) => (
-                            <div key={post.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:-translate-y-2">
-                                <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold mb-4">#{idx + 1}</div>
-                                <h3 className="text-xl font-bold mb-2">{post.title}</h3>
-                                <p className="text-sm text-gray-600">{post.views} views • {post.likes} likes</p>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </motion.div>
 
-                {/* Popular Categories */}
-                <div className="mb-20">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-8">📚 Popular Categories</h2>
-                    <div className="grid md:grid-cols-4 gap-6">
-                        {popularCategories.map((cat, idx) => (
-                            <div key={idx} className={`relative h-48 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-2xl transition`}>
-                                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
-                                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-80 flex flex-col items-center justify-center text-white`}>
-                                    <div className="text-5xl mb-2">{cat.icon}</div>
-                                    <h3 className="text-xl font-bold">{cat.name}</h3>
-                                    <p className="text-sm">{cat.count} Articles</p>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.3, duration: 1 }}
+                            className="relative max-w-xl mx-auto lg:max-w-none"
+                        >
+                            <div className="relative z-10 group cursor-pointer" onClick={() => navigate(`/blog/${featuredPost.id}`)}>
+                                <div className="absolute -inset-6 bg-emerald-500/10 rounded-[3.5rem] blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+                                <div className="relative overflow-hidden rounded-[3rem] bg-[#141516] border border-white/10 shadow-3xl transition-all duration-500 group-hover:translate-y-[-8px]">
+                                    <div className="aspect-[16/11] overflow-hidden">
+                                        <img src={featuredPost.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3s]" />
+                                    </div>
+                                    <div className="p-8 md:p-10">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <span className="bg-emerald-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-md">{featuredPost.category}</span>
+                                            <div className="flex items-center gap-2 text-white/40 text-[10px] font-black uppercase tracking-widest">
+                                                <Clock size={12} />
+                                                {featuredPost.readTime}
+                                            </div>
+                                        </div>
+                                        <h3 className="text-3xl font-black text-white mb-6 line-clamp-2 leading-[1.1]">
+                                            {featuredPost.title}
+                                        </h3>
+                                        <div className="flex items-center gap-4 pt-6 border-t border-white/5">
+                                            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-xl shadow-emerald-500/20">
+                                                <User size={20} />
+                                            </div>
+                                            <div>
+                                                <p className="text-white text-sm font-black">{featuredPost.author}</p>
+                                                <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest">{featuredPost.date}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        ))}
+                        </motion.div>
                     </div>
                 </div>
+            </section>
 
-                {/* Category Filter */}
-                <div className="mb-12">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-6">📖 All Articles</h2>
-                    <div className="flex flex-wrap gap-3 mb-8">
+            {/* ARTICLES CONTENT */}
+            <section className="max-w-7xl mx-auto px-6 py-20 relative z-20">
+                {/* CATEGORY BAR */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16 border-b border-gray-100 pb-12">
+                    <div className="flex items-center gap-4">
+                        <div className="h-10 w-[2px] bg-emerald-500"></div>
+                        <h2 className="text-3xl font-black tracking-tighter text-gray-900">CURATED ARTICLES</h2>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3">
                         {categories.map(cat => (
-                            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-6 py-3 rounded-full font-semibold transition shadow-md ${selectedCategory === cat ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 'bg-white text-gray-700 border-2'}`}>
+                            <button
+                                key={cat}
+                                onClick={() => setSelectedCategory(cat)}
+                                className={`px-5 h-10 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 ${selectedCategory === cat ? 'bg-black text-white shadow-lg' : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-900'}`}
+                            >
                                 {cat}
                             </button>
                         ))}
                     </div>
                 </div>
 
-                {/* Blog Grid */}
-                <div className="grid md:grid-cols-3 gap-8">
-                    {filteredPosts.map(post => (
-                        <div key={post.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2">
-                            <img src={post.image} alt={post.title} className="w-full h-56 object-cover" />
-                            <div className="p-6">
-                                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">{post.category}</span>
-                                <h3 className="text-xl font-bold text-gray-800 mt-3 mb-2">{post.title}</h3>
-                                <p className="text-gray-600 text-sm mb-4">{post.excerpt.substring(0, 100)}...</p>
-                                <div className="flex justify-between items-center text-xs text-gray-500">
-                                    <span>{post.views} views • {post.likes} likes</span>
-                                    <button className="text-green-600 font-semibold">Read →</button>
+                {/* POSTS GRID */}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                    <AnimatePresence mode="popLayout">
+                        {filteredPosts.length > 0 ? (
+                            filteredPosts.map((post, index) => (
+                                <motion.div
+                                    layout
+                                    key={post.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                                    className="group h-full"
+                                >
+                                    <div className="relative h-full flex flex-col bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] group-hover:-translate-y-2">
+                                        <div className="relative aspect-[16/10] overflow-hidden">
+                                            <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                                            <button className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-red-500 transition-all shadow-lg active:scale-90">
+                                                <Heart size={18} fill={post.id === 3 ? "currentColor" : "none"} />
+                                            </button>
+                                        </div>
+                                        <div className="p-8 md:p-10 flex-1 flex flex-col">
+                                            <div className="flex items-center gap-4 mb-6">
+                                                <span className="text-emerald-500 font-black text-[9px] uppercase tracking-[2px] leading-none bg-emerald-50 px-2.5 py-1.5 rounded-lg">
+                                                    {post.category}
+                                                </span>
+                                                <div className="flex items-center gap-1.5 text-gray-300 font-black text-[9px] uppercase tracking-[2px]">
+                                                    <Clock size={12} className="text-emerald-500/40" />
+                                                    {post.readTime}
+                                                </div>
+                                            </div>
+                                            <h3 className="text-2xl font-black text-gray-900 mb-5 line-clamp-2 leading-tight group-hover:text-emerald-600 transition-colors">
+                                                {post.title}
+                                            </h3>
+                                            <p className="text-gray-500 text-sm font-medium mb-8 line-clamp-3 leading-relaxed">
+                                                {post.excerpt}
+                                            </p>
+                                            <div className="mt-auto flex items-center justify-between pt-8 border-t border-gray-50">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden shadow-sm">
+                                                        <img src={`https://i.pravatar.cc/100?u=${post.author}`} alt="" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <span className="text-gray-900 font-black text-[9px] uppercase tracking-widest">{post.author}</span>
+                                                </div>
+                                                <button className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-[3px] group-hover:translate-x-1 transition-all">
+                                                    READ MORE
+                                                    <ArrowRight size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-32 text-center">
+                                <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-gray-100">
+                                    <SearchX className="text-gray-300" size={40} />
                                 </div>
+                                <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tighter">No Insights Found</h3>
+                                <p className="text-gray-400 font-medium max-w-sm mx-auto">Try adjusting your filters or search terms for better results.</p>
                             </div>
-                        </div>
-                    ))}
+                        )}
+                    </AnimatePresence>
                 </div>
+            </section>
+
+            {/* EXPERT SPOTLIGHT */}
+            <section className="bg-white border-y border-gray-100 py-32 relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-emerald-500/[0.02] rounded-full blur-[150px] pointer-events-none"></div>
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center mb-24">
+                        <span className="text-emerald-500 font-black text-[10px] uppercase tracking-[8px] mb-6 block">Our Community Experts</span>
+                        <h2 className="text-6xl font-black text-gray-900 tracking-tighter leading-none">MEET THE PUBLISHERS</h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-10 md:gap-16">
+                        {[
+                            { name: "Dr. Sarah Green", roles: ["Nutrition Specialist", "Harvard Alumna"], image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80", count: 42 },
+                            { name: "Chef Mike Chen", roles: ["Organic Culinary Arts", "3 Michelin Star"], image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80", count: 28 },
+                            { name: "Alex Rivera", roles: ["Regenerative Farmer", "Sustainability Envoy"], image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80", count: 35 }
+                        ].map((expert, i) => (
+                            <motion.div
+                                key={i}
+                                whileHover={{ y: -10 }}
+                                className="flex flex-col items-center text-center px-4"
+                            >
+                                <div className="relative mb-10">
+                                    <div className="absolute -inset-4 bg-emerald-500/5 rounded-[4rem] rotate-6 group-hover:rotate-12 transition-all duration-500"></div>
+                                    <div className="relative w-48 h-48 rounded-[3.5rem] overflow-hidden ring-8 ring-white shadow-2xl">
+                                        <img src={expert.image} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="" />
+                                    </div>
+                                    <div className="absolute -bottom-4 right-0 w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-emerald-500">
+                                        <Award size={24} />
+                                    </div>
+                                </div>
+                                <h4 className="text-2xl font-black text-gray-900 mb-3">{expert.name}</h4>
+                                <div className="space-y-1 mb-8 opacity-60">
+                                    {expert.roles.map(r => <p key={r} className="text-[10px] font-black uppercase tracking-widest">{r}</p>)}
+                                </div>
+                                <div className="inline-flex items-center gap-4 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100 transition-colors hover:bg-emerald-50 hover:border-emerald-100">
+                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">{expert.count} ARTICLES</span>
+                                    <div className="w-[1px] h-3 bg-gray-200"></div>
+                                    <ArrowRight className="text-emerald-500" size={16} />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* NEWSLETTER */}
+            <section className="max-w-7xl mx-auto px-6 py-32">
+                <div className="relative bg-[#0A0B0B] rounded-[4rem] p-12 md:p-32 overflow-hidden">
+                    <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E")` }}></div>
+                    <div className="absolute -top-1/2 -left-1/4 w-[1000px] h-[1000px] bg-emerald-500/10 rounded-full blur-[180px] pointer-events-none"></div>
+
+                    <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                        <div className="text-left">
+                            <Zap className="text-amber-300 mb-10 animate-bounce" size={56} fill="currentColor" />
+                            <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter mb-8 shadow-black/50">
+                                HARVEST <br />
+                                <span className="text-emerald-500">FRESH</span> IDEAS.
+                            </h2>
+                            <p className="text-gray-400 text-lg md:text-xl font-medium max-w-md">
+                                Get weekly nutrition tips and exclusive farm deals delivered straight to your inbox.
+                            </p>
+                        </div>
+
+                        <div className="bg-white/5 backdrop-blur-3xl p-8 md:p-12 rounded-[3.5rem] border border-white/10 shadow-3xl">
+                            <h4 className="text-white font-black text-xl mb-8 tracking-tight">JOIN 45K+ READERS</h4>
+                            <div className="space-y-4">
+                                <input
+                                    type="email"
+                                    placeholder="your@email.com"
+                                    className="w-full h-18 px-10 rounded-[1.5rem] border-none outline-none font-black text-sm bg-white/5 focus:bg-white text-white focus:text-gray-900 transition-all placeholder:text-gray-600"
+                                />
+                                <button className="w-full h-18 bg-emerald-500 text-white rounded-[1.5rem] font-black text-sm hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 active:scale-95">
+                                    DISCOVERY NOW
+                                </button>
+                            </div>
+                            <p className="mt-8 text-white/20 text-[9px] font-black uppercase tracking-[4px] text-center">PRIVACY GUARANTEED • NO SPAM</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* FOOTER CTA */}
+            <div className="max-w-7xl mx-auto px-6 py-32 text-center">
+                <div className="h-20 w-[1px] bg-gray-100 mx-auto mb-16"></div>
+                <MessageCircle className="mx-auto text-emerald-500 mb-8" size={48} />
+                <h3 className="text-4xl font-black text-gray-900 mb-6 tracking-tighter">WANT TO BECOME A WRITER?</h3>
+                <p className="text-gray-400 font-medium mb-12 max-w-lg mx-auto leading-relaxed text-lg">
+                    Share your organic journey with our community. We are always looking for passionate voices.
+                </p>
+                <button className="h-16 px-12 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all group">
+                    <span className="flex items-center gap-4 text-gray-900 font-black text-xs uppercase tracking-[4px]">
+                        APPLY NOW
+                        <ArrowRight className="group-hover:translate-x-2 transition-transform text-emerald-500" size={18} />
+                    </span>
+                </button>
             </div>
         </div>
     );

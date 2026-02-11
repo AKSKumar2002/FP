@@ -47,9 +47,9 @@ const FloatingActionButton = () => {
     ];
 
     return (
-        <div className="md:hidden fixed bottom-[100px] right-6 flex flex-col items-end gap-3 z-50">
+        <div className="md:hidden fixed bottom-[100px] right-6 flex flex-col items-end gap-3 z-50 pointer-events-none">
             {/* Expanded Menu Options */}
-            <div className={`flex flex-col gap-3 transition-all duration-300 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+            <div className={`flex flex-col gap-3 transition-all duration-300 pointer-events-auto ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
                 {menuItems.map((item, index) => (
                     <button
                         key={index}
@@ -71,7 +71,7 @@ const FloatingActionButton = () => {
             {/* Main Toggle Button */}
             <button
                 onClick={toggleOpen}
-                className={`w-14 h-14 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 z-50 relative opacity-90 hover:opacity-100 ${isOpen ? 'bg-gray-800 rotate-45' : 'bg-green-600'}`}
+                className={`w-14 h-14 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 z-50 relative opacity-90 hover:opacity-100 pointer-events-auto ${isOpen ? 'bg-gray-800 rotate-45' : 'bg-green-600'}`}
                 style={{
                     boxShadow: '0 8px 24px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.1)'
                 }}
@@ -90,7 +90,7 @@ const FloatingActionButton = () => {
             {/* Backdrop to close when clicking outside */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/20 backdrop-blur-[1px] -z-10"
+                    className="fixed inset-0 bg-black/20 backdrop-blur-[1px] -z-10 pointer-events-auto"
                     onClick={() => setIsOpen(false)}
                 ></div>
             )}

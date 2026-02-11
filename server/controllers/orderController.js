@@ -3,6 +3,7 @@ import Product from "../models/Product.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../models/User.js";
+import { createNotification } from "./notificationController.js";
 
 // ✅ Razorpay instance (LIVE KEYS - TEMP for testing)
 // ⚠️ Remove hardcoded keys after testing and use process.env instead
@@ -41,6 +42,13 @@ export const placeOrderCOD = async (req, res) => {
       address,
       paymentType: "COD",
     });
+
+    await createNotification(
+      userId,
+      "Order Placed! 🚚",
+      `Your order for ₹${amount} has been placed successfully.`,
+      "order"
+    );
 
     return res.json({ success: true, message: "Order Placed Successfully" });
   } catch (error) {
@@ -134,8 +142,15 @@ export const verifyRazorpayPayment = async (req, res) => {
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature === razorpay_signature) {
-      await Order.findByIdAndUpdate(orderId, { isPaid: true });
+      const order = await Order.findByIdAndUpdate(orderId, { isPaid: true });
       await User.findByIdAndUpdate(userId, { cartItems: {} });
+
+      await createNotification(
+        userId,
+        "Payment Confirmed! 💳",
+        `Payment for order #${orderId} was successful and your order is being prepared.`,
+        "payment"
+      );
 
       return res.json({ success: true, message: "Payment Verified" });
     } else {
@@ -207,6 +222,14 @@ export const updateOrderStatus = async (req, res) => {
     if (!updatedOrder) {
       return res.json({ success: false, message: "Order not found" });
     }
+
+    // Send notification to user
+    await createNotification(
+      updatedOrder.userId,
+      `Order ${status}! 📦`,
+      `Your order #${id.slice(-6)} has been updated to: ${status}.`,
+      "order"
+    );
 
     return res.json({ success: true, order: updatedOrder, message: "Status updated" });
   } catch (error) {

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import './AllProducts.css';
 
 const AllProducts = () => {
-    const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery, setSearchQuery } = useAppContext()
+    const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery, setSearchQuery, setSelectedQuickProduct } = useAppContext()
     const navigate = useNavigate()
     const [filteredProducts, setFilteredProducts] = useState([])
     const [selectedCategory, setSelectedCategory] = useState("All")
@@ -29,8 +29,12 @@ const AllProducts = () => {
     }, [selectedCategory, products, searchQuery])
 
     const openProductPopup = (product) => {
-        setSelectedProduct(product)
-        setSelectedVariant(product.variants?.[0] || null)
+        if (window.innerWidth < 768) {
+            setSelectedQuickProduct(product);
+            return;
+        }
+        setSelectedProduct(product);
+        setSelectedVariant(product.variants?.[0] || null);
         setSelectedImage(null) // Reset to show first image
         document.body.style.overflow = 'hidden'
     }

@@ -11,6 +11,7 @@ import cartRouter from './routes/cartRoute.js';
 import addressRouter from './routes/addressRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import CategoryRouter from './routes/CategoryRoute.js';
+import notificationRouter from './routes/notificationRoute.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -52,6 +53,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/category', CategoryRouter);
+app.use('/api/notification', notificationRouter);
 
 // ✅ Start server directly (no http.createServer or socket.io)
 app.listen(port, () => {

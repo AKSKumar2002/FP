@@ -105,7 +105,7 @@ const MainBanner = () => {
               src={banner.image}
               alt={`banner ${index + 1}`}
               className='w-full hidden md:block object-cover'
-              style={{ height: '350px' }}
+              style={{ height: '300px' }}
             />
 
             {/* Mobile Image - Full Width Landscape */}
@@ -113,7 +113,7 @@ const MainBanner = () => {
               src={banner.imageSm}
               alt={`banner ${index + 1}`}
               className='w-full md:hidden object-cover'
-              style={{ aspectRatio: '4/3', maxHeight: '280px' }}
+              style={{ aspectRatio: '16/9', maxHeight: '220px' }}
             />
 
 

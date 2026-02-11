@@ -19,7 +19,7 @@ import MobileProductCard from '../components/MobileProductCard';
 import { assets } from '../assets/assets';
 
 const Home = () => {
-  const { products, currency, addToCart, user, setShowUserLogin } = useAppContext();
+  const { products, currency, addToCart, user, setShowUserLogin, setSelectedQuickProduct } = useAppContext();
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -47,6 +47,10 @@ const Home = () => {
   }, [products]);
 
   const openProductPopup = (product) => {
+    if (window.innerWidth < 768) {
+      setSelectedQuickProduct(product);
+      return;
+    }
     setSelectedProduct(product);
     setSelectedVariant(product.variants?.[0] || null);
     document.body.style.overflow = 'hidden';

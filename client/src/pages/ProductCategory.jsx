@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const ProductCategory = () => {
-  const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery } = useAppContext();
+  const { products, categories, currency, addToCart, user, setShowUserLogin, searchQuery, setSelectedQuickProduct } = useAppContext();
   const { category } = useParams();
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -29,6 +29,10 @@ const ProductCategory = () => {
     });
 
   const openProductPopup = (product) => {
+    if (window.innerWidth < 768) {
+      setSelectedQuickProduct(product);
+      return;
+    }
     setSelectedProduct(product);
     setSelectedVariant(product.variants?.[0] || null);
     document.body.style.overflow = 'hidden';
