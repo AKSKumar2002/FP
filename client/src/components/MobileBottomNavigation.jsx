@@ -2,8 +2,12 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, FileText, ShoppingBag, ShoppingCart, Package } from 'lucide-react';
 
+import { useAppContext } from '../context/AppContext';
+
 const MobileBottomNavigation = () => {
     const location = useLocation();
+    const { getCartCount, animateCart } = useAppContext();
+    const cartCount = getCartCount();
 
     const navItems = [
         { path: '/blog', label: 'Blog', icon: <FileText size={22} /> },
@@ -18,6 +22,7 @@ const MobileBottomNavigation = () => {
             <div className="bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-[32px] h-20 px-6 flex items-center justify-between relative">
                 {navItems.map((item) => {
                     const isActive = location.pathname === item.path;
+                    const isCart = item.label === 'Cart';
 
                     if (item.isCenter) {
                         const isHomeActive = location.pathname === '/';
@@ -45,11 +50,16 @@ const MobileBottomNavigation = () => {
                             to={item.path}
                             className={`flex flex-col items-center justify-center gap-1 transition-all ${isActive ? 'text-[#10B981]' : 'text-gray-400'}`}
                         >
-                            <div className={`transition-transform ${isActive ? 'scale-110 mb-0.5' : 'mb-0.5'}`}>
+                            <div className={`transition-transform relative ${isActive ? 'scale-110 mb-0.5' : 'mb-0.5'} ${isCart && animateCart ? 'animate-bounce text-green-600' : ''}`}>
                                 {React.cloneElement(item.icon, {
                                     strokeWidth: isActive ? 2.5 : 2,
                                     fill: isActive ? '#E7F5EF' : 'none'
                                 })}
+                                {isCart && cartCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </div>
                             <span className={`text-[11px] font-bold transition-opacity ${isActive ? 'opacity-100' : 'opacity-60'}`}>
                                 {item.label}

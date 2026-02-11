@@ -4,12 +4,33 @@ import { Search, Bell, Mic, ChevronDown, User, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const MobileHeader = () => {
-    const { user, navigate, searchQuery, setSearchQuery, preferredAddress, unreadCount, installPwa, isPwaInstalled, deferredPrompt } = useAppContext();
+    const {
+        user, navigate, searchQuery, setSearchQuery, preferredAddress, unreadCount,
+        installPwa, isPwaInstalled, deferredPrompt, products, currency
+    } = useAppContext();
+
+    const [showDropdown, setShowDropdown] = React.useState(false);
+
+    const filteredProducts = React.useMemo(() => {
+        if (!searchQuery || searchQuery.trim() === '') return [];
+        const query = searchQuery.toLowerCase();
+        return products.filter(product =>
+            product.name.toLowerCase().includes(query) ||
+            product.category?.name?.toLowerCase().includes(query)
+        ).slice(0, 5);
+    }, [searchQuery, products]);
 
     const handleSearch = (e) => {
         if (e.key === 'Enter') {
             navigate('/products');
+            setShowDropdown(false);
         }
+    };
+
+    const handleProductClick = (productId, category) => {
+        navigate(`/products/${category?.toLowerCase() || 'all'}/${productId}`);
+        setSearchQuery("");
+        setShowDropdown(false);
     };
 
     const handleVoiceSearch = () => {
@@ -70,10 +91,9 @@ const MobileHeader = () => {
 
                 {/* Icons */}
                 <div className="flex items-center gap-2">
-                    {/* PWA Install Button (Only visible if not installed) */}
                     {!isPwaInstalled && (
                         <button
-                            className="bg-emerald-500 p-2.5 rounded-full shadow-lg shadow-emerald-200 text-white animate-pulse active:scale-95 transition-transform"
+                            className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200 animate-pulse active:scale-95 transition-transform"
                             onClick={() => {
                                 if (deferredPrompt) {
                                     installPwa();
@@ -95,7 +115,7 @@ const MobileHeader = () => {
                                 }
                             }}
                         >
-                            <Smartphone size={20} strokeWidth={2.5} />
+                            <span className="text-[10px] font-bold leading-none">Install</span>
                         </button>
                     )}
 
@@ -112,7 +132,7 @@ const MobileHeader = () => {
             </div>
 
             {/* Bottom Row: Search Bar */}
-            <div className="relative group">
+            <div className="relative group relative">
                 <div className="absolute inset-y-0 left-0 pl-11 flex items-center pointer-events-none text-gray-400">
                     {/* Search icon inside input */}
                 </div>
@@ -123,7 +143,11 @@ const MobileHeader = () => {
                     type="text"
                     placeholder="Search Grocery"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setShowDropdown(true);
+                    }}
+                    onFocus={() => setShowDropdown(true)}
                     onKeyDown={handleSearch}
                     className="w-full bg-white border-none rounded-[18px] py-3.5 pl-11 pr-12 text-[15px] shadow-sm placeholder:text-gray-400 font-medium outline-none"
                 />
@@ -135,6 +159,29 @@ const MobileHeader = () => {
                         <Mic size={20} />
                     </div>
                 </div>
+
+                {/* Instant Search Dropdown */}
+                {showDropdown && filteredProducts.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl z-50 border border-gray-100 overflow-hidden animate-slideUp">
+                        {filteredProducts.map((product) => (
+                            <div
+                                key={product._id}
+                                onClick={() => handleProductClick(product._id, product.category?.name)}
+                                className="flex items-center gap-3 p-3 hover:bg-gray-50 border-b last:border-b-0 cursor-pointer"
+                            >
+                                <img
+                                    src={product.image[0]}
+                                    alt={product.name}
+                                    className="w-10 h-10 object-cover rounded-md bg-gray-100"
+                                />
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-bold text-gray-800 truncate">{product.name}</h4>
+                                    <p className="text-xs text-primary font-bold">{currency}{product.variants[0]?.offerPrice}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

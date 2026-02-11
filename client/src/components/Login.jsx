@@ -246,7 +246,7 @@ const Login = () => {
     return (
         <div
             onClick={() => setShowUserLogin(false)}
-            className="fixed inset-0 z-[100] flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto px-4"
+            className="fixed inset-0 z-[99999] flex items-center justify-center text-sm text-gray-600 bg-black/50 overflow-y-auto px-4"
         >
             <div
                 onClick={(e) => e.stopPropagation()}

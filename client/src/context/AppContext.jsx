@@ -98,6 +98,24 @@ export const AppContextProvider = ({ children }) => {
       [key]: prev[key] ? prev[key] + 1 : 1,
     }));
 
+    // Toast Feedback
+    const realId = productId.split('|')[0];
+    const product = products.find(p => p._id === realId);
+    if (product) {
+      toast.success(`${product.name} added to cart!`, {
+        id: `cart-toast-${realId}`,
+        icon: '🛒',
+        style: { borderRadius: '12px', background: '#333', color: '#fff' },
+        position: 'bottom-center',
+        duration: 2000
+      });
+    }
+
+    // Haptic Feedback (Mobile)
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+
     setAnimateCart(true); // ✅ trigger
     setTimeout(() => setAnimateCart(false), 600); // reset
   };
