@@ -71,7 +71,7 @@ const ProductQuickViewSheet = () => {
                         animate={{ y: 0 }}
                         exit={{ y: "100%" }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="relative w-full max-w-lg bg-white rounded-t-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]"
+                        className="relative w-full max-w-lg bg-white rounded-t-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[75vh]"
                     >
                         {/* Drag Handle */}
                         <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-2 flex-shrink-0" />

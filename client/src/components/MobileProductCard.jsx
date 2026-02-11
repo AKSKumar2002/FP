@@ -65,10 +65,7 @@ const MobileProductCard = ({ product }) => {
                     </button>
                 </div>
 
-                {/* Promo Text */}
-                <p className="text-[8px] text-gray-400 font-bold uppercase tracking-wider pt-1">
-                    {savings}% OFF" ya "BUY 1 GET 1
-                </p>
+
             </div>
         </div>
     );

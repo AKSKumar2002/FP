@@ -1,27 +1,40 @@
-import React, { useEffect, useState } from 'react'
-import { assets } from '../assets/assets'
-import { useAppContext } from '../context/AppContext'
-import toast from 'react-hot-toast'
-import LocationPickerModal from '../components/LocationPickerModal'
-import { MapPin } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useAppContext } from '../context/AppContext';
+import { assets } from '../assets/assets';
+import toast from 'react-hot-toast';
+import LocationPickerModal from '../components/LocationPickerModal';
+import {
+    MapPin, User, Mail, Phone, Home, Building,
+    Flag, Globe, Save, ArrowLeft, CheckCircle2
+} from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-// Input Field Component
-const InputField = ({ type, placeholder, name, handleChange, address }) => (
-    <input className='w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition'
-        type={type}
-        placeholder={placeholder}
-        onChange={handleChange}
-        name={name}
-        value={address[name]}
-        required
-    />
-)
+// Ultra-Clean Input Component
+const ModernInput = ({ icon: Icon, label, ...props }) => (
+    <div className="relative group w-full">
+        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">{label}</label>
+        <div className="relative flex items-center">
+            <div className="absolute left-4 text-gray-300 group-focus-within:text-emerald-600 transition-colors pointer-events-none">
+                <Icon size={18} strokeWidth={2} />
+            </div>
+            <input
+                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 transition-all font-semibold text-gray-800 placeholder:text-gray-300 text-sm"
+                {...props}
+            />
+            {props.value && (
+                <div className="absolute right-4 text-emerald-500 animate-in fade-in zoom-in duration-300">
+                    <CheckCircle2 size={16} />
+                </div>
+            )}
+        </div>
+    </div>
+);
 
 const AddAddress = () => {
-
-    const { axios, user, navigate, setPreferredAddress } = useAppContext();
+    const { axios, user, setPreferredAddress } = useAppContext();
     const location = useLocation();
+    const navigate = useNavigate();
     const [isMapOpen, setIsMapOpen] = useState(false);
 
     const [address, setAddress] = useState({
@@ -34,16 +47,15 @@ const AddAddress = () => {
         zipcode: '',
         country: '',
         phone: '',
-    })
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setAddress((prevAddress) => ({
             ...prevAddress,
             [name]: value,
-        }))
-    }
+        }));
+    };
 
     const handleLocationSelect = (data) => {
         const addr = data.address;
@@ -57,11 +69,9 @@ const AddAddress = () => {
         };
         setAddress(newAddress);
 
-        // Also update the global preferred address for immediate UI feedback
         setPreferredAddress(newAddress);
         localStorage.setItem('preferredAddress', JSON.stringify(newAddress));
 
-        // If user is already logged in, save to backend immediately so we get an _id
         if (user) {
             axios.post('/api/address/add', { address: newAddress, userId: user._id })
                 .then(res => {
@@ -73,14 +83,14 @@ const AddAddress = () => {
                 .catch(err => console.error("Auto-save address failed", err));
         }
 
-        toast.success("Location updated from map!");
+        toast.success("Location auto-filled from map!");
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
 
         if (!user) {
-            toast.error("Please login to save address to your account");
+            toast.error("Please login first");
             navigate('/login');
             return;
         }
@@ -89,68 +99,111 @@ const AddAddress = () => {
             const { data } = await axios.post('/api/address/add', { address });
 
             if (data.success) {
-                toast.success(data.message)
+                toast.success("Address saved securely");
                 setPreferredAddress(address);
                 localStorage.setItem('preferredAddress', JSON.stringify(address));
-                navigate('/cart')
+                navigate('/cart');
             } else {
-                toast.error(data.message)
+                toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.message)
+            toast.error(error.message);
         }
-    }
+    };
 
     useEffect(() => {
-        // Auto-open map if coming from header trigger
         if (location.state?.openMap) {
             setIsMapOpen(true);
         }
-    }, [location.state])
+    }, [location.state]);
 
     return (
-        <div className='mt-16 pb-16 px-4 md:px-0'>
-            <div className="flex items-center justify-between mb-2">
-                <p className='text-2xl md:text-3xl text-gray-500 tracking-tight'>Add Shipping <span className='font-semibold text-primary'>Address</span></p>
-                <button
-                    onClick={() => setIsMapOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-50 text-primary border border-primary/20 rounded-xl font-bold text-sm active:scale-95 transition-all shadow-sm"
+        <div className="min-h-screen bg-[#F8F9FA] pt-24 pb-20 px-4 md:px-0 flex justify-center">
+
+            <div className="w-full max-w-2xl">
+                {/* Minimal Header */}
+                <div className="flex items-center justify-between mb-8 px-2">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="w-10 h-10 bg-white rounded-full shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors"
+                    >
+                        <ArrowLeft size={18} />
+                    </button>
+                    <h1 className="text-xl font-black tracking-tight text-gray-900">NEW ADDRESS</h1>
+                    <div className="w-10"></div> {/* Spacer for alignment */}
+                </div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-gray-100"
                 >
-                    <MapPin size={16} />
-                    Select on Map
-                </button>
-            </div>
-
-            <div className='flex flex-col-reverse md:flex-row justify-between mt-10'>
-                <div className='flex-1 max-w-md'>
-                    <form onSubmit={onSubmitHandler} className='space-y-3 mt-6 text-sm'>
-
-                        <div className='grid grid-cols-2 gap-4'>
-                            <InputField handleChange={handleChange} address={address} name='firstName' type="text" placeholder="First Name" />
-                            <InputField handleChange={handleChange} address={address} name='lastName' type="text" placeholder="Last Name" />
+                    {/* Map Action Banner */}
+                    <div
+                        onClick={() => setIsMapOpen(true)}
+                        className="relative overflow-hidden bg-gray-900 rounded-3xl p-6 mb-10 cursor-pointer group"
+                    >
+                        <div className="relative z-10 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-emerald-500 transition-colors duration-500">
+                                    <MapPin size={20} className="text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-bold text-lg">Use Current Location</h3>
+                                    <p className="text-gray-400 text-xs font-medium mt-0.5">Tap to pinpoint on map</p>
+                                </div>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <ArrowLeft className="rotate-180 text-white" size={14} />
+                            </div>
                         </div>
 
-                        <InputField handleChange={handleChange} address={address} name='email' type="email" placeholder="Email address" />
-                        <InputField handleChange={handleChange} address={address} name='street' type="text" placeholder="Street / Area / Landmark" />
+                        {/* Subtle patterns */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl translate-x-10 -translate-y-10"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-x-10 translate-y-10"></div>
+                    </div>
 
-                        <div className='grid grid-cols-2 gap-4'>
-                            <InputField handleChange={handleChange} address={address} name='city' type="text" placeholder="City" />
-                            <InputField handleChange={handleChange} address={address} name='state' type="text" placeholder="State" />
+                    <form onSubmit={onSubmitHandler} className="space-y-10">
+                        {/* Section 1 */}
+                        <div className="space-y-6">
+                            <h3 className="text-xs font-black text-gray-300 uppercase tracking-[0.2em]">Contact Details</h3>
+                            <div className="grid grid-cols-2 gap-5">
+                                <ModernInput icon={User} label="First Name" name="firstName" value={address.firstName} onChange={handleChange} placeholder="John" required />
+                                <ModernInput icon={User} label="Last Name" name="lastName" value={address.lastName} onChange={handleChange} placeholder="Doe" required />
+                            </div>
+                            <ModernInput icon={Phone} label="Mobile Number" name="phone" type="tel" value={address.phone} onChange={handleChange} placeholder="+91 00000 00000" required />
+                            <ModernInput icon={Mail} label="Email Address" name="email" type="email" value={address.email} onChange={handleChange} placeholder="john@example.com" required />
                         </div>
 
-                        <div className='grid grid-cols-2 gap-4'>
-                            <InputField handleChange={handleChange} address={address} name='zipcode' type="text" placeholder="Zip code" />
-                            <InputField handleChange={handleChange} address={address} name='country' type="text" placeholder="Country" />
+                        {/* Section 2 */}
+                        <div className="space-y-6">
+                            <h3 className="text-xs font-black text-gray-300 uppercase tracking-[0.2em]">Delivery Address</h3>
+                            <ModernInput icon={Home} label="Flat, House, Building" name="street" value={address.street} onChange={handleChange} placeholder="Format: No./Street Name" required />
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <ModernInput icon={Building} label="City / Town" name="city" value={address.city} onChange={handleChange} placeholder="City" required />
+                                <ModernInput icon={MapPin} label="Pincode" name="zipcode" value={address.zipcode} onChange={handleChange} placeholder="000000" required />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-5">
+                                <ModernInput icon={Globe} label="State" name="state" value={address.state} onChange={handleChange} placeholder="State" required />
+                                <ModernInput icon={Flag} label="Country" name="country" value={address.country} onChange={handleChange} placeholder="Country" required />
+                            </div>
                         </div>
 
-                        <InputField handleChange={handleChange} address={address} name='phone' type="text" placeholder="Phone Number" />
-
-                        <button className='w-full mt-6 bg-primary text-white py-4 rounded-xl font-bold hover:bg-primary-dull transition-all cursor-pointer uppercase shadow-lg'>
-                            Save delivery address
+                        <button
+                            type="submit"
+                            className="w-full bg-emerald-600 text-white h-14 rounded-2xl font-bold text-sm uppercase tracking-widest shadow-xl shadow-emerald-200 hover:bg-emerald-700 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3"
+                        >
+                            <Save size={18} strokeWidth={2.5} />
+                            Save & Continue
                         </button>
                     </form>
-                </div>
-                <img className='md:mr-16 mb-16 md:mt-0 opacity-80' src={assets.add_address_iamge} alt="Add Address" />
+                </motion.div>
+
+                <p className="text-center text-gray-300 text-[10px] font-bold uppercase tracking-widest mt-8">
+                    Secure & Encrypted Information
+                </p>
             </div>
 
             <LocationPickerModal
@@ -159,7 +212,7 @@ const AddAddress = () => {
                 onLocationSelect={handleLocationSelect}
             />
         </div>
-    )
-}
+    );
+};
 
-export default AddAddress
+export default AddAddress;
